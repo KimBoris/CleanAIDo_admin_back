@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.zerock.cleanaido_admin_back.product.entity.Product;
 import org.zerock.cleanaido_admin_back.product.repository.ProductRepository;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
-import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
 
 @SpringBootTest
 class CleanAiDoAdminBackApplicationTests {
