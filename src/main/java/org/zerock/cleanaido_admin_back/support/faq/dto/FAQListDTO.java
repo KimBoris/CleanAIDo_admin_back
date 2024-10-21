@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class FAQListDTO {
 
     private Long id;
-    private String title;
-    private String description;
+    private String question;
+    private String answer;
+
 }

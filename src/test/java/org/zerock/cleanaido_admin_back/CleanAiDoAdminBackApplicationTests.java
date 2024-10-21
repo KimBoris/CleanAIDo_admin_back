@@ -42,8 +42,8 @@ class CleanAiDoAdminBackApplicationTests {
         for(int i = 0; i < 10; i++)
         {
             FAQ faq = FAQ.builder()
-                    .title("TITLE "+i)
-                    .description("DES "+"TITLE "+i)
+                    .question("TITLE "+i)
+                    .answer("DES "+"TITLE "+i)
                     .build();
 
             faqRepository.save(faq);

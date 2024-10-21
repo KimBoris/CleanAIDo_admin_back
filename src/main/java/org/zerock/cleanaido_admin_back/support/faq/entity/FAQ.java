@@ -20,9 +20,9 @@ public class FAQ {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long fno;
 
-    private String title;
+    private String question;
 
-    private String description;
+    private String answer;
 
 
 }
