@@ -52,7 +52,7 @@ class CleanAiDoAdminBackApplicationTests {
         {
             FAQ faq = FAQ.builder()
                     .question("TITLE "+i)
-                    .answer("DES "+"TITLE "+i)
+//                    .answer("DES "+"TITLE "+i)
                     .build();
 
             faqRepository.save(faq);

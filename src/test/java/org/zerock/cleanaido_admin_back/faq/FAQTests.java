@@ -11,7 +11,7 @@ FAQRepository faqRepository;
     public FAQ createFAQ(String question, String answer) {
         FAQ faq = FAQ.builder()
                 .question(question)
-                .answer(answer)
+//                .answer(answer)
                 .build();
 
         return faqRepository.save(faq);

@@ -9,7 +9,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Getter
+@Data
+
 public class FAQ {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +19,14 @@ public class FAQ {
     @Column(nullable = false)
     private String question;
 
-    @Column(nullable = false)
     private String answer;
+
+    private boolean delFlag;
+
+    public FAQBuilder toBuilder() {
+        return FAQ.builder()
+                .fno(this.fno)
+                .question(this.question)
+                .delFlag(this.delFlag);
+    }
 }
