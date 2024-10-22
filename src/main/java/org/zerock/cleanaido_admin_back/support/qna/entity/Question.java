@@ -12,7 +12,7 @@ public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Qno;
+    private Long qno;
 
     private String title;
 

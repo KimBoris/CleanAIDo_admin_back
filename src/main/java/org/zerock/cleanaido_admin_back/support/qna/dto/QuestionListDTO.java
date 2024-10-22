@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuestionDTO {
+public class QuestionListDTO {
 
-    private Long Qno;
+    private Long qno;
 
     private String title;
 
