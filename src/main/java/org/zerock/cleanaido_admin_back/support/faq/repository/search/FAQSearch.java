@@ -6,4 +6,7 @@ import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 
 public interface FAQSearch {
     Page<FAQ> list(Pageable pageable);
+
+//    FAQ getFAQ(Long fno);
+
 }

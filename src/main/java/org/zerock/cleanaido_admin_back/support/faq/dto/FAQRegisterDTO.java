@@ -14,7 +14,5 @@ public class FAQRegisterDTO {
     private Long fno;
     private String question;
     private String answer;
-
-    @Builder.Default
-    private boolean delFlag = false;
+    private boolean delFlag;
 }
