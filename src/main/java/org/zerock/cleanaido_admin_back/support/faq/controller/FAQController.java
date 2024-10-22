@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
+import org.zerock.cleanaido_admin_back.support.faq.dto.FAQReadDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQRegisterDTO;
 import org.zerock.cleanaido_admin_back.support.faq.service.FAQService;
 
@@ -22,8 +23,14 @@ public class FAQController {
     public ResponseEntity<PageResponseDTO<FAQListDTO>> list(PageRequestDTO pageRequestDTO) {
 
         return ResponseEntity.ok(faqService.listFAQ(pageRequestDTO));
+
     }
 
+    @GetMapping("{fno}")
+    public ResponseEntity<FAQReadDTO> read(@PathVariable  Long fno) {
+        FAQReadDTO faqDTO = faqService.readFAQ(fno);
+        return ResponseEntity.ok(faqDTO);
+    }
 
 
     @DeleteMapping("{fno}")
