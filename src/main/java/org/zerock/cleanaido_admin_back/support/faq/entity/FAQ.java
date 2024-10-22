@@ -14,15 +14,11 @@ import lombok.*;
 @Builder
 @Getter
 public class FAQ {
-
-
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long fno;
 
-    private String title;
+    private String question;
 
-    private String description;
-
-
+    private String answer;
 }
