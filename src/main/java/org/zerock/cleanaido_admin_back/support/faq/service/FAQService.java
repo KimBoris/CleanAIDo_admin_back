@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
-import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
+import org.zerock.cleanaido_admin_back.support.faq.dto.FAQDTO;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
 
@@ -23,16 +23,25 @@ import java.util.stream.Collectors;
 public class FAQService {
     private final FAQRepository faqRepository;
 
-    public PageResponseDTO<FAQListDTO> listFAQ(PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<FAQDTO> listFAQ(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
         Page<FAQ> faqPage = faqRepository.list(pageable);
 
-        List<FAQListDTO> dtoList = faqPage.getContent().stream()
-                .map(faq -> FAQListDTO.builder()
+        List<FAQDTO> dtoList = faqPage.getContent().stream()
+                .map(faq -> FAQDTO.builder()
                         .question(faq.getQuestion())
                         .answer(faq.getAnswer()).build()).collect(Collectors.toList());
 
 
         return new PageResponseDTO<>(dtoList, pageRequestDTO, faqPage.getTotalElements());
+    }
+
+    public FAQ createFAQ(String question, String answer) {
+        FAQ faq = FAQ.builder()
+                .question(question)
+                .answer(answer)
+                .build();
+
+        return faqRepository.save(faq);
     }
 }

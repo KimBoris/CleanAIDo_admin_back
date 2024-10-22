@@ -10,9 +10,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FAQListDTO
+public class FAQDTO
 {
-    private Long id;
     private String question;
     private String answer;
+
+
 }
