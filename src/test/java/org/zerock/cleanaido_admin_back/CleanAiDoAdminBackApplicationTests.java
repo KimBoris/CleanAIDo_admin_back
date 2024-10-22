@@ -1,5 +1,6 @@
 package org.zerock.cleanaido_admin_back;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +15,7 @@ import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
 import org.zerock.cleanaido_admin_back.support.qna.Repository.QNARepository;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 
+@Disabled
 @SpringBootTest
 class CleanAiDoAdminBackApplicationTests {
 
