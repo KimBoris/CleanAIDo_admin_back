@@ -15,7 +15,7 @@ public class QuestionListDTO {
 
     private String title;
 
-    private String contents;
-
     private String writer;
+
+    private boolean answered;
 }

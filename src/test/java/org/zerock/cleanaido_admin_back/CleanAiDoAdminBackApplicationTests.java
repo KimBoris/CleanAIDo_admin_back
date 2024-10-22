@@ -15,7 +15,6 @@ import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
 import org.zerock.cleanaido_admin_back.support.qna.Repository.QNARepository;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 
-@Disabled
 @SpringBootTest
 class CleanAiDoAdminBackApplicationTests {
 

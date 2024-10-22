@@ -9,8 +9,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
+import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionListDTO;
-import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 import org.zerock.cleanaido_admin_back.support.qna.service.QNAService;
 
 import java.util.Optional;
@@ -30,18 +30,19 @@ public class QNAController {
 
     }
 
-    @GetMapping("read/{qno}")
+    @GetMapping("{qno}")
     public String read(@PathVariable("qno") Long qno, Model model) {
 
         log.info("Reading question: " + qno);
 
-        Optional<QuestionListDTO> result = qnaService.read(qno); // QNASearch 인터페이스 사용
+        Optional<QuestionDTO> result = qnaService.read(qno); // QNASearch 인터페이스 사용
 
-        QuestionListDTO questionListDTO = result.orElseThrow(() -> new EntityNotFoundException("Question not found"));
+        QuestionDTO questionDTO = result.orElseThrow(() -> new EntityNotFoundException("Question not found"));
 
-        model.addAttribute("question", questionListDTO);
+        model.addAttribute("question", questionDTO);
 
-        log.info("Read question: " + questionListDTO);
+        log.info("Read question: " + questionDTO.getTitle());
+        log.info("answerd : " + questionDTO.getCreatedAt());
 
         return "/qna/read"; // qna 읽기 페이지로 이동
     }

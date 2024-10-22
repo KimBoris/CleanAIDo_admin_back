@@ -5,18 +5,15 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.support.qna.Repository.QNARepository;
+import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionListDTO;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,6 +35,7 @@ public class QNAService {
                         .qno(question.getQno())
                         .title(question.getTitle())
                         .writer(question.getWriter())
+                        .answered(question.isAnswered())
                         .build()).collect(Collectors.toList());
 
 
@@ -45,7 +43,7 @@ public class QNAService {
     }
 
 
-    public Optional<QuestionListDTO> read(Long qno) {
+    public Optional<QuestionDTO> read(Long qno) {
 
         return qnaRepository.getAQuestion(qno);
     }

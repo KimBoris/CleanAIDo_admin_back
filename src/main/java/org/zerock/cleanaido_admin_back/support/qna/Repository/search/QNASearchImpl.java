@@ -4,7 +4,7 @@ import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
-import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionListDTO;
+import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionDTO;
 import org.zerock.cleanaido_admin_back.support.qna.entity.QQuestion;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 
@@ -33,7 +33,7 @@ public class QNASearchImpl extends QuerydslRepositorySupport implements QNASearc
     }
 
     @Override
-    public Optional<QuestionListDTO> getAQuestion(Long qno) {
+    public Optional<QuestionDTO> getAQuestion(Long qno) {
         QQuestion question = QQuestion.question;
 
         // JPQLQuery 생성
@@ -44,17 +44,20 @@ public class QNASearchImpl extends QuerydslRepositorySupport implements QNASearc
         Question result = query.fetchOne();
 
         // Question 객체를 QuestionListDTO로 변환
-        QuestionListDTO questionListDTO = null;
+        QuestionDTO questionDTO = null;
         if (result != null) {
-            questionListDTO = QuestionListDTO.builder()
+            questionDTO = QuestionDTO.builder()
                     .qno(result.getQno())
                     .title(result.getTitle())
                     .contents(result.getContents())
                     .writer(result.getWriter())
+                    .answered(result.isAnswered())
+                    .createdAt(result.getCreatedAt())
+                    .updatedAt(result.getUpdatedAt())
                     .build();
         }
 
-        return Optional.ofNullable(questionListDTO);
+        return Optional.ofNullable(questionDTO);
     }
 }
 
