@@ -10,10 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FAQDTO
-{
+public class FAQReadDTO {
+    private Long pno;
     private String question;
     private String answer;
-
-
+    private boolean delFlag;
 }
