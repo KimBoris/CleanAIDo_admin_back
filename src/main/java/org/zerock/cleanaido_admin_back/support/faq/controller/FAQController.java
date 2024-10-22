@@ -29,6 +29,4 @@ public class FAQController {
         FAQ createdFAQ = faqService.createFAQ(faqDTO.getQuestion(), faqDTO.getAnswer());
         return ResponseEntity.ok(faqDTO);
     }
-
-
 }
