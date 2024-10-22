@@ -5,8 +5,5 @@ import org.springframework.data.domain.Pageable;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 
 public interface FAQSearch {
-
     Page<FAQ> list(Pageable pageable);
-
-
 }
