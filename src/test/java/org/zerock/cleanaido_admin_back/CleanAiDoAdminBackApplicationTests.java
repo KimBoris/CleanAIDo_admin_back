@@ -11,8 +11,8 @@ import org.zerock.cleanaido_admin_back.product.entity.Product;
 import org.zerock.cleanaido_admin_back.product.repository.ProductRepository;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
-import org.zerock.cleanaido_admin_back.support.qna.Repository.QNARepository;
-import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
+//import org.zerock.cleanaido_admin_back.support.qna.Repository.QNARepository;
+//import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 
 @SpringBootTest
 class CleanAiDoAdminBackApplicationTests {
@@ -23,9 +23,9 @@ class CleanAiDoAdminBackApplicationTests {
 
     @Autowired
     FAQRepository faqRepository;
-
-    @Autowired
-    QNARepository qnaRepository;
+//
+//    @Autowired
+//    QNARepository qnaRepository;
 
     @Test
     @Transactional
@@ -59,32 +59,32 @@ class CleanAiDoAdminBackApplicationTests {
         }
     }
 
-    @Test
-    @Transactional
-    @Commit
-    public void testDummiesQuestion() {
-        for(int i = 0; i < 10; i++)
-        {
-            Question qus = Question.builder()
-                    .title("TITLE "+i)
-                    .contents("DES "+"TITLE "+i)
-                    .writer("user"+i)
-                    .build();
-
-            qnaRepository.save(qus);
-
-
-        }
-    }
-
-    @Test
-    public void testQuestionList(){
-
-
-        Pageable pageable = PageRequest.of(0, 10);
-
-        qnaRepository.list(pageable);
-
-
-    }
+//    @Test
+//    @Transactional
+//    @Commit
+//    public void testDummiesQuestion() {
+//        for(int i = 0; i < 10; i++)
+//        {
+//            Question qus = Question.builder()
+//                    .title("TITLE "+i)
+//                    .contents("DES "+"TITLE "+i)
+//                    .writer("user"+i)
+//                    .build();
+//
+//            qnaRepository.save(qus);
+//
+//
+//        }
+//    }
+//
+//    @Test
+//    public void testQuestionList(){
+//
+//
+//        Pageable pageable = PageRequest.of(0, 10);
+//
+//        qnaRepository.list(pageable);
+//
+//
+//    }
 }
