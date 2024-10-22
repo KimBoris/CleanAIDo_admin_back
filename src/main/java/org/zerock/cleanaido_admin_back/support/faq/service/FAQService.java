@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
+import org.zerock.cleanaido_admin_back.support.faq.dto.FAQReadDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQRegisterDTO;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
@@ -33,6 +34,7 @@ public class FAQService {
                 .map(faq -> FAQListDTO.builder()
                         .fno(faq.getFno())
                         .question(faq.getQuestion())
+                        .delFlag(faq.isDelFlag())
                         .build())
                 .collect(Collectors.toList());
 
@@ -42,30 +44,17 @@ public class FAQService {
         return new PageResponseDTO<>(dtoList, pageRequestDTO, faqPage.getTotalElements());
     }
 
-
-    public void updateFAQ(Long fno, FAQRegisterDTO faqDTO)
-    {
+    public FAQReadDTO readFAQ(Long fno) {
         FAQ faq = faqRepository.findById(fno)
                 .orElseThrow(() -> new EntityNotFoundException("FAQ not found" + fno));
 
-        
-
-
-        faqRepository.save(faq);
+        return FAQReadDTO.builder()
+                .pno(faq.getFno())
+                .question(faq.getQuestion())
+                .answer(faq.getAnswer())
+                .delFlag(faq.isDelFlag())
+                .build();
     }
-//
-//    public void updateFAQ(Long fno, FAQRegisterDTO faqDTO) {
-//        FAQ faq = faqRepository.findById(fno)
-//                .orElseThrow(() -> new EntityNotFoundException("FAQ not found " + fno));
-//
-//        FAQ updatedFAQ =faq.toBuilder()
-//                .question(faqDTO.getQuestion())
-//                .answer
-//                .build();
-//
-//
-//        faqRepository.save(faq);
-//    }
 
 
     public void deleteFAQ(Long fno) {

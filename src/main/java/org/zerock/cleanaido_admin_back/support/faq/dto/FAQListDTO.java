@@ -14,7 +14,5 @@ public class FAQListDTO
 {
     private Long fno;
     private String question;
-
-    @Builder.Default
-    private boolean delFlag = false;
+    private boolean delFlag;
 }

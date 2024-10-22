@@ -21,6 +21,7 @@ public class FAQSearchImpl extends QuerydslRepositorySupport implements FAQSearc
         QFAQ faq = QFAQ.fAQ;
 
         JPQLQuery<FAQ> query = from(faq);
+        query.where(faq.delFlag.isFalse());
         getQuerydsl().applyPagination(pageable, query);
 
         List<FAQ> results = query.fetch();
@@ -28,4 +29,6 @@ public class FAQSearchImpl extends QuerydslRepositorySupport implements FAQSearc
 
         return new PageImpl<>(results, pageable, total);
     }
+
+
 }
