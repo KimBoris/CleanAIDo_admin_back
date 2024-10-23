@@ -8,6 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Getter
+@Setter
 @ToString(exclude = "question")
 public class Answer {
 

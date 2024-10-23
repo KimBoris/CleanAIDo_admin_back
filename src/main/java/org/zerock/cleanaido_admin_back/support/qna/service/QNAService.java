@@ -69,4 +69,11 @@ public class QNAService {
         // Answer 객체 저장
         answerRepository.save(answer);
     }
+
+    @Transactional
+    public void updateAnswer(String answerText, Long qno) {
+        Answer answer = answerRepository.findAnswerByQno(qno);
+
+        answer.setAnswerText(answerText);
+    }
 }

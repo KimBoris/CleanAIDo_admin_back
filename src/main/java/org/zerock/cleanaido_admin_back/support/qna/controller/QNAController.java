@@ -51,4 +51,10 @@ public class QNAController {
         qnaService.saveAnswer(answerText, qno); // 답변 저장
         return ResponseEntity.status(201).build(); // 201 Created 응답
     }
+
+    @PutMapping("{qno}")
+    public ResponseEntity<Void> updateAnswer(@PathVariable("qno") Long qno, @RequestParam String answerText) {
+        qnaService.updateAnswer(answerText, qno);
+        return ResponseEntity.status(201).build();
+    }
 }
