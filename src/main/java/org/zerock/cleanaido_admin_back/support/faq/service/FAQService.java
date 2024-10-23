@@ -28,17 +28,21 @@ public class FAQService {
 
     public PageResponseDTO<FAQListDTO> listFAQ(PageRequestDTO pageRequestDTO) {
 
-        if(pageRequestDTO.getPage() <1)
-        {
+        if (pageRequestDTO.getPage() < 1) {
             throw new IllegalArgumentException("페이지 번호는 1이상 이어야 합니다.");
         }
 
+        long totalElements = faqRepository.count();
+        int totalPages = (int) Math.ceil((double) totalElements / pageRequestDTO.getSize());
+
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
-//        Page<FAQ> faqPage = faqRepository.list(pageable);
 
         List<FAQListDTO> dtoList = faqRepository.convertToDTOList(pageable);
 
-        long totalElements = faqRepository.count();
+        if(dtoList.isEmpty())
+        {
+            throw new EntityNotFoundException("해당 페이지는 존재하지 않습니다.");
+        }
 
         return new PageResponseDTO<>(dtoList, pageRequestDTO, totalElements);
     }
@@ -95,9 +99,8 @@ public class FAQService {
 
         try {
             faqRepository.save(faq);
-        }
-        catch (DataAccessException e) {
-            throw new RuntimeException("데이터 베이스 오류가 발생했습니다. "+e.getMessage());
+        } catch (DataAccessException e) {
+            throw new RuntimeException("데이터 베이스 오류가 발생했습니다. " + e.getMessage());
         }
 
         return faq.getFno();
@@ -106,8 +109,7 @@ public class FAQService {
     public void deleteFAQ(Long fno) {
         FAQ faq = faqRepository.findById(fno)
                 .orElseThrow(() -> new EntityNotFoundException("FAQ not found " + fno));
-        if(faq.isDelFlag() == true)
-        {
+        if (faq.isDelFlag() == true) {
             throw new IllegalStateException("이미 삭제된 FAQ입니다. " + fno);
         }
         faq.setDelFlag(true);
