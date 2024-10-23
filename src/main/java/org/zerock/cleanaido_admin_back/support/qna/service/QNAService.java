@@ -11,14 +11,12 @@ import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.support.qna.Repository.AnswerRepository;
 import org.zerock.cleanaido_admin_back.support.qna.Repository.QuestionRepository;
-import org.zerock.cleanaido_admin_back.support.qna.dto.AnswerDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionReadDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionListDTO;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Answer;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,18 +54,24 @@ public class QNAService {
     @Transactional
     public void saveAnswer(String answerText, Long qno) {
 
-        Question question = Question.builder()
-                .qno(qno)
-                .build();
+        // 데이터베이스에서 해당 qno에 해당하는 Question 엔티티를 조회합니다.
+        Question question = questionRepository.findById(qno)
+                .orElseThrow(() -> new IllegalArgumentException("해당 qno에 해당하는 질문을 찾을 수 없습니다."));
+
+        // Question의 answered 속성을 true로 변경합니다.
+        question.setAnswered(true);
 
         // Answer 객체를 생성합니다.
         Answer answer = Answer.builder()
                 .answerText(answerText)
-                .question(question) // DTO에서 엔티티로 변환
+                .question(question) // 실제 데이터베이스에 있는 question을 참조
                 .build();
 
         // Answer 객체 저장
         answerRepository.save(answer);
+
+        // Question 객체 저장 (변경된 answered 속성 저장)
+        questionRepository.save(question);
     }
 
     @Transactional
