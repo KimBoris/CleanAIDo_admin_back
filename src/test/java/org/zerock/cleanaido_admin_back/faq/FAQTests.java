@@ -1,5 +1,6 @@
 package org.zerock.cleanaido_admin_back.faq;
 
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
@@ -16,4 +17,6 @@ FAQRepository faqRepository;
 
         return faqRepository.save(faq);
     }
+
+
 }

@@ -5,10 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.entity.QFAQ;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FAQSearchImpl extends QuerydslRepositorySupport implements FAQSearch {
 
@@ -22,13 +24,38 @@ public class FAQSearchImpl extends QuerydslRepositorySupport implements FAQSearc
 
         JPQLQuery<FAQ> query = from(faq);
         query.where(faq.delFlag.isFalse());
+        query.orderBy(faq.fno.desc());
         getQuerydsl().applyPagination(pageable, query);
 
         List<FAQ> results = query.fetch();
+
         long total = query.fetchCount();
 
         return new PageImpl<>(results, pageable, total);
     }
 
+    @Override
+    public FAQ getFAQ(Long fno) {
+        QFAQ faq = QFAQ.fAQ;
+        return from(faq).where(faq.fno.eq(fno).and(faq.delFlag.isFalse())).fetchOne();
+    }
 
+    @Override
+    public List<FAQListDTO> convertToDTOList(Pageable pageable) {
+        QFAQ faq = QFAQ.fAQ;
+
+        JPQLQuery<FAQ> query = from(faq);
+        query.where(faq.delFlag.isFalse());
+        query.orderBy(faq.fno.desc());
+        getQuerydsl().applyPagination(pageable, query);
+
+        List<FAQ> results = query.fetch();
+
+        return results.stream()
+                .map(faqEntity -> FAQListDTO.builder()
+                        .fno(faqEntity.getFno())
+                        .question(faqEntity.getQuestion())
+                        .delFlag(faqEntity.isDelFlag())
+                        .build()).collect(Collectors.toList());
+    }
 }
