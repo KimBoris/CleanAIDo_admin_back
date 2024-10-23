@@ -8,7 +8,7 @@ import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 import java.util.Optional;
 
 
-public interface QNASearch {
+public interface QuestionSearch {
     Page<Question> list(Pageable pageable);
 
     // 새로운 메소드 추가

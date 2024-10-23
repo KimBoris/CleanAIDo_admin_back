@@ -1,6 +1,5 @@
 package org.zerock.cleanaido_admin_back;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,7 +11,7 @@ import org.zerock.cleanaido_admin_back.product.entity.Product;
 import org.zerock.cleanaido_admin_back.product.repository.ProductRepository;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
-import org.zerock.cleanaido_admin_back.support.qna.Repository.QNARepository;
+import org.zerock.cleanaido_admin_back.support.qna.Repository.QuestionRepository;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 
 @SpringBootTest
@@ -26,7 +25,7 @@ class CleanAiDoAdminBackApplicationTests {
     FAQRepository faqRepository;
 
     @Autowired
-    QNARepository qnaRepository;
+    QuestionRepository questionRepository;
 
     @Test
     @Transactional
@@ -64,7 +63,7 @@ class CleanAiDoAdminBackApplicationTests {
     @Transactional
     @Commit
     public void testDummiesQuestion() {
-        for(int i = 0; i < 30; i++)
+        for(int i = 0; i < 150; i++)
         {
             Question qus = Question.builder()
                     .title("TITLE "+i)
@@ -72,7 +71,7 @@ class CleanAiDoAdminBackApplicationTests {
                     .writer("user"+i)
                     .build();
 
-            qnaRepository.save(qus);
+            questionRepository.save(qus);
 
 
         }
@@ -84,7 +83,7 @@ class CleanAiDoAdminBackApplicationTests {
 
         Pageable pageable = PageRequest.of(0, 10);
 
-        qnaRepository.list(pageable);
+        questionRepository.list(pageable);
 
 
     }

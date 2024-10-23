@@ -13,9 +13,9 @@ import java.util.Optional;
 
 
 @Log4j2
-public class QNASearchImpl extends QuerydslRepositorySupport implements QNASearch {
+public class QuestionSearchImpl extends QuerydslRepositorySupport implements QuestionSearch {
 
-    public QNASearchImpl() {
+    public QuestionSearchImpl() {
         super(Question.class);
     }
 

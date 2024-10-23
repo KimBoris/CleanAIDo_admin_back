@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
+import org.zerock.cleanaido_admin_back.support.qna.dto.AnswerDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionListDTO;
 import org.zerock.cleanaido_admin_back.support.qna.service.QNAService;
@@ -45,5 +46,11 @@ public class QNAController {
         log.info("answerd : " + questionDTO.getCreatedAt());
 
         return "/qna/read"; // qna 읽기 페이지로 이동
+    }
+
+    @PostMapping("{qno}")
+    public ResponseEntity<Void> createAnswer(@PathVariable("qno") Long qno, @RequestBody AnswerDTO answerDTO) {
+        qnaService.saveAnswer(answerDTO, qno); // 답변 저장
+        return ResponseEntity.status(201).build(); // 201 Created 응답
     }
 }
