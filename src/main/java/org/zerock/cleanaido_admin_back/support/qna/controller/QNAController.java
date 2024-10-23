@@ -32,7 +32,7 @@ public class QNAController {
     }
 
     @GetMapping("{qno}")
-    public String read(@PathVariable("qno") Long qno, Model model) {
+    public ResponseEntity<QuestionReadDTO> read(@PathVariable("qno") Long qno, Model model) {
 
         log.info("Reading question: " + qno);
 
@@ -43,7 +43,7 @@ public class QNAController {
         log.info("Read question: " + questionReadDTO.getTitle());
         log.info("answer : "+ questionReadDTO.getAnswertext());
 
-        return "/qna/read"; // qna 읽기 페이지로 이동
+        return ResponseEntity.ok(questionReadDTO); // qna 읽기 페이지로 이동
     }
 
     @PostMapping("{qno}")
