@@ -26,7 +26,7 @@ public class FAQController {
         return ResponseEntity.ok(faqService.listFAQ(pageRequestDTO));
     }
 
-    @PostMapping("register")
+    @PostMapping("")
     public ResponseEntity<String> register(@RequestBody FAQRegisterDTO faqRegisterDTO) {
         Long fno = faqService.registerFAQ(faqRegisterDTO);
         return ResponseEntity.ok(fno + "번이 등록되었습니다.");
@@ -43,6 +43,12 @@ public class FAQController {
 
         faqService.deleteFAQ(fno);
         return fno + "번이 삭제되었습니다.";
+    }
+
+    @PutMapping("{fno}")
+    public ResponseEntity<String> update(@PathVariable Long fno, @RequestBody FAQRegisterDTO faqRegisterDTO){
+        Long updateFno = faqService.updateFAQ(fno, faqRegisterDTO);
+        return ResponseEntity.ok(updateFno + "번이 수정되었습니다.");
     }
 
 
