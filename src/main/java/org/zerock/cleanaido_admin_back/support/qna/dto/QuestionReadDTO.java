@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuestionDTO {
+public class QuestionReadDTO {
 
     private Long qno;
 
@@ -23,12 +23,7 @@ public class QuestionDTO {
 
     private String writer;
 
-    private boolean answered;
+    private String answertext;
 
-    @CreationTimestamp
-    @Column(updatable = false) // 생성 시에만 값이 설정되고 수정 시에는 변경되지 않도록 설정
-    private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }

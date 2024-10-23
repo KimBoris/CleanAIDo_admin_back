@@ -1,8 +1,5 @@
 package org.zerock.cleanaido_admin_back.support.qna.service;
 
-import com.querydsl.jpa.JPQLQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -15,10 +12,9 @@ import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.support.qna.Repository.AnswerRepository;
 import org.zerock.cleanaido_admin_back.support.qna.Repository.QuestionRepository;
 import org.zerock.cleanaido_admin_back.support.qna.dto.AnswerDTO;
-import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionDTO;
+import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionReadDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionListDTO;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Answer;
-import org.zerock.cleanaido_admin_back.support.qna.entity.QQuestion;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 
 import java.util.List;
@@ -52,13 +48,13 @@ public class QNAService {
     }
 
 
-    public Optional<QuestionDTO> read(Long qno) {
+    public QuestionReadDTO read(Long qno) {
 
-        return questionRepository.getAQuestion(qno);
+        return questionRepository.getQuestion(qno);
     }
 
     @Transactional
-    public void saveAnswer(AnswerDTO answerDTO, Long qno) {
+    public void saveAnswer(String answerText, Long qno) {
 
         Question question = Question.builder()
                 .qno(qno)
@@ -66,7 +62,7 @@ public class QNAService {
 
         // Answer 객체를 생성합니다.
         Answer answer = Answer.builder()
-                .answerText(answerDTO.getAnswerText())
+                .answerText(answerText)
                 .question(question) // DTO에서 엔티티로 변환
                 .build();
 
