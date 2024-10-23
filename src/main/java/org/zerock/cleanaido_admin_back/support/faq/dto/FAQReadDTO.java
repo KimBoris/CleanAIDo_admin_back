@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FAQReadDTO {
-    private Long pno;
+    private Long fno;
     private String question;
     private String answer;
     private boolean delFlag;

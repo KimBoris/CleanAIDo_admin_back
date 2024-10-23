@@ -20,12 +20,13 @@ public class FAQ {
 
     private String answer;
 
+    @Column(nullable = false)
     private boolean delFlag;
 
-    public FAQBuilder toBuilder() {
-        return FAQ.builder()
-                .fno(this.fno)
-                .question(this.question)
-                .delFlag(this.delFlag);
-    }
+//    public FAQBuilder toBuilder() {
+//        return FAQ.builder()
+//                .fno(this.fno)
+//                .question(this.question)
+//                .delFlag(this.delFlag);
+//    }
 }

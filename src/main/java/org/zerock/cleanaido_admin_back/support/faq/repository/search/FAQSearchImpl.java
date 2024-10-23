@@ -37,7 +37,8 @@ public class FAQSearchImpl extends QuerydslRepositorySupport implements FAQSearc
     @Override
     public FAQ getFAQ(Long fno) {
         QFAQ faq = QFAQ.fAQ;
-        return from(faq).where(faq.fno.eq(fno).and(faq.delFlag.isFalse())).fetchOne();
+//        return from(faq).where(faq.fno.eq(fno).and(faq.delFlag.isFalse())).fetchOne();
+        return from(faq).where(faq.fno.eq(fno)).fetchOne();
     }
 
     @Override
