@@ -28,25 +28,32 @@ public class FAQService {
 
     public PageResponseDTO<FAQListDTO> listFAQ(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
-        Page<FAQ> faqPage = faqRepository.list(pageable);
+//        Page<FAQ> faqPage = faqRepository.list(pageable);
 
-        List<FAQListDTO> dtoList = faqPage.getContent().stream()
-                .map(faq -> FAQListDTO.builder()
-                        .fno(faq.getFno())
-                        .question(faq.getQuestion())
-                        .delFlag(faq.isDelFlag())
-                        .build())
-                .collect(Collectors.toList());
+        List<FAQListDTO> dtoList = faqRepository.convertToDTOList(pageable);
 
-        log.info("==================================================");
-        log.info(dtoList);
+        long totalElements = faqRepository.count();
 
-        return new PageResponseDTO<>(dtoList, pageRequestDTO, faqPage.getTotalElements());
+        return new PageResponseDTO<>(dtoList, pageRequestDTO, totalElements);
+    }
+
+    public Long registerFAQ(FAQRegisterDTO dto) {
+        FAQ faq = FAQ.builder()
+                .question(dto.getQuestion())
+                .answer(dto.getAnswer())
+                .delFlag(dto.isDelFlag())
+                .build();
+
+        faqRepository.save(faq);
+
+        return faq.getFno();
     }
 
     public FAQReadDTO readFAQ(Long fno) {
-        FAQ faq = faqRepository.findById(fno)
-                .orElseThrow(() -> new EntityNotFoundException("FAQ not found" + fno));
+        FAQ faq = faqRepository.getFAQ(fno);
+        if (faq == null) {
+            throw new EntityNotFoundException("FAQ not found" + fno);
+        }
 
         return FAQReadDTO.builder()
                 .pno(faq.getFno())
