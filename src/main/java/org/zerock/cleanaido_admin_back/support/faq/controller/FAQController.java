@@ -10,6 +10,7 @@ import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQReadDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQRegisterDTO;
+import org.zerock.cleanaido_admin_back.support.faq.dto.FAQSearchDTO;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.service.FAQService;
 
@@ -51,5 +52,10 @@ public class FAQController {
         return ResponseEntity.ok(updateFno + "번이 수정되었습니다.");
     }
 
+    @PostMapping("list")
+    public ResponseEntity<PageResponseDTO<FAQListDTO>> searchByQuestion(@RequestBody PageRequestDTO pageRequestDTO) {
+        PageResponseDTO<FAQListDTO> result = faqService.searchByQuestion(pageRequestDTO);
+        return ResponseEntity.ok(result);
+    }
 
 }
