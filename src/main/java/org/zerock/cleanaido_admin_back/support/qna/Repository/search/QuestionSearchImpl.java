@@ -25,6 +25,7 @@ public class QuestionSearchImpl extends QuerydslRepositorySupport implements Que
         QQuestion question = QQuestion.question;
 
         JPQLQuery<Question> query = from(question);
+        query.orderBy(question.qno.desc());
         getQuerydsl().applyPagination(pageable, query);
 
         List<Question> results = query.fetch();
@@ -33,33 +34,5 @@ public class QuestionSearchImpl extends QuerydslRepositorySupport implements Que
         return new PageImpl<>(results, pageable, total);
     }
 
-//    @Override
-//    public Optional<QuestionReadDTO> getAQuestion(Long qno) {
-//        QQuestion question = QQuestion.question;
-//        QAnswer answer = QAnswer.answer;
-//
-//        // JPQLQuery 생성
-//        JPQLQuery<Question> query = from(question);
-//        query.leftJoin(answer).on(answer.question.eq(question));
-//        query.where(question.qno.eq(qno));
-//        query.select(question, answer);
-//
-//        // 결과 조회
-//        Question result = query.fetchOne();
-//
-//        // Question 객체를 QuestionListDTO로 변환
-//        QuestionReadDTO questionReadDTO = null;
-//        if (result != null) {
-//            questionReadDTO = QuestionReadDTO.builder()
-//                    .qno(result.getQno())
-//                    .title(result.getTitle())
-//                    .contents(result.getContents())
-//                    .writer(result.getWriter())
-//                    .answertext(result)
-//                    .build();
-//        }
-//
-//        return Optional.ofNullable(questionReadDTO);
-//    }
 }
 

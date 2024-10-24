@@ -11,14 +11,12 @@ import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.support.qna.Repository.AnswerRepository;
 import org.zerock.cleanaido_admin_back.support.qna.Repository.QuestionRepository;
-import org.zerock.cleanaido_admin_back.support.qna.dto.AnswerDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionReadDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionListDTO;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Answer;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,7 +40,9 @@ public class QNAService {
                         .writer(question.getWriter())
                         .answered(question.isAnswered())
                         .build()).collect(Collectors.toList());
-
+        log.info(dtoList.toString());
+        log.info(pageRequestDTO.toString());
+        log.info(questionPage.getTotalElements());
 
         return new PageResponseDTO<>(dtoList, pageRequestDTO, questionPage.getTotalElements());
     }

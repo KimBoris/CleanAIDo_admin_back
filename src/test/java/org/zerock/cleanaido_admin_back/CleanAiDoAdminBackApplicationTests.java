@@ -63,7 +63,7 @@ class CleanAiDoAdminBackApplicationTests {
     @Transactional
     @Commit
     public void testDummiesQuestion() {
-        for(int i = 0; i < 150; i++)
+        for(int i = 0; i < 50; i++)
         {
             Question qus = Question.builder()
                     .title("TITLE "+i)
