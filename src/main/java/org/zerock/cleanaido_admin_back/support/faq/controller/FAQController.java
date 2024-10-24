@@ -22,9 +22,20 @@ public class FAQController {
     private final FAQService faqService;
 
     @GetMapping("list")
-    public ResponseEntity<PageResponseDTO<FAQListDTO>> list(PageRequestDTO pageRequestDTO) {
+    public ResponseEntity<PageResponseDTO<FAQListDTO>> list(@RequestParam(value = "page", defaultValue = "1") int page,
+                                                            @RequestParam(value = "size", defaultValue = "10") int size,
+                                                            @RequestParam(value = "keyword", required = false) String keyword) {
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(page)
+                .size(size)
+                .keyword(keyword)
+                .build();
 
-        return ResponseEntity.ok(faqService.listFAQ(pageRequestDTO));
+        if (keyword == null || keyword.isEmpty()) {
+            return ResponseEntity.ok(faqService.listFAQ(pageRequestDTO));
+        } else {
+            return ResponseEntity.ok(faqService.searchByQuestion(pageRequestDTO));
+        }
     }
 
     @PostMapping("")
@@ -50,12 +61,6 @@ public class FAQController {
     public ResponseEntity<String> update(@PathVariable Long fno, @RequestBody FAQRegisterDTO faqRegisterDTO){
         Long updateFno = faqService.updateFAQ(fno, faqRegisterDTO);
         return ResponseEntity.ok(updateFno + "번이 수정되었습니다.");
-    }
-
-    @PostMapping("list")
-    public ResponseEntity<PageResponseDTO<FAQListDTO>> searchByQuestion(@RequestBody PageRequestDTO pageRequestDTO) {
-        PageResponseDTO<FAQListDTO> result = faqService.searchByQuestion(pageRequestDTO);
-        return ResponseEntity.ok(result);
     }
 
 }
