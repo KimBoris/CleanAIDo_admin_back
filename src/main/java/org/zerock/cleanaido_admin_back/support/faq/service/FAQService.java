@@ -15,6 +15,7 @@ import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQReadDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQRegisterDTO;
+import org.zerock.cleanaido_admin_back.support.faq.dto.FAQSearchDTO;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
 
@@ -118,5 +119,20 @@ public class FAQService {
         }
         faq.setDelFlag(true);
         faqRepository.save(faq);
+    }
+
+    public PageResponseDTO<FAQListDTO> searchByQuestion(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
+        Page<FAQ> resultPage = faqRepository.searchByTitle(pageRequestDTO.getKeyword(), pageable);
+
+        List<FAQListDTO> dtoList = resultPage.getContent().stream()
+                .map(faq -> FAQListDTO.builder()
+                        .fno(faq.getFno())
+                        .question(faq.getQuestion())
+                        .delFlag(faq.isDelFlag())
+                        .build())
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO<>(dtoList, pageRequestDTO, resultPage.getTotalElements());
     }
 }

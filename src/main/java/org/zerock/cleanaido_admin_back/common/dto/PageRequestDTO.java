@@ -21,4 +21,6 @@ public class PageRequestDTO {
     @Min(value = 10, message = "set over 10")
     @Max(value = 100, message = "cannot over 100")
     private int size = 10;
+
+    private String keyword;
 }
