@@ -51,6 +51,8 @@ public class FAQSearchImpl extends QuerydslRepositorySupport implements FAQSearc
         getQuerydsl().applyPagination(pageable, query);
 
         List<FAQ> results = query.fetch();
+        System.out.println("================================================================");
+        System.out.println(results);
 
         return results.stream()
                 .map(faqEntity -> FAQListDTO.builder()

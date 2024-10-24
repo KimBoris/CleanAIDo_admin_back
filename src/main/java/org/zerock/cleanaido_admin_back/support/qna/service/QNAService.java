@@ -51,6 +51,7 @@ public class QNAService {
         }
     }
 
+
     public QuestionReadDTO read(Long qno) {
         try {
             return questionRepository.getQuestion(qno);
