@@ -39,9 +39,9 @@ public class FAQController {
     }
 
     @PostMapping("")
-    public ResponseEntity<String> register(@RequestBody FAQRegisterDTO faqRegisterDTO) {
+    public ResponseEntity<Long> register(@RequestBody FAQRegisterDTO faqRegisterDTO) {
         Long fno = faqService.registerFAQ(faqRegisterDTO);
-        return ResponseEntity.ok(fno + "번이 등록되었습니다.");
+        return ResponseEntity.ok(fno);
     }
 
     @GetMapping("{fno}")
