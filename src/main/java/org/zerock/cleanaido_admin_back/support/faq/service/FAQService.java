@@ -52,6 +52,21 @@ public class FAQService {
         return new PageResponseDTO<>(dtoList, pageRequestDTO, faqPage.getTotalElements());
     }
 
+    public PageResponseDTO<FAQListDTO> searchByQuestion(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
+        Page<FAQ> resultPage = faqRepository.searchByTitle(pageRequestDTO.getKeyword(), pageable);
+
+        List<FAQListDTO> dtoList = resultPage.getContent().stream()
+                .map(faq -> FAQListDTO.builder()
+                        .fno(faq.getFno())
+                        .question(faq.getQuestion())
+                        .delFlag(faq.isDelFlag())
+                        .build())
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO<>(dtoList, pageRequestDTO, resultPage.getTotalElements());
+    }
+
     public Long registerFAQ(FAQRegisterDTO dto) {
         if (dto.getQuestion() == null || dto.getQuestion().isEmpty()) {
             throw new IllegalArgumentException("질문은 필수 항목입니다.");
@@ -121,18 +136,4 @@ public class FAQService {
         faqRepository.save(faq);
     }
 
-    public PageResponseDTO<FAQListDTO> searchByQuestion(PageRequestDTO pageRequestDTO) {
-        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
-        Page<FAQ> resultPage = faqRepository.searchByTitle(pageRequestDTO.getKeyword(), pageable);
-
-        List<FAQListDTO> dtoList = resultPage.getContent().stream()
-                .map(faq -> FAQListDTO.builder()
-                        .fno(faq.getFno())
-                        .question(faq.getQuestion())
-                        .delFlag(faq.isDelFlag())
-                        .build())
-                .collect(Collectors.toList());
-
-        return new PageResponseDTO<>(dtoList, pageRequestDTO, resultPage.getTotalElements());
-    }
 }
