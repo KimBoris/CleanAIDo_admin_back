@@ -20,7 +20,6 @@ import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 @Service
 @Transactional
 @Log4j2
