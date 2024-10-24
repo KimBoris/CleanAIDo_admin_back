@@ -22,44 +22,29 @@ public class QuestionSearchImpl extends QuerydslRepositorySupport implements Que
 
     @Override
     public Page<Question> list(Pageable pageable) {
-        QQuestion question = QQuestion.question;
+        try {
+            QQuestion question = QQuestion.question;
 
-        JPQLQuery<Question> query = from(question);
-        getQuerydsl().applyPagination(pageable, query);
+            JPQLQuery<Question> query = from(question);
 
-        List<Question> results = query.fetch();
-        long total = query.fetchCount();
+            // 페이징 처리 적용
+            getQuerydsl().applyPagination(pageable, query);
 
-        return new PageImpl<>(results, pageable, total);
+            // 결과 목록을 가져옵니다.
+            List<Question> results = query.fetch();
+
+            // 총 레코드 수 계산
+            long total = query.fetchCount();
+
+            // 결과 반환
+            return new PageImpl<>(results, pageable, total);
+        } catch (IllegalArgumentException ex) {
+            log.error("잘못된 페이지 정보입니다: {}", ex.getMessage());
+            throw new IllegalArgumentException("잘못된 페이지 정보입니다.");
+        } catch (Exception ex) {
+            log.error("질문 목록을 불러오는 중 오류가 발생했습니다: {}", ex.getMessage());
+            throw new RuntimeException("질문 목록을 불러오는 중 오류가 발생했습니다.");
+        }
     }
-
-//    @Override
-//    public Optional<QuestionReadDTO> getAQuestion(Long qno) {
-//        QQuestion question = QQuestion.question;
-//        QAnswer answer = QAnswer.answer;
-//
-//        // JPQLQuery 생성
-//        JPQLQuery<Question> query = from(question);
-//        query.leftJoin(answer).on(answer.question.eq(question));
-//        query.where(question.qno.eq(qno));
-//        query.select(question, answer);
-//
-//        // 결과 조회
-//        Question result = query.fetchOne();
-//
-//        // Question 객체를 QuestionListDTO로 변환
-//        QuestionReadDTO questionReadDTO = null;
-//        if (result != null) {
-//            questionReadDTO = QuestionReadDTO.builder()
-//                    .qno(result.getQno())
-//                    .title(result.getTitle())
-//                    .contents(result.getContents())
-//                    .writer(result.getWriter())
-//                    .answertext(result)
-//                    .build();
-//        }
-//
-//        return Optional.ofNullable(questionReadDTO);
-//    }
 }
 
