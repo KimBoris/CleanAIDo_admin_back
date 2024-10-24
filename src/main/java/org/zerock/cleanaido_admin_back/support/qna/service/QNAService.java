@@ -11,12 +11,14 @@ import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.support.qna.Repository.AnswerRepository;
 import org.zerock.cleanaido_admin_back.support.qna.Repository.QuestionRepository;
+import org.zerock.cleanaido_admin_back.support.qna.dto.AnswerDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionReadDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionListDTO;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Answer;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

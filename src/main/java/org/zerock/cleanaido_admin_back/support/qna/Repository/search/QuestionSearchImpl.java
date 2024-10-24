@@ -26,6 +26,7 @@ public class QuestionSearchImpl extends QuerydslRepositorySupport implements Que
             QQuestion question = QQuestion.question;
 
             JPQLQuery<Question> query = from(question);
+            query.orderBy(question.qno.desc());
 
             // 페이징 처리 적용
             getQuerydsl().applyPagination(pageable, query);
@@ -46,5 +47,6 @@ public class QuestionSearchImpl extends QuerydslRepositorySupport implements Que
             throw new RuntimeException("질문 목록을 불러오는 중 오류가 발생했습니다.");
         }
     }
+
 }
 
