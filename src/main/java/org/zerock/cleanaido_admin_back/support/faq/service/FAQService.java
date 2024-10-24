@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.boot.model.naming.IllegalIdentifierException;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -31,20 +33,22 @@ public class FAQService {
         if (pageRequestDTO.getPage() < 1) {
             throw new IllegalArgumentException("페이지 번호는 1이상 이어야 합니다.");
         }
-
-        long totalElements = faqRepository.count();
-        int totalPages = (int) Math.ceil((double) totalElements / pageRequestDTO.getSize());
-
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
+        Page<FAQ> faqPage = faqRepository.list(pageable);
 
-        List<FAQListDTO> dtoList = faqRepository.convertToDTOList(pageable);
 
-        if(dtoList.isEmpty())
-        {
+        List<FAQListDTO> dtoList = faqPage.getContent().stream()
+                .map(faq -> FAQListDTO.builder()
+                        .fno(faq.getFno())
+                        .question(faq.getQuestion())
+                        .delFlag(faq.isDelFlag())
+                        .build()).collect(Collectors.toList());
+
+        if (dtoList.isEmpty()) {
             throw new EntityNotFoundException("해당 페이지는 존재하지 않습니다.");
         }
 
-        return new PageResponseDTO<>(dtoList, pageRequestDTO, totalElements);
+        return new PageResponseDTO<>(dtoList, pageRequestDTO, faqPage.getTotalElements());
     }
 
     public Long registerFAQ(FAQRegisterDTO dto) {
