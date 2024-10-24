@@ -1,5 +1,6 @@
 package org.zerock.cleanaido_admin_back.support.faq.repository.search;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -60,5 +61,20 @@ public class FAQSearchImpl extends QuerydslRepositorySupport implements FAQSearc
                         .question(faqEntity.getQuestion())
                         .delFlag(faqEntity.isDelFlag())
                         .build()).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<FAQ> searchByTitle(String keyword, Pageable pageable) {
+        QFAQ faq = QFAQ.fAQ;
+        JPQLQuery<FAQ> query = from(faq);
+        query.where(faq.question.containsIgnoreCase(keyword)
+                .and(faq.delFlag.isFalse())); // 검색어와 delFlag 조건
+
+        query.orderBy(faq.fno.desc());
+
+        List<FAQ> results = getQuerydsl().applyPagination(pageable, query).fetch();
+        long total = query.fetchCount();
+
+        return new PageImpl<>(results, pageable, total);
     }
 }

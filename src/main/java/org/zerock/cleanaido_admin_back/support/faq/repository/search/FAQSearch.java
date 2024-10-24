@@ -14,5 +14,6 @@ public interface FAQSearch {
 
     List<FAQListDTO> convertToDTOList(Pageable pageable);
 
+    Page<FAQ> searchByTitle(String keyword, Pageable pageable);
 
 }
