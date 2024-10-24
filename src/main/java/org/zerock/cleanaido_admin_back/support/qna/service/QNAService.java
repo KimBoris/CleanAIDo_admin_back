@@ -41,7 +41,6 @@ public class QNAService {
                         .answered(question.isAnswered())
                         .build()).collect(Collectors.toList());
 
-
         return new PageResponseDTO<>(dtoList, pageRequestDTO, questionPage.getTotalElements());
     }
 
