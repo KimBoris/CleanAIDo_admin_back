@@ -12,7 +12,6 @@ import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionReadDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionListDTO;
 import org.zerock.cleanaido_admin_back.support.qna.service.QNAService;
 
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/admin/qna")
@@ -23,11 +22,36 @@ public class QNAController {
     private final QNAService qnaService;
 
     @GetMapping("list")
-    public ResponseEntity<PageResponseDTO<QuestionListDTO>> list(PageRequestDTO pageRequestDTO) {
+    public ResponseEntity<PageResponseDTO<QuestionListDTO>> list(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "keyword", required = false) String keyword,
+            @RequestParam(value = "searchType", required = false) String searchType) {
 
-        return ResponseEntity.ok(qnaService.listQuestion(pageRequestDTO));
+        log.info("Search keyword: " + keyword);
+        log.info("Search type: " + searchType);
 
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(page)
+                .size(size)
+                .keyword(keyword)
+                .searchType(searchType)
+                .build();
+
+        if (keyword == null || keyword.isEmpty()) {
+            return ResponseEntity.ok(qnaService.listQuestion(pageRequestDTO));
+        }
+
+        if ("titleContents".equalsIgnoreCase(searchType)) {
+            return ResponseEntity.ok(qnaService.searchByTitleAndContents(pageRequestDTO));
+        } else if ("writer".equalsIgnoreCase(searchType)) {
+            return ResponseEntity.ok(qnaService.searchByWriter(pageRequestDTO));
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
+
+
 
     @GetMapping("{qno}")
     public ResponseEntity<QuestionReadDTO> read(@PathVariable("qno") Long qno, Model model) {
