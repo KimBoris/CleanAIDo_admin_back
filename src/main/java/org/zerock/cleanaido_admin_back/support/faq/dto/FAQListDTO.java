@@ -8,11 +8,19 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
+
 @NoArgsConstructor
 public class FAQListDTO
 {
     private Long fno;
     private String question;
     private boolean delFlag;
+    private String fileName;
+
+    public FAQListDTO(Long fno, String question, boolean delFlag, String fileName) {
+        this.fno = fno;
+        this.question = question;
+        this.delFlag = delFlag;
+        this.fileName = fileName;
+    }
 }
