@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.UploadDTO;
@@ -48,7 +49,8 @@ public class FAQController {
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> register(
             @ModelAttribute FAQRegisterDTO faqRegisterDTO,
-            @RequestParam("file") UploadDTO uploadDTO) {
+            @RequestParam("files") MultipartFile[] files) {
+        UploadDTO uploadDTO = new UploadDTO(files, null); // 또는 적절한 초기화 코드
         Long fno = faqService.registerFAQ(faqRegisterDTO, uploadDTO);
         return ResponseEntity.ok(fno);
     }
