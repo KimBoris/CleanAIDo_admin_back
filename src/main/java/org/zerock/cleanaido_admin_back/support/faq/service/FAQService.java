@@ -15,7 +15,6 @@ import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQReadDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQRegisterDTO;
-import org.zerock.cleanaido_admin_back.support.faq.dto.FAQSearchDTO;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
 
@@ -52,20 +51,24 @@ public class FAQService {
         return new PageResponseDTO<>(dtoList, pageRequestDTO, faqPage.getTotalElements());
     }
 
-    public PageResponseDTO<FAQListDTO> searchByQuestion(PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<FAQListDTO> search(PageRequestDTO pageRequestDTO) {
+        // SearchDTO에서 keyword를 가져옴
+        String keyword = pageRequestDTO.getSearchDTO().getKeyword();
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
-        Page<FAQ> resultPage = faqRepository.searchByTitle(pageRequestDTO.getKeyword(), pageable);
+
+        // keyword를 기반으로 검색 수행
+        Page<FAQ> resultPage = faqRepository.searchByKeyword(keyword, pageable);
 
         List<FAQListDTO> dtoList = resultPage.getContent().stream()
                 .map(faq -> FAQListDTO.builder()
                         .fno(faq.getFno())
                         .question(faq.getQuestion())
-                        .delFlag(faq.isDelFlag())
                         .build())
                 .collect(Collectors.toList());
 
         return new PageResponseDTO<>(dtoList, pageRequestDTO, resultPage.getTotalElements());
     }
+
 
     public Long registerFAQ(FAQRegisterDTO dto) {
         if (dto.getQuestion() == null || dto.getQuestion().isEmpty()) {

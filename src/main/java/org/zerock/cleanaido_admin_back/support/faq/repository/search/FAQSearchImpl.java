@@ -64,17 +64,18 @@ public class FAQSearchImpl extends QuerydslRepositorySupport implements FAQSearc
     }
 
     @Override
-    public Page<FAQ> searchByTitle(String keyword, Pageable pageable) {
+    public Page<FAQ> searchByKeyword(String keyword, Pageable pageable) {
         QFAQ faq = QFAQ.fAQ;
-        JPQLQuery<FAQ> query = from(faq);
-        query.where(faq.question.containsIgnoreCase(keyword)
-                .and(faq.delFlag.isFalse())); // 검색어와 delFlag 조건
 
-        query.orderBy(faq.fno.desc());
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(faq.question.containsIgnoreCase(keyword));
 
-        List<FAQ> results = getQuerydsl().applyPagination(pageable, query).fetch();
+        JPQLQuery<FAQ> query = from(faq).where(builder);
+        getQuerydsl().applyPagination(pageable, query);
+        List<FAQ> results = query.fetch();
         long total = query.fetchCount();
 
         return new PageImpl<>(results, pageable, total);
     }
+
 }

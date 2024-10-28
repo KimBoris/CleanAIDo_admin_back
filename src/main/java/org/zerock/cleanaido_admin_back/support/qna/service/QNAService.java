@@ -46,7 +46,9 @@ public class QNAService {
 
     public PageResponseDTO<QuestionListDTO> searchByTitleAndContents(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
-        Page<Question> resultPage = questionRepository.searchByTitleAndContents(pageRequestDTO.getKeyword(), pageable);
+        Page<Question> resultPage = questionRepository.searchByTitleAndContents(
+                pageRequestDTO.getSearchDTO().getKeyword(), pageable
+        );
 
         List<QuestionListDTO> dtoList = resultPage.getContent().stream()
                 .map(question -> QuestionListDTO.builder()
@@ -62,7 +64,9 @@ public class QNAService {
 
     public PageResponseDTO<QuestionListDTO> searchByWriter(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
-        Page<Question> resultPage = questionRepository.searchByWriter(pageRequestDTO.getKeyword(), pageable);
+        Page<Question> resultPage = questionRepository.searchByWriter(
+                pageRequestDTO.getSearchDTO().getKeyword(), pageable
+        );
 
         List<QuestionListDTO> dtoList = resultPage.getContent().stream()
                 .map(question -> QuestionListDTO.builder()
