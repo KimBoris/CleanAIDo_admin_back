@@ -37,31 +37,28 @@ public class QuestionSearchImpl extends QuerydslRepositorySupport implements Que
     public Page<Question> searchByTitleAndContents(String keyword, Pageable pageable) {
         QQuestion question = QQuestion.question;
         BooleanBuilder builder = new BooleanBuilder();
+        builder.or(question.title.containsIgnoreCase(keyword))
+                .or(question.contents.containsIgnoreCase(keyword));
 
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            builder.or(question.title.containsIgnoreCase(keyword))
-                    .or(question.contents.containsIgnoreCase(keyword));
-        }
-
-        JPQLQuery<Question> query = from(question).where(builder).orderBy(question.qno.desc());
+        JPQLQuery<Question> query = from(question).where(builder);
         getQuerydsl().applyPagination(pageable, query);
-
         List<Question> results = query.fetch();
         long total = query.fetchCount();
+
         return new PageImpl<>(results, pageable, total);
     }
 
     @Override
     public Page<Question> searchByWriter(String writer, Pageable pageable) {
         QQuestion question = QQuestion.question;
+        BooleanBuilder builder = new BooleanBuilder();
+        builder.and(question.writer.containsIgnoreCase(writer));
 
-        JPQLQuery<Question> query = from(question)
-                .where(question.writer.containsIgnoreCase(writer))
-                .orderBy(question.qno.desc());
+        JPQLQuery<Question> query = from(question).where(builder);
         getQuerydsl().applyPagination(pageable, query);
-
         List<Question> results = query.fetch();
         long total = query.fetchCount();
+
         return new PageImpl<>(results, pageable, total);
     }
 }
