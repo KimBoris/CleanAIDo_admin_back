@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface QuestionSearch {
     Page<Question> list(Pageable pageable);
 
+    Page<Question> searchByTitleAndContents(String keyword, Pageable pageable);
 
+    Page<Question> searchByWriter(String writer, Pageable pageable);
 }

@@ -10,38 +10,40 @@ import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.UploadDTO;
 import org.zerock.cleanaido_admin_back.common.util.CustomFileUtil;
+import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQReadDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQRegisterDTO;
-import org.zerock.cleanaido_admin_back.support.faq.dto.FAQSearchDTO;
-import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.service.FAQService;
 
-import java.util.Arrays;
-import java.util.List;
-
-@RestController
-@RequestMapping("/api/v1/admin/faq")
-@Log4j2
-@RequiredArgsConstructor
-public class FAQController {
-    private final FAQService faqService;
-    private final CustomFileUtil customFileUtil;
+    @RestController
+    @RequestMapping("/api/v1/admin/faq")
+    @Log4j2
+    @RequiredArgsConstructor
+    public class FAQController {
+        private final FAQService faqService;
 
     @GetMapping("list")
     public ResponseEntity<PageResponseDTO<FAQListDTO>> list(@RequestParam(value = "page", defaultValue = "1") int page,
                                                             @RequestParam(value = "size", defaultValue = "10") int size,
                                                             @RequestParam(value = "keyword", required = false) String keyword) {
-        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-                .page(page)
-                .size(size)
+
+        SearchDTO searchDTO = SearchDTO.builder()
                 .keyword(keyword)
                 .build();
 
-        if (keyword == null || keyword.isEmpty()) {
+
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(page)
+                .size(size)
+                .searchDTO(searchDTO)
+                .build();
+
+
+        if (searchDTO.getKeyword() == null || searchDTO.getKeyword().isEmpty()) {
             return ResponseEntity.ok(faqService.listFAQ(pageRequestDTO));
         } else {
-            return ResponseEntity.ok(faqService.searchByQuestion(pageRequestDTO));
+            return ResponseEntity.ok(faqService.search(pageRequestDTO));
         }
     }
 

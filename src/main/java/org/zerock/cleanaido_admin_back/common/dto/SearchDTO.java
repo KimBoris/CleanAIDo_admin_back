@@ -1,18 +1,17 @@
-package org.zerock.cleanaido_admin_back.support.faq.dto;
+package org.zerock.cleanaido_admin_back.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FAQSearchDTO {
+public class SearchDTO {
 
-    private PageRequestDTO pageRequestDTO;
     private String keyword;
-}
+    private String searchType;
 
+}
