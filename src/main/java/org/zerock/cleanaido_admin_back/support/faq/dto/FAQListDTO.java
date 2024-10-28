@@ -15,4 +15,5 @@ public class FAQListDTO
     private Long fno;
     private String question;
     private boolean delFlag;
+    private String fileName;
 }

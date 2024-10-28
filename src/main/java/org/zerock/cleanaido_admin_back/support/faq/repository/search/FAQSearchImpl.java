@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.zerock.cleanaido_admin_back.support.common.entity.QAttachFile;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.entity.QFAQ;
@@ -23,9 +24,16 @@ public class FAQSearchImpl extends QuerydslRepositorySupport implements FAQSearc
     public Page<FAQ> list(Pageable pageable) {
         QFAQ faq = QFAQ.fAQ;
 
+        // 첨부파일 컬렉션
+        QAttachFile attachFile = QAttachFile.attachFile;
+
         JPQLQuery<FAQ> query = from(faq);
+        query.leftJoin(faq.attachFiles, attachFile);
+
         query.where(faq.delFlag.isFalse());
+        query.where(attachFile.ord.eq(0));
         query.orderBy(faq.fno.desc());
+
         getQuerydsl().applyPagination(pageable, query);
 
         List<FAQ> results = query.fetch();

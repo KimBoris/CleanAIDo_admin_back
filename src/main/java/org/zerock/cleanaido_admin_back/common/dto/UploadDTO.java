@@ -1,5 +1,4 @@
-package org.zerock.cleanaido_admin_back.support.faq.dto;
-
+package org.zerock.cleanaido_admin_back.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,11 +12,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class FAQReadDTO {
-    private Long fno;
-    private String question;
-    private String answer;
-    private boolean delFlag;
+public class UploadDTO {
 
-    private List<String> fileNames;
+    private MultipartFile[] files;
+
+    private List<String> uploadedFileNames;
+
 }

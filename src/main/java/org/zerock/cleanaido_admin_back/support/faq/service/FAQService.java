@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
+import org.zerock.cleanaido_admin_back.common.dto.UploadDTO;
+import org.zerock.cleanaido_admin_back.common.util.CustomFileUtil;
+import org.zerock.cleanaido_admin_back.support.common.entity.AttachFile;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQReadDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQRegisterDTO;
@@ -19,6 +22,7 @@ import org.zerock.cleanaido_admin_back.support.faq.dto.FAQSearchDTO;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,6 +32,7 @@ import java.util.stream.Collectors;
 @Log4j2
 public class FAQService {
     private final FAQRepository faqRepository;
+    private final CustomFileUtil customFileUtil;
 
     public PageResponseDTO<FAQListDTO> listFAQ(PageRequestDTO pageRequestDTO) {
 
@@ -67,7 +72,7 @@ public class FAQService {
         return new PageResponseDTO<>(dtoList, pageRequestDTO, resultPage.getTotalElements());
     }
 
-    public Long registerFAQ(FAQRegisterDTO dto) {
+    public Long registerFAQ(FAQRegisterDTO dto, UploadDTO uploadDTO) {
         if (dto.getQuestion() == null || dto.getQuestion().isEmpty()) {
             throw new IllegalArgumentException("질문은 필수 항목입니다.");
         }
@@ -78,6 +83,10 @@ public class FAQService {
                 .question(dto.getQuestion())
                 .answer(dto.getAnswer())
                 .build();
+
+        // 첨부파일 저장
+        List<String> fileNames = customFileUtil.saveFiles(List.of(uploadDTO.getFiles()));
+        fileNames.forEach(faq::addFile);
 
         faqRepository.save(faq);
 

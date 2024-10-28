@@ -3,10 +3,13 @@ package org.zerock.cleanaido_admin_back.support.faq.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
+import org.zerock.cleanaido_admin_back.common.dto.UploadDTO;
+import org.zerock.cleanaido_admin_back.common.util.CustomFileUtil;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQReadDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQRegisterDTO;
@@ -14,12 +17,16 @@ import org.zerock.cleanaido_admin_back.support.faq.dto.FAQSearchDTO;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.service.FAQService;
 
+import java.util.Arrays;
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/admin/faq")
 @Log4j2
 @RequiredArgsConstructor
 public class FAQController {
     private final FAQService faqService;
+    private final CustomFileUtil customFileUtil;
 
     @GetMapping("list")
     public ResponseEntity<PageResponseDTO<FAQListDTO>> list(@RequestParam(value = "page", defaultValue = "1") int page,
@@ -38,9 +45,11 @@ public class FAQController {
         }
     }
 
-    @PostMapping("")
-    public ResponseEntity<Long> register(@RequestBody FAQRegisterDTO faqRegisterDTO) {
-        Long fno = faqService.registerFAQ(faqRegisterDTO);
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Long> register(
+            @ModelAttribute FAQRegisterDTO faqRegisterDTO,
+            @RequestParam("file") UploadDTO uploadDTO) {
+        Long fno = faqService.registerFAQ(faqRegisterDTO, uploadDTO);
         return ResponseEntity.ok(fno);
     }
 
