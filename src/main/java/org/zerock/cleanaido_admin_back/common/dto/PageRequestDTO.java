@@ -23,4 +23,6 @@ public class PageRequestDTO {
     private int size = 10;
 
     private String keyword;
+
+    private String searchType;
 }
