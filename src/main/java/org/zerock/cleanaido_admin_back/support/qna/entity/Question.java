@@ -41,10 +41,10 @@ public class Question {
     @Builder.Default
     private Set<AttachFile> attachFiles = new HashSet<>();
 
-    public void addFile(String filename){
-        attachFiles.add(new AttachFile(attachFiles.size(), filename));
-    }
-    public void clearFiles(){
-        attachFiles.clear();
-    }
+//    public void addFile(String filename){
+//        attachFiles.add(new AttachFile(attachFiles.size(), filename));
+//    }
+//    public void clearFiles(){
+//        attachFiles.clear();
+//    }
 }
