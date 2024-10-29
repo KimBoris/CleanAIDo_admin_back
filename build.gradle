@@ -34,6 +34,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+    testImplementation 'com.h2database:h2' // 내장형 H2 데이터베이스 추가
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
@@ -50,6 +52,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation 'com.google.code.gson:gson:2.10.1'
+
+    // https://mvnrepository.com/artifact/net.coobird/thumbnailator(썸네일)
+    implementation 'net.coobird:thumbnailator:0.4.19'
 
 }
 

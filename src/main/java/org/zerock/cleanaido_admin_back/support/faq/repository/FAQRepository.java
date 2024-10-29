@@ -9,5 +9,5 @@ import org.zerock.cleanaido_admin_back.support.faq.repository.search.FAQSearch;
 public interface FAQRepository extends JpaRepository<FAQ, Long>, FAQSearch {
 
     @Override
-    Page<FAQ> searchByTitle(String keyword, Pageable pageable); // 제목으로 검색 메서드
+    Page<FAQ> searchByKeyword(String keyword, Pageable pageable); // 제목으로 검색 메서드
 }

@@ -46,7 +46,7 @@ class CleanAiDoAdminBackApplicationTests {
     @Transactional
     @Commit
     public void testDummiesFAQ() {
-        for(int i = 0; i < 10; i++)
+        for(int i = 0; i < 100; i++)
         {
             FAQ faq = FAQ.builder()
                     .question("TITLE "+i)
@@ -63,7 +63,7 @@ class CleanAiDoAdminBackApplicationTests {
     @Transactional
     @Commit
     public void testDummiesQuestion() {
-        for(int i = 0; i < 50; i++)
+        for(int i = 0; i < 180; i++)
         {
             Question qus = Question.builder()
                     .title("TITLE "+i)
