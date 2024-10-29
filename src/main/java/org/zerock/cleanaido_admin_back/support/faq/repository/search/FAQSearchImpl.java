@@ -66,12 +66,6 @@ public class FAQSearchImpl extends QuerydslRepositorySupport implements FAQSearc
                 .build();
     }
 
-    @Override
-    public FAQ getFAQ(Long fno) {
-        QFAQ faq = QFAQ.fAQ;
-//        return from(faq).where(faq.fno.eq(fno).and(faq.delFlag.isFalse())).fetchOne();
-        return from(faq).where(faq.fno.eq(fno)).fetchOne();
-    }
 
     @Override
     public List<FAQListDTO> convertToDTOList(Pageable pageable) {

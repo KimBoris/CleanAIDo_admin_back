@@ -4,8 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.zerock.cleanaido_admin_back.support.common.entity.AttachFile;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -33,4 +36,15 @@ public class Question {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    @ElementCollection
+    @Builder.Default
+    private Set<AttachFile> attachFiles = new HashSet<>();
+
+//    public void addFile(String filename){
+//        attachFiles.add(new AttachFile(attachFiles.size(), filename));
+//    }
+//    public void clearFiles(){
+//        attachFiles.clear();
+//    }
 }
