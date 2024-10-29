@@ -70,9 +70,13 @@ import org.zerock.cleanaido_admin_back.support.faq.service.FAQService;
         return fno + "번이 삭제되었습니다.";
     }
 
-    @PutMapping("{fno}")
-    public ResponseEntity<String> update(@PathVariable Long fno, @RequestBody FAQRegisterDTO faqRegisterDTO){
-        Long updateFno = faqService.updateFAQ(fno, faqRegisterDTO);
+    @PutMapping(value = "{fno}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> update(
+            @PathVariable Long fno,
+            @ModelAttribute FAQRegisterDTO faqRegisterDTO,
+            @RequestParam("files") MultipartFile[] files){
+        UploadDTO uploadDTO = new UploadDTO(files, null);
+        Long updateFno = faqService.updateFAQ(fno, faqRegisterDTO, uploadDTO);
         return ResponseEntity.ok(updateFno + "번이 수정되었습니다.");
     }
 

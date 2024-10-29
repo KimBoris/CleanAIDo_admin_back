@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.UploadDTO;
@@ -22,7 +23,9 @@ import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,22 +47,7 @@ public class FAQService {
         log.info("---------------------------------------1");
 
         return response;
-        //log.info(faqPage);
 
-
-
-//        List<FAQListDTO> dtoList = faqPage.getContent().stream()
-//                .map(faq -> FAQListDTO.builder()
-//                        .fno(faq.getFno())
-//                        .question(faq.getQuestion())
-//                        .delFlag(faq.isDelFlag())
-//                        .build()).collect(Collectors.toList());
-//
-//        if (dtoList.isEmpty()) {
-//            throw new EntityNotFoundException("해당 페이지는 존재하지 않습니다.");
-//        }
-
-        //return new PageResponseDTO<>(dtoList, pageRequestDTO, faqPage.getTotalElements());
     }
 
     public PageResponseDTO<FAQListDTO> search(PageRequestDTO pageRequestDTO) {
@@ -94,12 +82,15 @@ public class FAQService {
                 .answer(dto.getAnswer())
                 .build();
 
-        // 첨부파일 저장
-        if(uploadDTO.getFiles() != null) {
-            List<String> fileNames = customFileUtil.saveFiles(List.of(uploadDTO.getFiles()));
-            fileNames.forEach(faq::addFile);
-        }
+        List<String> fileNames = Optional.ofNullable(uploadDTO.getFiles())
+                .map(files -> Arrays.stream(files)
+                        .filter(file -> !file.isEmpty()) // 실제 파일이 있는 경우만 필터링
+                        .collect(Collectors.toList()))
+                .filter(validFiles -> !validFiles.isEmpty()) // 빈 리스트는 제외
+                .map(customFileUtil::saveFiles) // 유효한 파일이 있으면 저장
+                .orElse(Collections.emptyList()); // 유효한 파일이 없으면 빈 리스트
 
+        fileNames.forEach(faq::addFile);
 
         faqRepository.save(faq);
 
@@ -123,7 +114,7 @@ public class FAQService {
                 .build();
     }
 
-    public Long updateFAQ(Long fno, FAQRegisterDTO dto) {
+    public Long updateFAQ(Long fno, FAQRegisterDTO dto, UploadDTO uploadDTO) {
 
         if (dto.getQuestion() == null || dto.getQuestion().isEmpty()) {
             throw new IllegalIdentifierException("질문은 필수 항목입니다.");
@@ -138,6 +129,20 @@ public class FAQService {
         faq.setQuestion(dto.getQuestion());
         faq.setAnswer(dto.getAnswer());
 //        faq.setDelFlag(dto.isDelFlag());
+        
+        // 기존 파일 목록 초기화
+        faq.clearFile();
+
+        // 새로운 파일 저장
+        List<String> fileNames = Optional.ofNullable(uploadDTO.getFiles())
+                .map(files -> Arrays.stream(files)
+                        .filter(file -> !file.isEmpty()) // 실제 파일이 있는 경우만 필터링
+                        .collect(Collectors.toList()))
+                .filter(validFiles -> !validFiles.isEmpty()) // 빈 리스트는 제외
+                .map(customFileUtil::saveFiles) // 파일이 있으면 저장
+                .orElse(Collections.emptyList()); // 파일이 없으면 빈 리스트
+
+        fileNames.forEach(faq::addFile);
 
         try {
             faqRepository.save(faq);
