@@ -102,15 +102,21 @@ public class FAQService {
         if (faq == null) {
             throw new EntityNotFoundException("게시물을 찾을 수 없습니다." + fno);
         }
-//        if(faq.isDelFlag())
-//        {
-//            throw new EntityNotFoundException("삭제된 게시물입니다.");
-//        }
+//    if (faq.isDelFlag()) {
+//        throw new EntityNotFoundException("삭제된 게시물입니다.");
+//    }
+
+        // AttachFile에서 fileName만 추출하여 List<String>으로 변환
+        List<String> fileNames = faq.getAttachFiles().stream()
+                .map(AttachFile::getFileName)
+                .collect(Collectors.toList());
+
         return FAQReadDTO.builder()
                 .fno(faq.getFno())
                 .question(faq.getQuestion())
                 .answer(faq.getAnswer())
                 .delFlag(faq.isDelFlag())
+                .fileNames(fileNames) // 추출한 fileNames 설정
                 .build();
     }
 

@@ -12,8 +12,6 @@ import java.util.List;
 public interface FAQSearch {
     PageResponseDTO<FAQListDTO> list(PageRequestDTO pageRequestDTO);
 
-    FAQ getFAQ(Long fno);
-
     List<FAQListDTO> convertToDTOList(Pageable pageable);
 
     Page<FAQ> searchByKeyword(String keyword, Pageable pageable);
