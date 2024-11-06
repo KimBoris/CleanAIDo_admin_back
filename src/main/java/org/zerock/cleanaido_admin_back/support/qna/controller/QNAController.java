@@ -8,11 +8,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
-import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionReadDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionListDTO;
 import org.zerock.cleanaido_admin_back.support.qna.service.QNAService;
 
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/admin/qna")
@@ -23,38 +23,11 @@ public class QNAController {
     private final QNAService qnaService;
 
     @GetMapping("list")
-    public ResponseEntity<PageResponseDTO<QuestionListDTO>> list(
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "keyword", required = false) String keyword,
-            @RequestParam(value = "searchType", required = false) String searchType
-    ) {
-        SearchDTO searchDTO = SearchDTO.builder()
-                .keyword(keyword)
-                .searchType(searchType)
-                .build();
+    public ResponseEntity<PageResponseDTO<QuestionListDTO>> list(PageRequestDTO pageRequestDTO) {
 
-        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-                .page(page)
-                .size(size)
-                .searchDTO(searchDTO)
-                .build();
+        return ResponseEntity.ok(qnaService.listQuestion(pageRequestDTO));
 
-        if (searchDTO.getKeyword() == null || searchDTO.getKeyword().isEmpty()) {
-            return ResponseEntity.ok(qnaService.listQuestion(pageRequestDTO));
-        } else {
-            if ("titleContents".equalsIgnoreCase(searchDTO.getSearchType())) {
-                return ResponseEntity.ok(qnaService.searchByTitleAndContents(pageRequestDTO));
-            } else if ("writer".equalsIgnoreCase(searchDTO.getSearchType())) {
-                return ResponseEntity.ok(qnaService.searchByWriter(pageRequestDTO));
-            } else {
-                return ResponseEntity.badRequest().build();
-            }
-        }
     }
-
-
-
 
     @GetMapping("{qno}")
     public ResponseEntity<QuestionReadDTO> read(@PathVariable("qno") Long qno, Model model) {
