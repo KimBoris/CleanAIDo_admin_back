@@ -13,11 +13,9 @@ import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.support.common.entity.QAttachFile;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
-import org.zerock.cleanaido_admin_back.support.faq.dto.FAQRegisterDTO;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.entity.QFAQ;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
