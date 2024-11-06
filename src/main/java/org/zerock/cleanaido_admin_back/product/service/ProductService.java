@@ -24,23 +24,23 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public PageResponseDTO<ProductListDTO> listProduct(PageRequestDTO pageRequestDTO) {
-        try {
-            Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
-            Page<Product> productPage = productRepository.list(pageable);
-
-            List<ProductListDTO> dtoList = productPage.getContent().stream()
-                    .map(product -> ProductListDTO.builder()
-
-                            .build()).collect(Collectors.toList());
-
-            return new PageResponseDTO<>(dtoList, pageRequestDTO, productPage.getTotalElements());
-        } catch (IllegalArgumentException ex) {
-            log.error("페이지 번호는 1 이상이어야 합니다: {}", ex.getMessage());
-            throw new IllegalArgumentException("페이지 번호는 1 이상이어야 합니다.");
-        } catch (Exception ex) {
-            log.error("질문 목록을 불러오는 중 오류가 발생했습니다: {}", ex.getMessage());
-            throw new RuntimeException("질문 목록을 불러오는 중 오류가 발생했습니다.");
-        }
-    }
+//    public PageResponseDTO<ProductListDTO> listProduct(PageRequestDTO pageRequestDTO) {
+//        try {
+//            Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
+//            Page<Product> productPage = productRepository.list(pageable);
+//
+//            List<ProductListDTO> dtoList = productPage.getContent().stream()
+//                    .map(product -> ProductListDTO.builder()
+//
+//                            .build()).collect(Collectors.toList());
+//
+//            return new PageResponseDTO<>(dtoList, pageRequestDTO, productPage.getTotalElements());
+//        } catch (IllegalArgumentException ex) {
+//            log.error("페이지 번호는 1 이상이어야 합니다: {}", ex.getMessage());
+//            throw new IllegalArgumentException("페이지 번호는 1 이상이어야 합니다.");
+//        } catch (Exception ex) {
+//            log.error("질문 목록을 불러오는 중 오류가 발생했습니다: {}", ex.getMessage());
+//            throw new RuntimeException("질문 목록을 불러오는 중 오류가 발생했습니다.");
+//        }
+//    }
 }

@@ -18,8 +18,4 @@ public class QuestionListDTO {
     private String writer;
 
     private boolean answered;
-
-    private String fileName;
-
-
 }

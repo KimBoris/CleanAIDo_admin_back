@@ -19,10 +19,10 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("list")
-    public ResponseEntity<PageResponseDTO<ProductListDTO>> list(PageRequestDTO pageRequestDTO) {
-
-        return ResponseEntity.ok(productService.listProduct(pageRequestDTO));
-
-    }
+//    @GetMapping("list")
+//    public ResponseEntity<PageResponseDTO<ProductListDTO>> list(PageRequestDTO pageRequestDTO) {
+//
+//        return ResponseEntity.ok(productService.listProduct(pageRequestDTO));
+//
+//    }
 }
