@@ -30,18 +30,20 @@ public class QNAService {
     private final AnswerRepository answerRepository;
 
     public PageResponseDTO<QuestionListDTO> listQuestion(PageRequestDTO pageRequestDTO) {
+
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
-        Page<Question> questionPage = questionRepository.list(pageable);
+        PageResponseDTO<QuestionListDTO> questionPage = questionRepository.list(pageRequestDTO);
 
-        List<QuestionListDTO> dtoList = questionPage.getContent().stream()
-                .map(question -> QuestionListDTO.builder()
-                        .qno(question.getQno())
-                        .title(question.getTitle())
-                        .writer(question.getWriter())
-                        .answered(question.isAnswered())
-                        .build()).collect(Collectors.toList());
-
-        return new PageResponseDTO<>(dtoList, pageRequestDTO, questionPage.getTotalElements());
+//        List<QuestionListDTO> dtoList = questionPage.getContent().stream()
+//                .map(question -> QuestionListDTO.builder()
+//                        .qno(question.)
+//                        .title(question.getTitle())
+//                        .writer(question.getWriter())
+//                        .answered(question.isAnswered())
+//                        .build()).collect(Collectors.toList());
+//
+//        return new PageResponseDTO<>(dtoList, pageRequestDTO, questionPage.getTotalElements());
+        return null;
     }
 
     public PageResponseDTO<QuestionListDTO> searchByTitleAndContents(PageRequestDTO pageRequestDTO) {
