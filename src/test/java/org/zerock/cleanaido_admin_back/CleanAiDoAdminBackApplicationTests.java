@@ -14,6 +14,8 @@ import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
 import org.zerock.cleanaido_admin_back.support.qna.Repository.QuestionRepository;
 import org.zerock.cleanaido_admin_back.support.qna.entity.Question;
 
+import java.time.LocalDateTime;
+
 @SpringBootTest
 class CleanAiDoAdminBackApplicationTests {
 
@@ -31,17 +33,24 @@ class CleanAiDoAdminBackApplicationTests {
     @Transactional
     @Commit
     public void testDummies() {
-        for(int i = 0; i < 10; i++)
-        {
+        LocalDateTime releaseDate = LocalDateTime.of(2024, 11, 26, 11, 0, 58);
+
+        for(int i = 0; i < 10; i++) {
             Product product = Product.builder()
-                    .name("User"+i)
+                    .pcode("z1kdf" + i)
+                    .pname("product" + i)
+                    .price(10000 + i * 1000)
+                    .quantity(i)
+                    .releasedAt(releaseDate)
+                    .pstatus("판매중")
+                    .ptags("액체세제,인체무해성분")
+                    .sellerId("s30")
                     .build();
 
             repository.save(product);
-
-
         }
     }
+
     @Test
     @Transactional
     @Commit
@@ -76,15 +85,5 @@ class CleanAiDoAdminBackApplicationTests {
 
         }
     }
-
-    @Test
-    public void testQuestionList(){
-
-
-        Pageable pageable = PageRequest.of(0, 10);
-
-        questionRepository.list(pageable);
-
-
-    }
+    
 }

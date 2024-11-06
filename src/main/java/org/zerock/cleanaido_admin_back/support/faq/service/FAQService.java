@@ -22,6 +22,7 @@ import org.zerock.cleanaido_admin_back.support.faq.dto.FAQRegisterDTO;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -135,6 +136,14 @@ public class FAQService {
         faq.setQuestion(dto.getQuestion());
         faq.setAnswer(dto.getAnswer());
 //        faq.setDelFlag(dto.isDelFlag());
+
+        // 기존 파일 삭제
+        List<String> oldFileNames = faq.getAttachFiles().stream()
+                .map(AttachFile::getFileName)
+                .collect(Collectors.toList());
+        if (!oldFileNames.isEmpty()) {
+            customFileUtil.deleteFiles(oldFileNames);
+        }
         
         // 기존 파일 목록 초기화
         faq.clearFile();
@@ -165,6 +174,18 @@ public class FAQService {
         if (faq.isDelFlag() == true) {
             throw new IllegalStateException("이미 삭제된 FAQ입니다. " + fno);
         }
+
+        // 기존 파일 목록 초기화
+        faq.clearFile();
+
+        // 실제 파일 삭제 처리
+        List<String> fileNames = faq.getAttachFiles().stream()
+                .map(AttachFile::getFileName)
+                .collect(Collectors.toList());
+        if (!fileNames.isEmpty()) {
+            customFileUtil.deleteFiles(fileNames);
+        }
+
         faq.setDelFlag(true);
         faqRepository.save(faq);
     }
