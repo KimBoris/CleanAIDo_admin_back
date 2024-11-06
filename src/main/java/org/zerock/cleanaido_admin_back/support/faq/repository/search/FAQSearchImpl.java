@@ -1,7 +1,6 @@
 package org.zerock.cleanaido_admin_back.support.faq.repository.search;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.domain.Page;
@@ -13,11 +12,9 @@ import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.support.common.entity.QAttachFile;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
-import org.zerock.cleanaido_admin_back.support.faq.dto.FAQRegisterDTO;
 import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.entity.QFAQ;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
