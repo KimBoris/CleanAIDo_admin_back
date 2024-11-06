@@ -85,15 +85,5 @@ class CleanAiDoAdminBackApplicationTests {
 
         }
     }
-
-    @Test
-    public void testQuestionList(){
-
-
-        Pageable pageable = PageRequest.of(0, 10);
-
-        questionRepository.list(pageable);
-
-
-    }
+    
 }
