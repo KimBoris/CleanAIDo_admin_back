@@ -49,4 +49,3 @@ public class QuestionSearchImpl extends QuerydslRepositorySupport implements Que
     }
 
 }
-
