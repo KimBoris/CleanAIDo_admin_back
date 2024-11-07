@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FAQRegisterDTO {
 
-    @NotNull
     private String question;
     private String answer;
     private boolean delFlag;

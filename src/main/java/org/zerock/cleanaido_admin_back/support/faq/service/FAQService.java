@@ -67,12 +67,6 @@ public class FAQService {
 
 
     public Long registerFAQ(FAQRegisterDTO dto, UploadDTO uploadDTO) {
-//        if (dto.getQuestion() == null || dto.getQuestion().isEmpty()) {
-//            throw new IllegalArgumentException("질문은 필수 항목입니다.");
-//        }
-//        if (dto.getAnswer() == null || dto.getAnswer().isEmpty()) {
-//            throw new IllegalArgumentException("답변은 필수 항목 입니다.");
-//        }
 
         FAQ faq = FAQ.builder()
                 .question(dto.getQuestion())
@@ -101,9 +95,6 @@ public class FAQService {
         if (faq == null) {
             throw new EntityNotFoundException("게시물을 찾을 수 없습니다." + fno);
         }
-//    if (faq.isDelFlag()) {
-//        throw new EntityNotFoundException("삭제된 게시물입니다.");
-//    }
 
         // AttachFile에서 fileName만 추출하여 List<String>으로 변환
         List<String> fileNames = faq.getAttachFiles().stream()
@@ -121,20 +112,11 @@ public class FAQService {
 
     public Long updateFAQ(Long fno, FAQRegisterDTO dto, UploadDTO uploadDTO) {
 
-//        if (dto.getQuestion() == null || dto.getQuestion().isEmpty()) {
-//            throw new IllegalIdentifierException("질문은 필수 항목입니다.");
-//        }
-//        if (dto.getAnswer() == null || dto.getAnswer().isEmpty()) {
-//            throw new IllegalIdentifierException("답변은 필수 항목 입니다.");
-//        }
-
         FAQ faq = faqRepository.findById(fno)
                 .orElseThrow(() -> new EntityNotFoundException("FAQ not found" + fno));
 
         faq.setQuestion(dto.getQuestion());
         faq.setAnswer(dto.getAnswer());
-//        faq.setDelFlag(dto.isDelFlag());
-
 
         // 기존 파일 리스트
         List<String> oldFileNames = faq.getAttachFiles().stream()
@@ -150,16 +132,10 @@ public class FAQService {
                 .map(customFileUtil::saveFiles) // 파일이 있으면 저장
                 .orElse(Collections.emptyList()); // 파일이 없으면 빈 리스트
 
-
         // 삭제할 파일 리스트
         List<String> filesToDelete = oldFileNames.stream()
                 .filter(oldFile -> !newFileNames.contains(oldFile))
                 .collect(Collectors.toList());
-
-        for(String fileName : filesToDelete) {
-            log.info("================================");
-            log.info(fileName);
-        }
 
         // 삭제할 파일이 있다면 실제 파일까지 삭제
         if (!filesToDelete.isEmpty()) {
@@ -169,6 +145,7 @@ public class FAQService {
         // 기존 파일 목록 초기화
         faq.clearFile();
 
+        // 새로운 파일 add
         for (String newFileName : newFileNames) {
             faq.addFile(newFileName);
         }
