@@ -10,4 +10,5 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     // 배송전, 배송중, 배송완료인 주문 조회
     Page<Order> findByOrderStatusIn(List<String> statuses, Pageable pageable);
+
 }
