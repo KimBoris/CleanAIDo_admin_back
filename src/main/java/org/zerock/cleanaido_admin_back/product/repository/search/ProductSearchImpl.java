@@ -1,8 +1,11 @@
 package org.zerock.cleanaido_admin_back.product.repository.search;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -52,6 +55,26 @@ public class ProductSearchImpl extends QuerydslRepositorySupport implements Prod
                 .totalCount(total)
                 .pageRequestDTO(pageRequestDTO)
                 .build();
+    }
+    @Override
+    public Page<Product> searchBy(String type, String keyword, Pageable pageable) {
+        QProduct product = QProduct.product;
+        log.info("---------------------");
+        log.info("search start.");
+
+        BooleanBuilder builder = new BooleanBuilder();
+        if("pcode".equals(type)) {
+            builder.and(product.pcode.containsIgnoreCase(keyword));
+        }else if("pname".equals(type)) {
+            builder.and(product.pname.containsIgnoreCase(keyword));
+        }
+
+        JPQLQuery<Product> query = from(product).where(builder);
+        getQuerydsl().applyPagination(pageable, query);
+        List<Product> results = query.fetch();
+        long total = query.fetchCount();
+
+        return new PageImpl<>(results, pageable, total);
     }
 
 }
