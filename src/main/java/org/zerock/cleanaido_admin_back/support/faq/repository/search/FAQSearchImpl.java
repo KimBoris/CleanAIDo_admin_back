@@ -1,7 +1,6 @@
 package org.zerock.cleanaido_admin_back.support.faq.repository.search;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.domain.Page;
