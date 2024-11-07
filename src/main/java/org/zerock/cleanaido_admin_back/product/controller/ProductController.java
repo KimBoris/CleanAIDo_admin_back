@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
+import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.common.dto.UploadDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductListDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductRegisterDTO;
@@ -22,14 +23,31 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("list")
-    public ResponseEntity<PageResponseDTO<ProductListDTO>> list() {
+    public ResponseEntity<PageResponseDTO<ProductListDTO>> list(@RequestParam(value = "page", defaultValue = "1") int page,
+                                                                @RequestParam(value = "size", defaultValue = "10") int size,
+                                                                @RequestParam(value = "type", required = false) String type,
+                                                                @RequestParam(value = "keyword", required = false) String keyword) {
 
-        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
-                .page(1)
-                .size(10)
+        SearchDTO searchDTO = SearchDTO.builder()
+                .searchType(type)
+                .keyword(keyword)
                 .build();
 
-        return ResponseEntity.ok(productService.listProduct(pageRequestDTO));
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(page)
+                .size(size)
+                .searchDTO(searchDTO)
+                .build();
+
+        if (searchDTO.getKeyword() == null || searchDTO.getKeyword().isEmpty()) {
+            log.info("keyword is null or empty");
+            log.info("---------------------");
+            return ResponseEntity.ok(productService.listProduct(pageRequestDTO));
+        } else {
+            log.info("type is :" + searchDTO.getSearchType());
+            log.info("keyword is " + searchDTO.getKeyword());
+            return ResponseEntity.ok(productService.search(pageRequestDTO));
+        }
 
     }
 

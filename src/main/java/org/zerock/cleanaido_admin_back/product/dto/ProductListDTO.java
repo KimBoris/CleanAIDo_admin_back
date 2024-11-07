@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ProductListDTO {
 
-    private int pno;
+    private Long pno;
 
     private String pcode;
 

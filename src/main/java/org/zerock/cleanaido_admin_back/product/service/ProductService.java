@@ -15,14 +15,7 @@ import org.zerock.cleanaido_admin_back.product.dto.ProductListDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductRegisterDTO;
 import org.zerock.cleanaido_admin_back.product.entity.Product;
 import org.zerock.cleanaido_admin_back.product.repository.ProductRepository;
-import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
-import org.zerock.cleanaido_admin_back.support.faq.dto.FAQRegisterDTO;
-import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
-
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +40,31 @@ public class ProductService {
         return response;
 
     }
+
+    public PageResponseDTO<ProductListDTO> search(PageRequestDTO pageRequestDTO) {
+        // SearchDTO에서 type과 keyword를 가져옴
+        String type = pageRequestDTO.getSearchDTO().getSearchType();
+        String keyword = pageRequestDTO.getSearchDTO().getKeyword();
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
+
+        // type, keyword를 기반으로 검색 수행
+        Page<Product> resultPage = productRepository.searchBy(type, keyword, pageable);
+
+        List<ProductListDTO> dtoList = resultPage.getContent().stream()
+                .map(product -> ProductListDTO.builder()
+                        .pno(product.getPno())
+                        .pname(product.getPname())
+                        .pcode(product.getPcode())
+                        .price(product.getPrice())
+                        .quantity(product.getQuantity())
+                        .pstatus(product.getPstatus())
+                        .releasedAt(product.getReleasedAt())
+                        .build())
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO<>(dtoList, pageRequestDTO, resultPage.getTotalElements());
+    }
+
     public Long registerProduct(ProductRegisterDTO dto, UploadDTO uploadDTO) {
         Product product = Product.builder()
                 .pcode(dto.getPcode())

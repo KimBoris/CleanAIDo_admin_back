@@ -30,27 +30,57 @@ public class QNAService {
     private final AnswerRepository answerRepository;
 
     public PageResponseDTO<QuestionListDTO> listQuestion(PageRequestDTO pageRequestDTO) {
-        try {
-            Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
-            Page<Question> questionPage = questionRepository.list(pageable);
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
+        Page<Question> questionPage = questionRepository.list(pageable);
 
-            List<QuestionListDTO> dtoList = questionPage.getContent().stream()
-                    .map(question -> QuestionListDTO.builder()
-                            .qno(question.getQno())
-                            .title(question.getTitle())
-                            .writer(question.getWriter())
-                            .answered(question.isAnswered())
-                            .build()).collect(Collectors.toList());
+        List<QuestionListDTO> dtoList = questionPage.getContent().stream()
+                .map(question -> QuestionListDTO.builder()
+                        .qno(question.getQno())
+                        .title(question.getTitle())
+                        .writer(question.getWriter())
+                        .answered(question.isAnswered())
+                        .build()).collect(Collectors.toList());
 
-            return new PageResponseDTO<>(dtoList, pageRequestDTO, questionPage.getTotalElements());
-        } catch (IllegalArgumentException ex) {
-            log.error("페이지 번호는 1 이상이어야 합니다: {}", ex.getMessage());
-            throw new IllegalArgumentException("페이지 번호는 1 이상이어야 합니다.");
-        } catch (Exception ex) {
-            log.error("질문 목록을 불러오는 중 오류가 발생했습니다: {}", ex.getMessage());
-            throw new RuntimeException("질문 목록을 불러오는 중 오류가 발생했습니다.");
-        }
+        return new PageResponseDTO<>(dtoList, pageRequestDTO, questionPage.getTotalElements());
     }
+
+    public PageResponseDTO<QuestionListDTO> searchByTitleAndContents(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
+        Page<Question> resultPage = questionRepository.searchByTitleAndContents(
+                pageRequestDTO.getSearchDTO().getKeyword(), pageable
+        );
+
+        List<QuestionListDTO> dtoList = resultPage.getContent().stream()
+                .map(question -> QuestionListDTO.builder()
+                        .qno(question.getQno())
+                        .title(question.getTitle())
+                        .writer(question.getWriter())
+                        .answered(question.isAnswered())
+                        .build())
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO<>(dtoList, pageRequestDTO, resultPage.getTotalElements());
+    }
+
+    public PageResponseDTO<QuestionListDTO> searchByWriter(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
+        Page<Question> resultPage = questionRepository.searchByWriter(
+                pageRequestDTO.getSearchDTO().getKeyword(), pageable
+        );
+
+        List<QuestionListDTO> dtoList = resultPage.getContent().stream()
+                .map(question -> QuestionListDTO.builder()
+                        .qno(question.getQno())
+                        .title(question.getTitle())
+                        .writer(question.getWriter())
+                        .answered(question.isAnswered())
+                        .build())
+                .collect(Collectors.toList());
+
+        return new PageResponseDTO<>(dtoList, pageRequestDTO, resultPage.getTotalElements());
+    }
+
+
 
 
     public QuestionReadDTO read(Long qno) {
