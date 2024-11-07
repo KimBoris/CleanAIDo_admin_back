@@ -25,7 +25,7 @@ public class ProductListDTO {
 
     private LocalDateTime createdAt;
 
-    private LocalDateTime releasedAt;
+    private LocalDateTime updatedAt;
 
     private String pstatus;
 }

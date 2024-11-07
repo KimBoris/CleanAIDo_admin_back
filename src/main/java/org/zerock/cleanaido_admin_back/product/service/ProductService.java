@@ -58,7 +58,7 @@ public class ProductService {
                         .price(product.getPrice())
                         .quantity(product.getQuantity())
                         .pstatus(product.getPstatus())
-                        .releasedAt(product.getReleasedAt())
+                        .updatedAt(product.getUpdatedAt())
                         .build())
                 .collect(Collectors.toList());
 
