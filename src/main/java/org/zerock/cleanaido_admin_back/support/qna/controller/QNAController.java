@@ -12,7 +12,6 @@ import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionReadDTO;
 import org.zerock.cleanaido_admin_back.support.qna.dto.QuestionListDTO;
 import org.zerock.cleanaido_admin_back.support.qna.service.QNAService;
 
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/admin/qna")

@@ -17,9 +17,13 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    @GetMapping("/list")
-    public ResponseEntity<Page<OrderListDTO>> getOrderList(Pageable pageable) {
-        return ResponseEntity.ok(orderService.getOrderList(pageable));
+    @GetMapping("/in-progress")
+    public ResponseEntity<Page<OrderListDTO>> getInProgressOrders(Pageable pageable) {
+        return ResponseEntity.ok(orderService.getInProgressOrders(pageable));
+    }
+
+    @GetMapping("/canceled")
+    public ResponseEntity<Page<OrderListDTO>> getCanceledOrders(Pageable pageable) {
+        return ResponseEntity.ok(orderService.getCanceledOrders(pageable));
     }
 }
-
