@@ -24,7 +24,9 @@ public class OrderRepositoryTests {
 
     @Test
     public void testInsertDummyOrders() {
-        for (int i = 1; i <= 10; i++) {
+        String[] statuses = {"배송전", "배송중", "배송완료", "취소", "교환", "환불"};
+
+        for (int i = 1; i <= 120; i++) {
             Order orders = Order.builder()
                     .productNumber(100 + i)
                     .customerId("Customer0" + i)
@@ -33,7 +35,7 @@ public class OrderRepositoryTests {
                     .deliveryMessage("문앞에 두세요 " + i)
                     .totalPrice(5000 * i)
                     .trackingNumber("TRACKING" + i)
-                    .orderStatus(i % 2 == 0 ? "완료" : "미완료")
+                    .orderStatus(statuses[i % statuses.length])
                     .orderDate(LocalDateTime.now())
                     .build();
 
