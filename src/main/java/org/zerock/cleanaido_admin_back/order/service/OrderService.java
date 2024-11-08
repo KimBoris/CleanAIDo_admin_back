@@ -18,26 +18,21 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
 
+    // In-progress 상태 주문 목록 조회 및 검색
     public PageResponseDTO<OrderListDTO> listInProgressOrders(PageRequestDTO pageRequestDTO) {
         List<String> inProgressStatuses = Arrays.asList("배송전", "배송중", "배송완료");
         return handleListOrSearch(pageRequestDTO, inProgressStatuses);
     }
 
-    public PageResponseDTO<OrderListDTO> listCanceledOrders(PageRequestDTO pageRequestDTO) {
-        List<String> canceledStatuses = Arrays.asList("취소", "교환", "환불");
+    // 취소, 교환, 환불 상태의 주문 목록 조회 및 검색
+    public PageResponseDTO<OrderListDTO> listCanceledOrders(PageRequestDTO pageRequestDTO, String status) {
+        List<String> canceledStatuses = (status == null || status.isEmpty())
+                ? Arrays.asList("취소", "교환", "환불")
+                : List.of(status); // 특정 상태가 있을 때 그 상태만 필터링
         return handleListOrSearch(pageRequestDTO, canceledStatuses);
     }
 
-    public PageResponseDTO<OrderListDTO> searchInProgressOrders(PageRequestDTO pageRequestDTO) {
-        List<String> inProgressStatuses = Arrays.asList("배송전", "배송중", "배송완료");
-        return handleListOrSearch(pageRequestDTO, inProgressStatuses);
-    }
-
-    public PageResponseDTO<OrderListDTO> searchCanceledOrders(PageRequestDTO pageRequestDTO) {
-        List<String> canceledStatuses = Arrays.asList("취소", "교환", "환불");
-        return handleListOrSearch(pageRequestDTO, canceledStatuses);
-    }
-
+    // 상태별 목록 또는 검색 결과를 반환하는 공통 메서드
     private PageResponseDTO<OrderListDTO> handleListOrSearch(PageRequestDTO pageRequestDTO, List<String> statuses) {
         var pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
         var searchDTO = pageRequestDTO.getSearchDTO();

@@ -24,7 +24,6 @@ public class OrderController {
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "searchType", required = false) String searchType
     ) {
-        // SearchDTO와 PageRequestDTO 생성
         SearchDTO searchDTO = SearchDTO.builder()
                 .keyword(keyword)
                 .searchType(searchType)
@@ -36,12 +35,7 @@ public class OrderController {
                 .searchDTO(searchDTO)
                 .build();
 
-        // 검색어가 없는 경우 목록 반환, 있는 경우 검색 결과 반환
-        if (searchDTO.getKeyword() == null || searchDTO.getKeyword().isEmpty()) {
-            return ResponseEntity.ok(orderService.listInProgressOrders(pageRequestDTO));
-        } else {
-            return ResponseEntity.ok(orderService.searchInProgressOrders(pageRequestDTO));
-        }
+        return ResponseEntity.ok(orderService.listInProgressOrders(pageRequestDTO));
     }
 
     // 취소/교환/환불 상태의 주문 내역 조회
@@ -50,9 +44,9 @@ public class OrderController {
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "keyword", required = false) String keyword,
-            @RequestParam(value = "searchType", required = false) String searchType
+            @RequestParam(value = "searchType", required = false) String searchType,
+            @RequestParam(value = "status", required = false) String status // 추가된 파라미터
     ) {
-        // SearchDTO와 PageRequestDTO 생성
         SearchDTO searchDTO = SearchDTO.builder()
                 .keyword(keyword)
                 .searchType(searchType)
@@ -64,11 +58,11 @@ public class OrderController {
                 .searchDTO(searchDTO)
                 .build();
 
-        // 검색어가 없는 경우 목록 반환, 있는 경우 검색 결과 반환
-        if (searchDTO.getKeyword() == null || searchDTO.getKeyword().isEmpty()) {
-            return ResponseEntity.ok(orderService.listCanceledOrders(pageRequestDTO));
+        // 상태 필터가 없으면 전체 취소/교환/환불 목록 반환, 상태 필터가 있으면 해당 상태만 필터링
+        if (status == null || status.isEmpty()) {
+            return ResponseEntity.ok(orderService.listCanceledOrders(pageRequestDTO, null));
         } else {
-            return ResponseEntity.ok(orderService.searchCanceledOrders(pageRequestDTO));
+            return ResponseEntity.ok(orderService.listCanceledOrders(pageRequestDTO, status));
         }
     }
 }
