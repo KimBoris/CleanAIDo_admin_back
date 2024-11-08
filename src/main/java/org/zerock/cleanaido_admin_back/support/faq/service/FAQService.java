@@ -23,10 +23,7 @@ import org.zerock.cleanaido_admin_back.support.faq.entity.FAQ;
 import org.zerock.cleanaido_admin_back.support.faq.repository.FAQRepository;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,8 +41,6 @@ public class FAQService {
         }
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
         PageResponseDTO<FAQListDTO> response = faqRepository.list(pageRequestDTO);
-
-        log.info("---------------------------------------1");
 
         return response;
 
@@ -72,12 +67,7 @@ public class FAQService {
 
 
     public Long registerFAQ(FAQRegisterDTO dto, UploadDTO uploadDTO) {
-        if (dto.getQuestion() == null || dto.getQuestion().isEmpty()) {
-            throw new IllegalArgumentException("질문은 필수 항목입니다.");
-        }
-        if (dto.getAnswer() == null || dto.getAnswer().isEmpty()) {
-            throw new IllegalArgumentException("답변은 필수 항목 입니다.");
-        }
+
         FAQ faq = FAQ.builder()
                 .question(dto.getQuestion())
                 .answer(dto.getAnswer())
@@ -91,7 +81,9 @@ public class FAQService {
                 .map(customFileUtil::saveFiles) // 유효한 파일이 있으면 저장
                 .orElse(Collections.emptyList()); // 유효한 파일이 없으면 빈 리스트
 
-        fileNames.forEach(faq::addFile);
+        for (String fileName : fileNames) {
+            faq.addFile(fileName);
+        }
 
         faqRepository.save(faq);
 
@@ -103,9 +95,6 @@ public class FAQService {
         if (faq == null) {
             throw new EntityNotFoundException("게시물을 찾을 수 없습니다." + fno);
         }
-//    if (faq.isDelFlag()) {
-//        throw new EntityNotFoundException("삭제된 게시물입니다.");
-//    }
 
         // AttachFile에서 fileName만 추출하여 List<String>으로 변환
         List<String> fileNames = faq.getAttachFiles().stream()
@@ -123,33 +112,19 @@ public class FAQService {
 
     public Long updateFAQ(Long fno, FAQRegisterDTO dto, UploadDTO uploadDTO) {
 
-        if (dto.getQuestion() == null || dto.getQuestion().isEmpty()) {
-            throw new IllegalIdentifierException("질문은 필수 항목입니다.");
-        }
-        if (dto.getAnswer() == null || dto.getAnswer().isEmpty()) {
-            throw new IllegalIdentifierException("답변은 필수 항목 입니다.");
-        }
-
         FAQ faq = faqRepository.findById(fno)
                 .orElseThrow(() -> new EntityNotFoundException("FAQ not found" + fno));
 
         faq.setQuestion(dto.getQuestion());
         faq.setAnswer(dto.getAnswer());
-//        faq.setDelFlag(dto.isDelFlag());
 
-        // 기존 파일 삭제
+        // 기존 파일 리스트
         List<String> oldFileNames = faq.getAttachFiles().stream()
                 .map(AttachFile::getFileName)
                 .collect(Collectors.toList());
-        if (!oldFileNames.isEmpty()) {
-            customFileUtil.deleteFiles(oldFileNames);
-        }
-        
-        // 기존 파일 목록 초기화
-        faq.clearFile();
 
-        // 새로운 파일 저장
-        List<String> fileNames = Optional.ofNullable(uploadDTO.getFiles())
+        // 새로운 파일 리스트
+        List<String> newFileNames = Optional.ofNullable(uploadDTO.getFiles())
                 .map(files -> Arrays.stream(files)
                         .filter(file -> !file.isEmpty()) // 실제 파일이 있는 경우만 필터링
                         .collect(Collectors.toList()))
@@ -157,7 +132,23 @@ public class FAQService {
                 .map(customFileUtil::saveFiles) // 파일이 있으면 저장
                 .orElse(Collections.emptyList()); // 파일이 없으면 빈 리스트
 
-        fileNames.forEach(faq::addFile);
+        // 삭제할 파일 리스트
+        List<String> filesToDelete = oldFileNames.stream()
+                .filter(oldFile -> !newFileNames.contains(oldFile))
+                .collect(Collectors.toList());
+
+        // 삭제할 파일이 있다면 실제 파일까지 삭제
+        if (!filesToDelete.isEmpty()) {
+            customFileUtil.deleteFiles(filesToDelete);
+        }
+
+        // 기존 파일 목록 초기화
+        faq.clearFile();
+
+        // 새로운 파일 add
+        for (String newFileName : newFileNames) {
+            faq.addFile(newFileName);
+        }
 
         try {
             faqRepository.save(faq);
@@ -175,9 +166,6 @@ public class FAQService {
             throw new IllegalStateException("이미 삭제된 FAQ입니다. " + fno);
         }
 
-        // 기존 파일 목록 초기화
-        faq.clearFile();
-
         // 실제 파일 삭제 처리
         List<String> fileNames = faq.getAttachFiles().stream()
                 .map(AttachFile::getFileName)
@@ -185,6 +173,9 @@ public class FAQService {
         if (!fileNames.isEmpty()) {
             customFileUtil.deleteFiles(fileNames);
         }
+
+        // 기존 파일 목록 초기화
+        faq.clearFile();
 
         faq.setDelFlag(true);
         faqRepository.save(faq);

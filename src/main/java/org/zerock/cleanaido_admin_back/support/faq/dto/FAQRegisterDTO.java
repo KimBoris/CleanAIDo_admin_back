@@ -1,5 +1,6 @@
 package org.zerock.cleanaido_admin_back.support.faq.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
