@@ -10,7 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.UploadDTO;
-import org.zerock.cleanaido_admin_back.common.util.CustomFileUtil;
 import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQListDTO;
 import org.zerock.cleanaido_admin_back.support.faq.dto.FAQReadDTO;
