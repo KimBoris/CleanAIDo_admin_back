@@ -59,13 +59,25 @@ public class Product {
 
     @ElementCollection
     @Builder.Default
-    private Set<AttachFile> attachFiles = new HashSet<>();
+    private Set<ImageFiles> imageFiles = new HashSet<>();
 
-    public void addFile(String filename) {
-        attachFiles.add(new AttachFile(attachFiles.size(), filename));
+    public void addImageFile(String filename, boolean type) {
+        imageFiles.add(new ImageFiles(imageFiles.size(), filename, type));
     }
 
-    public void clearFile() {
-        attachFiles.clear();
+    public void clearImageFile() {
+        imageFiles.clear();
+    }
+
+    @ElementCollection
+    @Builder.Default
+    private Set<UsageImageFiles> usageImageFiles = new HashSet<>();
+
+    public void addUsingImageFile(String filename) {
+        usageImageFiles.add(new UsageImageFiles(usageImageFiles.size(), filename));
+    }
+
+    public void clearUsingImageFile() {
+        usageImageFiles.clear();
     }
 }
