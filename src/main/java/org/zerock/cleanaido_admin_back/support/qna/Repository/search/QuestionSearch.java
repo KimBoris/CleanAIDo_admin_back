@@ -15,3 +15,4 @@ public interface QuestionSearch {
 
     Page<Question> searchByWriter(String writer, Pageable pageable);
 }
+
