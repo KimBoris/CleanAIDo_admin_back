@@ -2,21 +2,21 @@ package org.zerock.cleanaido_admin_back.product.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.zerock.cleanaido_admin_back.support.common.entity.AttachFile;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.zerock.cleanaido_admin_back.product.entity.QCategory.category;
 
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Getter
+@Data
 public class Product {
 
     @Id
@@ -59,13 +59,26 @@ public class Product {
 
     @ElementCollection
     @Builder.Default
-    private Set<AttachFile> attachFiles = new HashSet<>();
+    private Set<ImageFiles> imageFiles = new HashSet<>();
 
-    public void addFile(String filename) {
-        attachFiles.add(new AttachFile(attachFiles.size(), filename));
+    public void addImageFile(String filename, boolean type) {
+        imageFiles.add(new ImageFiles(imageFiles.size(), filename, type));
     }
 
-    public void clearFile() {
-        attachFiles.clear();
+    public void clearImageFile() {
+        imageFiles.clear();
     }
+
+    @ElementCollection
+    @Builder.Default
+    private Set<UsageImageFiles> usageImageFiles = new HashSet<>();
+
+    public void addUsingImageFile(String filename) {
+        usageImageFiles.add(new UsageImageFiles(usageImageFiles.size(), filename));
+    }
+
+    public void clearUsingImageFile() {
+        usageImageFiles.clear();
+    }
+
 }

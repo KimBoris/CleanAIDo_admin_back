@@ -10,9 +10,12 @@ import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.common.dto.UploadDTO;
+import org.zerock.cleanaido_admin_back.product.dto.CategoryDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductListDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductRegisterDTO;
 import org.zerock.cleanaido_admin_back.product.service.ProductService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/product")
@@ -51,12 +54,27 @@ public class ProductController {
 
     }
 
+    @GetMapping("register")
+    public ResponseEntity<List<CategoryDTO>> searchCategory(
+            @RequestParam(value = "keyword", required = false) String keyword) {
+
+        return ResponseEntity.ok(productService.searchCategory(keyword));
+    }
+
+
+
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> register(
             @ModelAttribute ProductRegisterDTO productRegisterDTO,
-            @RequestParam("files") MultipartFile[] files) {
-        UploadDTO uploadDTO = new UploadDTO(files, null); // 또는 적절한 초기화 코드
-        Long fno = productService.registerProduct(productRegisterDTO, uploadDTO);
+            @RequestParam List<Long> categoryList ,
+            @RequestParam("imageFiles") MultipartFile[] imageFiles,
+            @RequestParam("detailImageFiles") MultipartFile[] detailImageFiles,
+            @RequestParam("usageImageFiles") MultipartFile[] usageImageFiles) {
+        UploadDTO imageUploadDTO = new UploadDTO(imageFiles, null); // 또는 적절한 초기화 코드
+        UploadDTO detailImageUploadDTO = new UploadDTO(detailImageFiles, null); // 또는 적절한 초기화 코드
+        UploadDTO usageImageUploadDTO = new UploadDTO(usageImageFiles, null); // 또는 적절한 초기화 코드
+        Long fno = productService.registerProduct(
+                productRegisterDTO, categoryList, imageUploadDTO, detailImageUploadDTO, usageImageUploadDTO);
         return ResponseEntity.ok(fno);
     }
 }
