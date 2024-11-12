@@ -1,3 +1,4 @@
+
 package org.zerock.cleanaido_admin_back.order.dto;
 
 import lombok.AllArgsConstructor;
@@ -27,7 +28,7 @@ public class OrderListDTO {
     // Order 엔티티를 기반으로 하는 생성자 추가
     public OrderListDTO(Order order) {
         this.orderNumber = order.getOrderNumber();
-        this.productNumber = order.getProductNumber();
+        //this.productNumber = order.getProductNumber();
         this.customerId = order.getCustomerId();
         this.phoneNumber = order.getPhoneNumber();
         this.deliveryAddress = order.getDeliveryAddress();

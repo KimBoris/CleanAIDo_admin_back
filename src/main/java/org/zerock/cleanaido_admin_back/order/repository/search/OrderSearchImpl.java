@@ -51,7 +51,7 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
 
         try {
             int productNumber = Integer.parseInt(keyword);
-            condition.and(order.productNumber.eq(productNumber));
+            //condition.and(order.productNumber.eq(productNumber));
         } catch (NumberFormatException e) {
             return new PageImpl<>(List.of(), pageable, 0);
         }

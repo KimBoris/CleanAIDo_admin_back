@@ -18,8 +18,8 @@ public class Order {
     @Column(name = "order_number")
     private Integer orderNumber;
 
-    @Column(name = "product_number", nullable = false)
-    private Integer productNumber;
+//    @Column(name = "product_number", nullable = false)
+//    private Integer productNumber;
 
     @Column(name = "customer_id", length = 255, nullable = false)
     private String customerId;
