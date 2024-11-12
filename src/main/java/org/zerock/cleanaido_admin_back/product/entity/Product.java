@@ -2,21 +2,21 @@ package org.zerock.cleanaido_admin_back.product.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.zerock.cleanaido_admin_back.support.common.entity.AttachFile;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+
+import static org.zerock.cleanaido_admin_back.product.entity.QCategory.category;
 
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Getter
+@Data
 public class Product {
 
     @Id
@@ -80,4 +80,5 @@ public class Product {
     public void clearUsingImageFile() {
         usageImageFiles.clear();
     }
+
 }
