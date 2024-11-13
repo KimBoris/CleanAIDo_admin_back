@@ -27,4 +27,14 @@ public class PageRequestDTO {
 
     private SearchDTO searchDTO;
 
+    // 페이지와 사이즈만 받는 생성자 추가
+    public PageRequestDTO(int page, int size) {
+        this.page = page;
+        this.size = size;
+    }
+
+    // Pageable 객체 생성 메서드
+    public Pageable toPageable() {
+        return PageRequest.of(this.page - 1, this.size, Sort.by(Sort.Direction.DESC, "orderNumber"));
+    }
 }
