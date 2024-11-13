@@ -9,6 +9,8 @@ import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.order.dto.OrderListDTO;
 import org.zerock.cleanaido_admin_back.order.service.OrderService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/admin/orders")
 @RequiredArgsConstructor
@@ -16,7 +18,6 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    // 배송 상태의 주문 내역 조회
     @GetMapping("/in-progress")
     public ResponseEntity<PageResponseDTO<OrderListDTO>> getInProgressOrders(
             @RequestParam(value = "page", defaultValue = "1") int page,
@@ -24,45 +25,40 @@ public class OrderController {
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "searchType", required = false) String searchType
     ) {
-        SearchDTO searchDTO = SearchDTO.builder()
-                .keyword(keyword)
-                .searchType(searchType)
-                .build();
-
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .page(page)
                 .size(size)
-                .searchDTO(searchDTO)
+                .searchDTO(new SearchDTO(keyword, searchType))
                 .build();
 
-        return ResponseEntity.ok(orderService.listInProgressOrders(pageRequestDTO));
+        List<String> inProgressStatuses = List.of("배송전", "배송중", "배송완료", "주문 완료");
+        return ResponseEntity.ok(orderService.listOrders(pageRequestDTO, inProgressStatuses));
     }
 
-    // 취소/교환/환불 상태의 주문 내역 조회
     @GetMapping("/canceled")
     public ResponseEntity<PageResponseDTO<OrderListDTO>> getCanceledOrders(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "keyword", required = false) String keyword,
             @RequestParam(value = "searchType", required = false) String searchType,
-            @RequestParam(value = "status", required = false) String status // 추가된 파라미터
+            @RequestParam(value = "status", required = false) String status
     ) {
-        SearchDTO searchDTO = SearchDTO.builder()
-                .keyword(keyword)
-                .searchType(searchType)
-                .build();
-
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .page(page)
                 .size(size)
-                .searchDTO(searchDTO)
+                .searchDTO(new SearchDTO(keyword, searchType))
                 .build();
 
-        // 상태 필터가 없으면 전체 취소/교환/환불 목록 반환, 상태 필터가 있으면 해당 상태만 필터링
-        if (status == null || status.isEmpty()) {
-            return ResponseEntity.ok(orderService.listCanceledOrders(pageRequestDTO, null));
+        List<String> canceledStatuses;
+
+        // 특정 상태가 지정되었을 때 그 상태만 포함, 그렇지 않으면 취소, 교환, 환불 모두 포함
+        if (status != null && !status.isEmpty()) {
+            canceledStatuses = List.of(status);
         } else {
-            return ResponseEntity.ok(orderService.listCanceledOrders(pageRequestDTO, status));
+            canceledStatuses = List.of("취소", "교환", "환불");
         }
+
+        return ResponseEntity.ok(orderService.listOrders(pageRequestDTO, canceledStatuses));
     }
+
 }
