@@ -3,6 +3,7 @@ package org.zerock.cleanaido_admin_back.order.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "orders")
@@ -16,10 +17,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_number")
-    private Integer orderNumber;
-
-//    @Column(name = "product_number", nullable = false)
-//    private Integer productNumber;
+    private Long orderNumber;
 
     @Column(name = "customer_id", length = 255, nullable = false)
     private String customerId;
@@ -29,9 +27,6 @@ public class Order {
 
     @Column(name = "delivery_address", length = 255, nullable = false)
     private String deliveryAddress;
-
-    @Column(name = "delivery_message", length = 255)
-    private String deliveryMessage;
 
     @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
@@ -45,8 +40,6 @@ public class Order {
     @Column(name = "order_status", length = 255, nullable = false)
     private String orderStatus;
 
-    @PrePersist
-    public void prePersist() {
-        this.orderDate = LocalDateTime.now();
-    }
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderDetail> orderDetails;
 }
