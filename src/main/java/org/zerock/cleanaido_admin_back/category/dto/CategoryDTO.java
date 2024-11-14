@@ -1,4 +1,4 @@
-package org.zerock.cleanaido_admin_back.product.dto;
+package org.zerock.cleanaido_admin_back.category.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

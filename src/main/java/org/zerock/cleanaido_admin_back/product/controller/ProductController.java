@@ -10,7 +10,7 @@ import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.common.dto.UploadDTO;
-import org.zerock.cleanaido_admin_back.product.dto.CategoryDTO;
+import org.zerock.cleanaido_admin_back.category.dto.CategoryDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductListDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductRegisterDTO;
 import org.zerock.cleanaido_admin_back.product.service.ProductService;

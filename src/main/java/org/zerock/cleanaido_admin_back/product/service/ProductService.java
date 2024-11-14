@@ -11,12 +11,12 @@ import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.UploadDTO;
 import org.zerock.cleanaido_admin_back.common.util.CustomFileUtil;
-import org.zerock.cleanaido_admin_back.product.dto.CategoryDTO;
+import org.zerock.cleanaido_admin_back.category.dto.CategoryDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductListDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductRegisterDTO;
-import org.zerock.cleanaido_admin_back.product.entity.Category;
+import org.zerock.cleanaido_admin_back.category.entity.Category;
 import org.zerock.cleanaido_admin_back.product.entity.Product;
-import org.zerock.cleanaido_admin_back.product.entity.ProductCategory;
+import org.zerock.cleanaido_admin_back.category.entity.ProductCategory;
 import org.zerock.cleanaido_admin_back.product.repository.ProductCategoryRepository;
 import org.zerock.cleanaido_admin_back.product.repository.ProductRepository;
 

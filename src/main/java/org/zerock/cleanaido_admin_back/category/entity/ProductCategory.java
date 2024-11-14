@@ -1,10 +1,11 @@
-package org.zerock.cleanaido_admin_back.product.entity;
+package org.zerock.cleanaido_admin_back.category.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.zerock.cleanaido_admin_back.product.entity.Product;
 
 @Entity
 @AllArgsConstructor
