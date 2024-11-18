@@ -47,8 +47,6 @@ public class ProductController {
             log.info("---------------------");
             return ResponseEntity.ok(productService.listProduct(pageRequestDTO));
         } else {
-            log.info("type is :" + searchDTO.getSearchType());
-            log.info("keyword is " + searchDTO.getKeyword());
             return ResponseEntity.ok(productService.search(pageRequestDTO));
         }
 
