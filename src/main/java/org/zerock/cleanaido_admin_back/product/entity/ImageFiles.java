@@ -1,5 +1,6 @@
 package org.zerock.cleanaido_admin_back.product.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,12 @@ import lombok.ToString;
 @Getter
 public class ImageFiles {
 
+    @Column(name = "ord")
     private int ord;
+
+    @Column(name="file_name")
     private String fileName;
+
+    @Column(name="type")
     private boolean type;
 }

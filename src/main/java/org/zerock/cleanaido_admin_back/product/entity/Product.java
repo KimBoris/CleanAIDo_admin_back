@@ -70,10 +70,10 @@ public class Product {
 
     @ElementCollection
     @Builder.Default
-    private Set<UsageImageFiles> usageImageFiles = new HashSet<>();
+    private Set<UsageImageFile> usageImageFiles = new HashSet<>();
 
     public void addUsingImageFile(String filename) {
-        usageImageFiles.add(new UsageImageFiles(usageImageFiles.size(), filename));
+        usageImageFiles.add(new UsageImageFile(usageImageFiles.size(), filename));
     }
 
     public void clearUsingImageFile() {
