@@ -55,8 +55,8 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
         BooleanBuilder condition = new BooleanBuilder();
 
         try {
-            int productNumber = Integer.parseInt(keyword);
-            condition.and(orderDetail.productNumber.eq(productNumber));
+            long productNumber = Long.parseLong(keyword); // Product의 productNumber 조건 추가
+            condition.and(product.pno.eq(productNumber)); // Product의 pno 기준 검색
         } catch (NumberFormatException e) {
             return new PageImpl<>(List.of(), pageable, 0);
         }
