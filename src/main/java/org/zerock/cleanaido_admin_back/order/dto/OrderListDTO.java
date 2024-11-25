@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.zerock.cleanaido_admin_back.order.entity.QOrderDetail.orderDetail;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -25,7 +27,9 @@ public class OrderListDTO {
     private LocalDateTime orderDate;
     private String trackingNumber;
     private String orderStatus;
-    private List<Integer> productNumbers;
+    private List<Long> productNumbers;
+    private List<Integer> quantities; // 각 제품의 수량 리스트
+    private List<Integer> prices;    // 각 제품의 가격 리스트
 
     public OrderListDTO(Order order) {
         this.orderNumber = order.getOrderNumber();
@@ -36,8 +40,20 @@ public class OrderListDTO {
         this.orderDate = order.getOrderDate();
         this.trackingNumber = order.getTrackingNumber();
         this.orderStatus = order.getOrderStatus();
+
+        // Product의 pno 추출
         this.productNumbers = order.getOrderDetails().stream()
-                .map(OrderDetail::getProductNumber)
+                .map(orderDetail -> orderDetail.getProduct().getPno())
+                .collect(Collectors.toList());
+
+        // 수량 추출
+        this.quantities = order.getOrderDetails().stream()
+                .map(OrderDetail::getQuantity)
+                .collect(Collectors.toList());
+
+        // 가격 추출
+        this.prices = order.getOrderDetails().stream()
+                .map(OrderDetail::getPrice)
                 .collect(Collectors.toList());
     }
 }
