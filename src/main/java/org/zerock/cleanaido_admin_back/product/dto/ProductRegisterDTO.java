@@ -31,5 +31,7 @@ public class ProductRegisterDTO {
 
     private String ptags;
 
+    private String pstatus;
+
     private String sellerId;
 }
