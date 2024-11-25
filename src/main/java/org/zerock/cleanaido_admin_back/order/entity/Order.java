@@ -28,6 +28,9 @@ public class Order {
     @Column(name = "delivery_address", length = 255, nullable = false)
     private String deliveryAddress;
 
+    @Column(name = "delivery_message", length = 255)
+    private String deliveryMessage;
+
     @Column(name = "total_price", nullable = false)
     private Integer totalPrice;
 
@@ -40,6 +43,20 @@ public class Order {
     @Column(name = "order_status", length = 255, nullable = false)
     private String orderStatus;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<OrderDetail> orderDetails;
+    public void setOrderStatus(String orderStatus) {
+        this.orderStatus = orderStatus;
+    }
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<OrderDetail> orderDetails = new ArrayList<>();
+
+    public void addOrderDetail(OrderDetail orderDetail) {
+        this.orderDetails.add(orderDetail);
+        orderDetail.setOrder(this);
+    }
+
+    public void setTotalPrice(int totalPrice) {
+        this.totalPrice = totalPrice;
+    }
 }

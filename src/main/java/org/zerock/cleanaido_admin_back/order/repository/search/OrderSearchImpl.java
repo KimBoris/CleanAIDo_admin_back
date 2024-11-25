@@ -10,6 +10,7 @@ import org.zerock.cleanaido_admin_back.order.dto.OrderListDTO;
 import org.zerock.cleanaido_admin_back.order.entity.Order;
 import org.zerock.cleanaido_admin_back.order.entity.QOrder;
 import org.zerock.cleanaido_admin_back.order.entity.QOrderDetail;
+import org.zerock.cleanaido_admin_back.product.entity.QProduct;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,6 +50,8 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
     public Page<OrderListDTO> searchByProductNumber(String keyword, List<String> statuses, Pageable pageable) {
         QOrder order = QOrder.order;
         QOrderDetail orderDetail = QOrderDetail.orderDetail;
+        QProduct product = QProduct.product;
+
         BooleanBuilder condition = new BooleanBuilder();
 
         try {
@@ -61,6 +64,7 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
 
         JPQLQuery<Order> query = from(order)
                 .join(order.orderDetails, orderDetail)
+                .join(orderDetail.product, product) // Product와 조인
                 .where(condition)
                 .distinct()
                 .orderBy(order.orderNumber.desc());
@@ -107,8 +111,12 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
     // 페이징된 결과를 반환하는 메서드
     private Page<OrderListDTO> getPagedResult(BooleanBuilder condition, Pageable pageable) {
         QOrder order = QOrder.order;
+        QOrderDetail orderDetail = QOrderDetail.orderDetail;
+        QProduct product = QProduct.product;
+
         JPQLQuery<Order> query = from(order)
-                .leftJoin(order.orderDetails, QOrderDetail.orderDetail)
+                .leftJoin(order.orderDetails, orderDetail)
+                .leftJoin(orderDetail.product, product) // Product와 조인
                 .where(condition)
                 .distinct()
                 .orderBy(order.orderNumber.desc());
