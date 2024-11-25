@@ -4,18 +4,22 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.zerock.cleanaido_admin_back.category.entity.QProductCategory;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.category.dto.CategoryDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductListDTO;
+import org.zerock.cleanaido_admin_back.product.dto.ProductReadDTO;
 import org.zerock.cleanaido_admin_back.product.entity.Product;
 import org.zerock.cleanaido_admin_back.category.entity.QCategory;
+import org.zerock.cleanaido_admin_back.product.entity.QImageFiles;
 import org.zerock.cleanaido_admin_back.product.entity.QProduct;
 
 
@@ -111,5 +115,56 @@ public class ProductSearchImpl extends QuerydslRepositorySupport implements Prod
         return resultsQuery.fetch(); // 결과 반환
     }
 
+    @Override
+    public ProductReadDTO getProduct(Long pno) {
+        QProduct product = QProduct.product;
+        QProductCategory productCategory = QProductCategory.productCategory;
+        QCategory category = QCategory.category;
+
+        // Fetch Product data
+        JPQLQuery<Product> productQuery = from(product).where(product.pno.eq(pno));
+        Product result = productQuery.fetchOne();
+
+        if (result == null) {
+            throw new IllegalArgumentException("Product not found with pno: " + pno);
+        }
+
+        // Fetch categories through ProductCategory
+        JPQLQuery<Long> categoryQuery = from(productCategory)
+                .join(productCategory.category, category)
+                .where(productCategory.product.pno.eq(pno))
+                .select(category.cno);
+        List<Long> categories = categoryQuery.fetch();
+
+// Split image files by type
+        List<String> imageFiles = result.getImageFiles().stream()
+                .filter(imageFile -> !imageFile.isType()) // `type`이 `false`인 경우
+                .map(org.zerock.cleanaido_admin_back.product.entity.ImageFiles::getFileName) // FQN 사용
+                .toList();
+
+        List<String> detailImageFiles = result.getImageFiles().stream()
+                .filter(org.zerock.cleanaido_admin_back.product.entity.ImageFiles::isType) // `type`이 `true`인 경우
+                .map(org.zerock.cleanaido_admin_back.product.entity.ImageFiles::getFileName) // FQN 사용
+                .toList();
+
+        // Build DTO
+        return ProductReadDTO.builder()
+                .pno(result.getPno())
+                .pcode(result.getPcode())
+                .pname(result.getPname())
+                .price(result.getPrice())
+                .quantity(result.getQuantity())
+                .createdAt(result.getCreatedAt())
+                .updatedAt(result.getUpdatedAt())
+                .imageFiles(imageFiles)
+                .detailImageFiles(detailImageFiles)
+                .usageImageFiles(result.getUsageImageFiles().stream()
+                        .map(org.zerock.cleanaido_admin_back.product.entity.UsageImageFile::getFileName) // FQN 사용
+                        .toList())
+                .categories(categories) // ProductCategory를 통해 가져온 카테고리 번호 리스트
+                .tags(result.getPtags())
+                .pstatus(result.getPstatus())
+                .build();
+    }
 
 }

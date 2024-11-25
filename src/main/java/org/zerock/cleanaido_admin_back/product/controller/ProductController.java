@@ -12,6 +12,7 @@ import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.common.dto.UploadDTO;
 import org.zerock.cleanaido_admin_back.category.dto.CategoryDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductListDTO;
+import org.zerock.cleanaido_admin_back.product.dto.ProductReadDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductRegisterDTO;
 import org.zerock.cleanaido_admin_back.product.service.ProductService;
 
@@ -75,4 +76,39 @@ public class ProductController {
                 productRegisterDTO, categoryList, imageUploadDTO, detailImageUploadDTO, usageImageUploadDTO);
         return ResponseEntity.ok(fno);
     }
+
+    @GetMapping("/read/{pno}")
+    public ResponseEntity<ProductReadDTO> read(@PathVariable Long pno) {
+        ProductReadDTO readDTO = productService.getProduct(pno);
+        return ResponseEntity.ok(readDTO);
+    }
+
+    @DeleteMapping("")
+    public Long delete(
+            @RequestParam(value = "pno", required = false) Long pno
+    ){
+        return productService.deleteProduct(pno);
+    }
+
+    @PutMapping(value = "/{pno}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Long> update(
+            @PathVariable Long pno, // 수정 대상 Product 번호
+            @ModelAttribute ProductRegisterDTO productRegisterDTO, // 수정할 기본 정보
+            @RequestParam List<Long> categoryList, // 수정할 카테고리 리스트
+            @RequestParam(value = "imageFiles", required = false) MultipartFile[] imageFiles, // 새 이미지 파일
+            @RequestParam(value = "detailImageFiles", required = false) MultipartFile[] detailImageFiles, // 새 상세 이미지
+            @RequestParam(value = "usageImageFiles", required = false) MultipartFile[] usageImageFiles) { // 새 사용법 이미지
+
+        // 파일이 존재하면 UploadDTO 생성
+        UploadDTO imageUploadDTO = (imageFiles != null) ? new UploadDTO(imageFiles, null) : null;
+        UploadDTO detailImageUploadDTO = (detailImageFiles != null) ? new UploadDTO(detailImageFiles, null) : null;
+        UploadDTO usageImageUploadDTO = (usageImageFiles != null) ? new UploadDTO(usageImageFiles, null) : null;
+
+        // 서비스 호출을 통해 데이터 수정
+        Long updatedPno = productService.updateProduct(
+                pno, productRegisterDTO, categoryList, imageUploadDTO, detailImageUploadDTO, usageImageUploadDTO);
+
+        return ResponseEntity.ok(updatedPno); // 수정된 Product 번호 반환
+    }
+
 }
