@@ -24,32 +24,31 @@ public class UserRepositoryTests {
 
     @Test
     public void testInsertDummyUsers() {
-        for (int i = 1; i <= 10; i++) {
             User user = User.builder()
-                    .userId(String.format("user%02d", i)) // user01, user02 형식으로 ID 설정
-                    .password("password" + i)
-                    .businessNumber("123-45-6789" + i)
-                    .businessName("Business Name " + i)
-                    .businessType("Type" + i)
-                    .ownerName("Owner Name " + i)
-                    .businessAddress("Address " + i)
+                    .userId(String.format("aaa@bbb.com")) // user01, user02 형식으로 ID 설정
+                    .password("$2a$12$OalSjKRwjseCYWJYOe4CXeTk2WQv2Jtie6oXIaIa2u9npYLCYZH3W")
+                    .businessNumber("123-45-6789")
+                    .businessName("Business Name ")
+                    .businessType("Type")
+                    .ownerName("Owner Name ")
+                    .businessAddress("Address ")
                     .businessStatus("Active")
-                    .businessCategory("Category " + i)
-                    .storeName("Store " + i)
-                    .commerceLicenseNum("CLN-" + i)
-                    .businessLicenseFile("license" + i + ".pdf")
-                    .originAddress("Origin Address " + i)
-                    .contactNumber("010-1234-567" + i)
-                    .accountNumber("Account" + i)
+                    .businessCategory("Category ")
+                    .storeName("Store ")
+                    .commerceLicenseNum("CLN-")
+                    .businessLicenseFile("license.pdf")
+                    .originAddress("Origin Address ")
+                    .contactNumber("010-1234-5678")
+                    .accountNumber("Account")
                     .userStatus("Active")
                     .delFlag(false)
-                    .adminRole(i == 1 || i == 2)
+                    .adminRole(true)
                     .createDate(LocalDateTime.now())
                     .build();
 
             userRepository.save(user);
         }
-    }
+
 
     @Test
     public void testUpdateUser() {
