@@ -2,10 +2,11 @@ package org.zerock.cleanaido_admin_back.order.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.zerock.cleanaido_admin_back.product.entity.Product;
 
 @Entity
 @Table(name = "order_detail")
-@ToString
+@ToString(exclude = "Order, Product")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -18,11 +19,12 @@ public class OrderDetail {
     private Long orderDetailId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_number")
+    @JoinColumn(name = "order_number", nullable = false)
     private Order order;
 
-    @Column(name = "product_number", nullable = false)
-    private Integer productNumber;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_number", nullable = false)
+    private Product product;
 
     @Column(name = "quantity", nullable = false)
     private int quantity;
