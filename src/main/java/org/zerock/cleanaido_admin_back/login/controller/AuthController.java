@@ -27,8 +27,9 @@ public class AuthController {
         User user = userService.authenticate(loginDTO.getUserId(), loginDTO.getPassword());
 
         if (user != null) {
-            String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.isAdminRole(), 60); // 60분 유효
-            String refreshToken = jwtUtil.createRefreshToken(user.getUserId(), 7); // 7일 유효
+            // AccessToken: 60분, RefreshToken: 7일
+            String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.isAdminRole(), 60);
+            String refreshToken = jwtUtil.createRefreshToken(user.getUserId(), 7);
 
             return ResponseEntity.ok(Map.of(
                     "accessToken", accessToken,

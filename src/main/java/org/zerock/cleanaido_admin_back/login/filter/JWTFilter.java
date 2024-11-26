@@ -30,12 +30,12 @@ public class JWTFilter extends OncePerRequestFilter {
             token = token.substring(7);
             try {
                 var claims = jwtUtil.validateToken(token);
-                String email = claims.getSubject();
-                boolean isAdmin = claims.get("adminRole", Boolean.class);
+                String userId = claims.get("user_id", String.class);
+                boolean isAdmin = claims.get("admin_role", Boolean.class);
 
                 // 인증 정보 설정
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        email,
+                        userId,
                         null,
                         isAdmin ? Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN")) :
                                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_SELLER"))
