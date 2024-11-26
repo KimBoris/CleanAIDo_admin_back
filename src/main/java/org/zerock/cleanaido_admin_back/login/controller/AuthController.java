@@ -19,18 +19,22 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserService userService; // 사용자 인증 로직
+    private final UserService userService;
     private final JWTUtil jwtUtil;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
-        // 사용자 인증
         User user = userService.authenticate(loginDTO.getUserId(), loginDTO.getPassword());
 
         if (user != null) {
-            // JWT 생성
-            String token = jwtUtil.createToken(user.getUserId(), user.isAdminRole(), 60); // 60분 유효
-            return ResponseEntity.ok(Map.of("token", token, "adminRole", user.isAdminRole()));
+            String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.isAdminRole(), 60); // 60분 유효
+            String refreshToken = jwtUtil.createRefreshToken(user.getUserId(), 7); // 7일 유효
+
+            return ResponseEntity.ok(Map.of(
+                    "accessToken", accessToken,
+                    "refreshToken", refreshToken,
+                    "adminRole", user.isAdminRole()
+            ));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }

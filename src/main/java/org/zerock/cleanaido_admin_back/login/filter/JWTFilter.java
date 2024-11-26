@@ -1,22 +1,18 @@
 package org.zerock.cleanaido_admin_back.login.filter;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.zerock.cleanaido_admin_back.login.util.JWTUtil;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collections;
 
-@Component
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
@@ -28,24 +24,25 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        String token = request.getHeader("Authorization");
 
-        String authHeader = request.getHeader("Authorization");
-
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
+        if (token != null && token.startsWith("Bearer ")) {
+            token = token.substring(7);
             try {
-                Claims claims = jwtUtil.validateToken(token);
+                var claims = jwtUtil.validateToken(token);
                 String email = claims.getSubject();
-                String role = claims.get("adminRole", Boolean.class) ? "ADMIN" : "SELLER";
+                boolean isAdmin = claims.get("adminRole", Boolean.class);
 
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                        email, null, List.of(new SimpleGrantedAuthority("ROLE_" + role)));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            } catch (JwtException e) {
+                // 인증 정보 설정
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        email,
+                        null,
+                        isAdmin ? Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN")) :
+                                Collections.singletonList(new SimpleGrantedAuthority("ROLE_SELLER"))
+                );
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.getWriter().write("{\"error\": \"Invalid or expired token\"}");
-                response.getWriter().flush();
                 return;
             }
         }
