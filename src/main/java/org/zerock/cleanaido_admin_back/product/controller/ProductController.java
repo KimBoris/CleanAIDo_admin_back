@@ -1,9 +1,11 @@
 package org.zerock.cleanaido_admin_back.product.controller;
 
+import jakarta.annotation.security.PermitAll;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
@@ -26,6 +28,8 @@ public class ProductController {
 
     private final ProductService productService;
 
+
+    @PreAuthorize("permitAll()")
     @GetMapping("list")
     public ResponseEntity<PageResponseDTO<ProductListDTO>> list(@RequestParam(value = "page", defaultValue = "1") int page,
                                                                 @RequestParam(value = "size", defaultValue = "10") int size,
