@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
+import org.zerock.cleanaido_admin_back.fcm.dto.FCMRequestDTO;
+import org.zerock.cleanaido_admin_back.fcm.service.FCMService;
 import org.zerock.cleanaido_admin_back.order.dto.OrderListDTO;
 import org.zerock.cleanaido_admin_back.order.repository.OrderRepository;
 
@@ -15,6 +17,7 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final FCMService fcmService;
 
     public PageResponseDTO<OrderListDTO> listOrders(PageRequestDTO pageRequestDTO, List<String> statuses) {
         Page<OrderListDTO> resultPage;
@@ -45,6 +48,18 @@ public class OrderService {
                     break;
             }
         }
+
+        String token = "eeCuTsZc8pqugAJA7ccSYc:APA91bH1XA4w8KVoF0VB_grbpTHhWMwnR5GoycDnd-kpCH6cqW-NLMKwZsahqVXbxMfLEFEumMZxDyoRyFBOqvrt3bLRKqCCbgjbcHkzz8g-0GZ7fM8jxWs";
+        String title = "주문 완료";
+        String body = "주문이 완료되었습니다.";
+
+        FCMRequestDTO req = FCMRequestDTO .builder()
+                .token(token)
+                .title(title)
+                .body(body)
+                .build();
+
+        fcmService.sendMessage(req);
 
         return new PageResponseDTO<>(resultPage.getContent(), pageRequestDTO, resultPage.getTotalElements());
     }

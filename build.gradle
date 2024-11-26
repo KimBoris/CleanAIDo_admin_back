@@ -61,6 +61,9 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5' // JSON 파싱용
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
+    // fcm
+    implementation 'com.google.firebase:firebase-admin:9.3.0'
+
 }
 
 tasks.named('test') {
