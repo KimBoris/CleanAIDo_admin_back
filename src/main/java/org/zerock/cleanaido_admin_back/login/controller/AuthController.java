@@ -34,7 +34,8 @@ public class AuthController {
             return ResponseEntity.ok(Map.of(
                     "accessToken", accessToken,
                     "refreshToken", refreshToken,
-                    "adminRole", user.isAdminRole()
+                    "adminRole", user.isAdminRole(),
+                    "id", user.getUserId()
             ));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
