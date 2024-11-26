@@ -6,7 +6,6 @@ spring:
     url: jdbc:mariadb://10.10.10.79:3306/cleanaido
     username: cleanaidouser
     password: cleanaidouser
-
     hikari:
       minimum-idle: 2
       maximum-pool-size: 5
@@ -37,7 +36,7 @@ org:
       path: upload
 
 jwt:
-  secret-key: your-very-secure-secret-key
+  secretKey: jakCELGsH3DsQsw2RTSLuQokILHO/A3wRn6GWuao3EQ=
 
 logging:
   level:
