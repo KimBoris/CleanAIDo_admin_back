@@ -36,6 +36,9 @@ org:
     upload:
       path: upload
 
+jwt:
+  secretKey: jakCELGsH3DsQsw2RTSLuQokILHO/A3wRn6GWuao3EQ=
+
 logging:
   level:
     org.springframework.security.web: TRACE
