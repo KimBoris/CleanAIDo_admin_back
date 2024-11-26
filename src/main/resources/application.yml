@@ -37,7 +37,7 @@ org:
       path: upload
 
 jwt:
-  secret-key: your-very-secure-secret-key
+  secretKey: jakCELGsH3DsQsw2RTSLuQokILHO/A3wRn6GWuao3EQ=
 
 logging:
   level:
