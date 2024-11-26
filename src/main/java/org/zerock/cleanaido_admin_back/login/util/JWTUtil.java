@@ -19,19 +19,21 @@ public class JWTUtil {
         this.secretKeyBytes = Base64.getDecoder().decode(secretKey);
     }
 
-    public String createAccessToken(String email, boolean isAdmin, int expirationMinutes) {
+    public String createAccessToken(String userId, boolean isAdmin, int expirationMinutes) {
         return Jwts.builder()
-                .setSubject(email)
-                .claim("adminRole", isAdmin)
+                .setSubject(userId)
+                .claim("user_id", userId) // user_id 포함
+                .claim("admin_role", isAdmin) // admin_role 포함
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMinutes * 60 * 1000))
                 .signWith(Keys.hmacShaKeyFor(secretKeyBytes), SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    public String createRefreshToken(String email, int expirationDays) {
+    public String createRefreshToken(String userId, int expirationDays) {
         return Jwts.builder()
-                .setSubject(email)
+                .setSubject(userId)
+                .claim("user_id", userId) // user_id 포함
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationDays * 24 * 60 * 60 * 1000))
                 .signWith(Keys.hmacShaKeyFor(secretKeyBytes), SignatureAlgorithm.HS256)
