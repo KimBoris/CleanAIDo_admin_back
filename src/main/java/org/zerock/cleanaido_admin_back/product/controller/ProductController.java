@@ -21,7 +21,7 @@ import org.zerock.cleanaido_admin_back.product.service.ProductService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/product")
+@RequestMapping("/api/v1/seller/product")
 @Log4j2
 @RequiredArgsConstructor
 public class ProductController {
