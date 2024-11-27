@@ -24,21 +24,25 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
-        User user = userService.authenticate(loginDTO.getUserId(), loginDTO.getPassword());
+        try {
+            User user = userService.authenticate(loginDTO.getUserId(), loginDTO.getPassword());
 
-        if (user != null) {
-            // AccessToken: 60분, RefreshToken: 7일
-            String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.isAdminRole(), 60);
-            String refreshToken = jwtUtil.createRefreshToken(user.getUserId(), 7);
+            if (user != null) {
+                String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.isAdminRole(), 60);
+                String refreshToken = jwtUtil.createRefreshToken(user.getUserId(), 7);
 
-            return ResponseEntity.ok(Map.of(
-                    "accessToken", accessToken,
-                    "refreshToken", refreshToken,
-                    "adminRole", user.isAdminRole(),
-                    "id", user.getUserId()
-            ));
-        } else {
+                return ResponseEntity.ok(Map.of(
+                        "accessToken", accessToken,
+                        "refreshToken", refreshToken,
+                        "adminRole", user.isAdminRole(),
+                        "id", user.getUserId()
+                ));
+            }
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
     }
+
 }
