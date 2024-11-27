@@ -27,6 +27,9 @@ spring:
       max-request-size: 20MB
       location: upload
       enabled: true
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
 
 org:
   zerock:
