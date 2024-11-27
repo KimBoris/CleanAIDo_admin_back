@@ -33,12 +33,11 @@ public class JWTFilter extends OncePerRequestFilter {
                 String userId = claims.get("user_id", String.class);
                 boolean isAdmin = claims.get("admin_role", Boolean.class);
 
-                // 인증 정보 설정
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         userId,
                         null,
-                        isAdmin ? Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN")) :
-                                Collections.singletonList(new SimpleGrantedAuthority("ROLE_SELLER"))
+                        isAdmin ? Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN"))
+                                : Collections.singletonList(new SimpleGrantedAuthority("ROLE_SELLER"))
                 );
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } catch (Exception e) {
