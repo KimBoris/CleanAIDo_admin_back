@@ -34,8 +34,14 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // 로그인/회원가입은 인증 없이 접근 가능
-                        .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN") // ADMIN 전용
-                        .requestMatchers("/api/v1/seller/**").hasAuthority("ROLE_SELLER") // SELLER 전용
+                        .requestMatchers("/api/v1/faq/list/**", "/api/v1/faq/read/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
+                        .requestMatchers("/api/v1/faq/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/v1/product/list/**", "/api/v1/product/read/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
+                        .requestMatchers("/api/v1/product/seller/**").hasAuthority("ROLE_SELLER")
+                        .requestMatchers("/api/v1/orders/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
+                        .requestMatchers("/api/v1/qna/list/**", "/api/v1/qna/read/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
+                        .requestMatchers("/api/v1/qna/admin/**").hasAuthority("ROLE_ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JWTFilter(jwtUtil), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);

@@ -12,7 +12,7 @@ import org.zerock.cleanaido_admin_back.order.service.OrderService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/admin/orders")
+@RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
 public class OrderController {
 

@@ -17,7 +17,7 @@ import org.zerock.cleanaido_admin_back.support.faq.dto.FAQRegisterDTO;
 import org.zerock.cleanaido_admin_back.support.faq.service.FAQService;
 
     @RestController
-    @RequestMapping("/api/v1/admin/faq")
+    @RequestMapping("/api/v1/faq")
     @Log4j2
     @RequiredArgsConstructor
     public class FAQController {
@@ -47,7 +47,7 @@ import org.zerock.cleanaido_admin_back.support.faq.service.FAQService;
         }
     }
 
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "admin/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> register(
             @ModelAttribute FAQRegisterDTO faqRegisterDTO,
             @RequestParam("files") MultipartFile[] files) {
@@ -56,20 +56,20 @@ import org.zerock.cleanaido_admin_back.support.faq.service.FAQService;
         return ResponseEntity.ok(fno);
     }
 
-    @GetMapping("{fno}")
+    @GetMapping("read/{fno}")
     public ResponseEntity<FAQReadDTO> read(@PathVariable Long fno) {
         FAQReadDTO faqDTO = faqService.readFAQ(fno);
         return ResponseEntity.ok(faqDTO);
     }
 
-    @DeleteMapping("{fno}")
+    @DeleteMapping("admin/{fno}")
     public String delete(@PathVariable Long fno) {
 
         faqService.deleteFAQ(fno);
         return fno + "번이 삭제되었습니다.";
     }
 
-    @PutMapping(value = "{fno}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "admin/{fno}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> update(
             @PathVariable Long fno,
             @ModelAttribute FAQRegisterDTO faqRegisterDTO,

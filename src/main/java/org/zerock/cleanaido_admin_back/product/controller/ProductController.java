@@ -21,7 +21,7 @@ import org.zerock.cleanaido_admin_back.product.service.ProductService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/seller/product")
+@RequestMapping("/api/v1/product")
 @Log4j2
 @RequiredArgsConstructor
 public class ProductController {
@@ -55,7 +55,7 @@ public class ProductController {
 
     }
 
-    @GetMapping("register")
+    @GetMapping("seller/register")
     public ResponseEntity<List<CategoryDTO>> searchCategory(
             @RequestParam(value = "keyword", required = false) String keyword) {
 
@@ -64,7 +64,7 @@ public class ProductController {
 
 
 
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "seller/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> register(
             @ModelAttribute ProductRegisterDTO productRegisterDTO,
             @RequestParam List<Long> categoryList ,
@@ -85,14 +85,14 @@ public class ProductController {
         return ResponseEntity.ok(readDTO);
     }
 
-    @DeleteMapping("")
+    @DeleteMapping("seller/delete")
     public Long delete(
             @RequestParam(value = "pno", required = false) Long pno
     ){
         return productService.deleteProduct(pno);
     }
 
-    @PutMapping(value = "/{pno}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PutMapping(value = "seller/{pno}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> update(
             @PathVariable Long pno, // 수정 대상 Product 번호
             @ModelAttribute ProductRegisterDTO productRegisterDTO, // 수정할 기본 정보
@@ -112,5 +112,4 @@ public class ProductController {
 
         return ResponseEntity.ok(updatedPno); // 수정된 Product 번호 반환
     }
-
 }
