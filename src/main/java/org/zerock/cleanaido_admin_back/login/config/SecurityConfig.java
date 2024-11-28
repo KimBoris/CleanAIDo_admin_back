@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // 로그인/회원가입은 인증 없이 접근 가능
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN") // ADMIN 전용
-                        .requestMatchers("/api/v1/product/**").permitAll() // 제품 API는 인증 없이 접근 가능
+                        .requestMatchers("/api/v1/**").hasRole("SELLER") // 제품 API는 인증 없이 접근 가능
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated() // 그 외 요청은 인증 필요
                 )
