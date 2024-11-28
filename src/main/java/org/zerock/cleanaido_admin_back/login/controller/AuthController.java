@@ -26,7 +26,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
-        log.info("login start~~~~~~~~~~~");
         try {
             User user = userService.authenticate(loginDTO.getUserId(), loginDTO.getPassword());
             log.info("User Id : " + loginDTO.getUserId());

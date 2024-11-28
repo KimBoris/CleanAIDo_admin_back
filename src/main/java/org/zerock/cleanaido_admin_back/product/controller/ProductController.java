@@ -28,8 +28,6 @@ public class ProductController {
 
     private final ProductService productService;
 
-
-    @PreAuthorize("permitAll()")
     @GetMapping("list")
     public ResponseEntity<PageResponseDTO<ProductListDTO>> list(@RequestParam(value = "page", defaultValue = "1") int page,
                                                                 @RequestParam(value = "size", defaultValue = "10") int size,
