@@ -20,13 +20,11 @@ import org.zerock.cleanaido_admin_back.user.service.UserService;
 @RequestMapping("/api/v1/admin/user")
 @RequiredArgsConstructor
 @Log4j2
-@PreAuthorize("permitAll()")
 public class UserController {
 
     private final UserService userService;
 
     @GetMapping("list")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<PageResponseDTO<UserListDTO>> list(@RequestParam(value = "page", defaultValue = "1") int page,
                                                              @RequestParam(value = "size", defaultValue = "10") int size,
                                                              @RequestParam(value = "type", required = false) String type,
