@@ -1,6 +1,7 @@
 package org.zerock.cleanaido_admin_back.login.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Log4j2
 public class AuthController {
 
     private final UserService userService;
@@ -26,6 +28,8 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody LoginDTO loginDTO) {
         try {
             User user = userService.authenticate(loginDTO.getUserId(), loginDTO.getPassword());
+            log.info("User Id : " + loginDTO.getUserId());
+            log.info("Password : " + loginDTO.getPassword());
 
             if (user != null) {
                 String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.isAdminRole(), 60);
@@ -35,7 +39,7 @@ public class AuthController {
                         "accessToken", accessToken,
                         "refreshToken", refreshToken,
                         "adminRole", user.isAdminRole(),
-                        "id", user.getUserId()
+                        "userId", user.getUserId()
                 ));
             }
         } catch (Exception e) {
