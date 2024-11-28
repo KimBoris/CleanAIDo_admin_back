@@ -14,8 +14,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
-
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -41,7 +39,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/orders/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
                         .requestMatchers("/api/v1/qna/list/**", "/api/v1/qna/read/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_SELLER")
                         .requestMatchers("/api/v1/qna/admin/**").hasAuthority("ROLE_ADMIN")
-
+                        .requestMatchers("/api/v1/admin/user/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/v1/admin/customer/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JWTFilter(jwtUtil), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);

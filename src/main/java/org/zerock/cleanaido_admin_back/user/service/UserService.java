@@ -2,15 +2,12 @@ package org.zerock.cleanaido_admin_back.user.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
-import org.zerock.cleanaido_admin_back.customer.dto.CustomerListDTO;
 import org.zerock.cleanaido_admin_back.user.dto.UserListDTO;
 import org.zerock.cleanaido_admin_back.user.entity.User;
 import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
@@ -33,6 +30,8 @@ public class UserService {
         }
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
         PageResponseDTO<UserListDTO> response = userRepository.list(pageRequestDTO);
+
+        log.info("response "+ response);
 
         return response;
     }
@@ -78,6 +77,21 @@ public class UserService {
                                 createDate(user.getCreateDate())
                                 .build()).collect(Collectors.toList());
 
-        return new PageResponseDTO<>(dtoList, pageRequestDTO, resultPage.getTotalPage());
+
+        log.info("dtoList = "+dtoList);
+        return userRepository.searchByBusinessName(type, keyword, pageRequestDTO);
     }
+//public PageResponseDTO<UserListDTO> search(PageRequestDTO pageRequestDTO) {
+//    String type = pageRequestDTO.getSearchDTO().getSearchType();
+//    String keyword = pageRequestDTO.getSearchDTO().getKeyword();
+//
+//    if (keyword == null || keyword.isEmpty()) {
+//        throw new IllegalArgumentException("검색 키워드는 비어 있을 수 없습니다.");
+//    }
+//
+//    log.info("Searching by type: {}, keyword: {}", type, keyword);
+//
+//    return userRepository.searchByBusinessName(type, keyword, pageRequestDTO);
+//}
+
 }
