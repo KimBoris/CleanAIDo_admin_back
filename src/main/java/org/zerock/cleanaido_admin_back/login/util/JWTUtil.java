@@ -25,7 +25,7 @@ public class JWTUtil {
                 .claim("user_id", userId) // user_id 포함
                 .claim("admin_role", isAdmin) // admin_role 포함
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationMinutes * 60 * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMinutes * 24 * 60* 60 * 1000))
                 .signWith(Keys.hmacShaKeyFor(secretKeyBytes), SignatureAlgorithm.HS256)
                 .compact();
     }
