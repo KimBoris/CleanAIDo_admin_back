@@ -42,13 +42,10 @@ public class UserController {
                 .build();
 
         //키워드가 없으면
-        if (searchDTO.getKeyword() == null) {
-            log.info("All List");
-            return ResponseEntity.ok(userService.listUsers(pageRequestDTO));
-        }
-        else {
-            log.info("Search");
+        if (searchDTO.getKeyword() != null || searchDTO.getSearchType() != null) {
             return ResponseEntity.ok(userService.search(pageRequestDTO));
         }
+        return ResponseEntity.ok(userService.listUsers(pageRequestDTO));
+
     }
 }

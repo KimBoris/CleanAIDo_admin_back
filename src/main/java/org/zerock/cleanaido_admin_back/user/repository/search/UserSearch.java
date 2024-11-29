@@ -12,7 +12,8 @@ import org.zerock.cleanaido_admin_back.user.entity.User;
 public interface UserSearch {
     PageResponseDTO<UserListDTO> list(PageRequestDTO pageRequestDTO);
 
-    PageResponseDTO<UserListDTO> searchByBusinessName(String type, String keyword, PageRequestDTO pageRequestDTO);
+    PageResponseDTO<UserListDTO> searchBy(String type, String keyword, PageRequestDTO pageRequestDTO);
+
 
 
 
