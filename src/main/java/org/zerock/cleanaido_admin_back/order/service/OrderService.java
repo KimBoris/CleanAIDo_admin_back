@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
+import org.zerock.cleanaido_admin_back.fcm.dto.FCMRequestDTO;
+import org.zerock.cleanaido_admin_back.fcm.service.FCMService;
 import org.zerock.cleanaido_admin_back.order.dto.OrderListDTO;
 import org.zerock.cleanaido_admin_back.order.repository.OrderRepository;
 
@@ -15,6 +17,7 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final FCMService fcmService;
 
     public PageResponseDTO<OrderListDTO> listOrders(PageRequestDTO pageRequestDTO, List<String> statuses) {
         Page<OrderListDTO> resultPage;

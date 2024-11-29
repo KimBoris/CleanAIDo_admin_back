@@ -15,7 +15,7 @@ import org.zerock.cleanaido_admin_back.support.qna.service.QNAService;
 
 
 @RestController
-@RequestMapping("/api/v1/admin/qna")
+@RequestMapping("/api/v1/qna")
 @Log4j2
 @RequiredArgsConstructor
 public class QNAController {
@@ -56,7 +56,7 @@ public class QNAController {
 
 
 
-    @GetMapping("{qno}")
+    @GetMapping("read/{qno}")
     public ResponseEntity<QuestionReadDTO> read(@PathVariable("qno") Long qno, Model model) {
 
         log.info("Reading question: " + qno);
@@ -71,7 +71,7 @@ public class QNAController {
         return ResponseEntity.ok(questionReadDTO); // qna 읽기 페이지로 이동
     }
 
-    @PostMapping("{qno}")
+    @PostMapping("admin/answer/{qno}")
     public ResponseEntity<Void> createAnswer(@PathVariable("qno") Long qno, @RequestParam String answerText) {
         if(answerText.isEmpty()) {
             return ResponseEntity.badRequest().build();
@@ -80,7 +80,7 @@ public class QNAController {
         return ResponseEntity.status(201).build(); // 201 Created 응답
     }
 
-    @PutMapping("{qno}")
+    @PutMapping("admin/update/{qno}")
     public ResponseEntity<Void> updateAnswer(@PathVariable("qno") Long qno, @RequestParam String answerText) {
         if(answerText.isEmpty()) {
             return ResponseEntity.badRequest().build();
