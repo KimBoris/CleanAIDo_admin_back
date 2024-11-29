@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
+import org.zerock.cleanaido_admin_back.product.dto.ProductListDTO;
 import org.zerock.cleanaido_admin_back.user.dto.UserListDTO;
 import org.zerock.cleanaido_admin_back.user.entity.QUser;
 import org.zerock.cleanaido_admin_back.user.entity.User;
@@ -70,58 +71,60 @@ public class UserSearchImpl extends QuerydslRepositorySupport implements UserSea
     }
 
     @Override
-    public PageResponseDTO<UserListDTO> searchByBusinessName(String type, String keyword, PageRequestDTO pageRequestDTO)
-    {
+    public PageResponseDTO<UserListDTO> searchBy(String type, String keyword, PageRequestDTO pageRequestDTO) {
         QUser user = QUser.user;
+
         JPQLQuery<User> query = from(user);
 
-        BooleanBuilder builder = new BooleanBuilder();
-
-        builder.or(user.businessName.like("%"+keyword+"%"));
-        //타입이 businessName일때
-        if (type != null && type.equals("businessName")) {
-            builder.or(user.businessName.like("%" + keyword + "%"));
-        } else if (type != null && type.equals("ownerName")) {
-            builder.or(user.ownerName.like("%" + keyword + "%"));
-        } else {
-            // 기본 검색 조건 (검색 타입이 없으면 모든 필드에서 검색)
-            builder.andAnyOf(
-                    user.businessName.like("%" + keyword + "%"),
-                    user.ownerName.like("%" + keyword + "%"),
-                    user.businessType.like("%" + keyword + "%")
-            );
+        //type = 스토어명, 유저 아이디, 사업자명
+        if (type == null || type.isEmpty()) {
+            BooleanBuilder builder = new BooleanBuilder();
+            builder.or(user.ownerName.like("%" + keyword + "%"))
+                    .or(user.userId.like("%" + keyword + "%"))
+                    .or(user.storeName.like("%" + keyword + "%"));
+            query.where(builder).distinct();
+        } else if (type.equals("userId")) {
+            query.where(user.userId.like("%" + keyword + "%"));
+        } else if (type.equals("OwnerName")) {
+            query.where(user.ownerName.like("%" + keyword + "%"));
+        } else if (type.equals("StoreName")) {
+            query.where(user.storeName.like("%" + keyword + "%"));
         }
 
-        query.where(builder);
         query.orderBy(user.userId.desc());
 
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
+
         getQuerydsl().applyPagination(pageable, query);
 
         JPQLQuery<UserListDTO> results =
-                query.select(Projections.bean(
-                        UserListDTO.class,
-                        user.userId,
-                        user.password,
-                        user.businessName,
-                        user.businessType,
-                        user.ownerName,
-                        user.businessAddress,
-                        user.businessStatus,
-                        user.businessCategory,
-                        user.storeName,
-                        user.commerceLicenseNum,
-                        user.businessLicenseFile,
-                        user.originAddress,
-                        user.contactNumber,
-                        user.accountNumber,
-                        user.userStatus,
-                        user.delFlag,
-                        user.adminRole,
-                        user.createDate
-                ));
+                query.select(
+                        Projections.bean(
+                                UserListDTO.class,
+                                user.userId,
+                                user.password,
+                                user.businessName,
+                                user.businessType,
+                                user.ownerName,
+                                user.businessAddress,
+                                user.businessStatus,
+                                user.businessCategory,
+                                user.storeName,
+                                user.commerceLicenseNum,
+                                user.businessLicenseFile,
+                                user.originAddress,
+                                user.contactNumber,
+                                user.accountNumber,
+                                user.userStatus,
+                                user.delFlag,
+                                user.adminRole,
+                                user.createDate
+
+                        )
+                );
 
         List<UserListDTO> dtoList = results.fetch();
+
         long total = query.fetchCount();
 
         return PageResponseDTO.<UserListDTO>withAll()
@@ -129,5 +132,6 @@ public class UserSearchImpl extends QuerydslRepositorySupport implements UserSea
                 .totalCount(total)
                 .pageRequestDTO(pageRequestDTO)
                 .build();
+
     }
 }

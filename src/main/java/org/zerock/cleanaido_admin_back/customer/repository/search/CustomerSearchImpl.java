@@ -19,7 +19,7 @@ public class CustomerSearchImpl extends QuerydslRepositorySupport implements Cus
     }
 
     @Override
-    public PageResponseDTO<CustomerListDTO> searchByName(String type, String key, PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<CustomerListDTO> searchBy(String type, String key, PageRequestDTO pageRequestDTO) {
 
 
 
