@@ -39,9 +39,14 @@ public class CustomerController {
                 .searchDTO(searchDTO)
                 .build();
 
-        if(searchDTO.getKeyword() != null || searchDTO.getSearchType() != null) {
-            return ResponseEntity.ok(customerService.search(pageRequestDTO));
-        }
+        //키워드가 없으면
+//        if (searchDTO.getKeyword() == null) {
+//            log.info("All List");
+//        }
             return ResponseEntity.ok(customerService.listCustomers(pageRequestDTO));
+//        else {
+//            log.info("Search");
+//            return ResponseEntity.ok(customerService.search(pageRequestDTO));
+//        }
     }
 }

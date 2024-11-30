@@ -1,14 +1,19 @@
 package org.zerock.cleanaido_admin_back.user.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.user.dto.UserListDTO;
+import org.zerock.cleanaido_admin_back.user.dto.UserReadDTO;
 import org.zerock.cleanaido_admin_back.user.entity.User;
 import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
 
@@ -18,6 +23,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Log4j2
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
@@ -54,5 +60,23 @@ public class UserService {
         return userRepository.searchBy(type, keyword, pageRequestDTO);
     }
 
+    @PutMapping("user/delete")
+    public String deleteUser(@RequestParam(value = "userId", required = false) String userId) {
 
+
+
+//        userRepository.deleteById(userId);
+        return "판매자 "+userId+"가 삭제 되었습니다.";
+    }
+
+
+    public UserReadDTO getUser(String userId) {
+        UserReadDTO userReadDTO = userRepository.getUserById(userId);
+
+        if (userReadDTO == null) {
+            log.info("No User");
+            throw new EntityNotFoundException("유저를 찾을 수 없습니다.");
+        }
+        return userReadDTO;
+    }
 }

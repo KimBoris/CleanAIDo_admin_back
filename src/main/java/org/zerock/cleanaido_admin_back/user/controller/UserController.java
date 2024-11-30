@@ -3,17 +3,17 @@ package org.zerock.cleanaido_admin_back.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.product.service.ProductService;
 import org.zerock.cleanaido_admin_back.user.dto.UserListDTO;
+import org.zerock.cleanaido_admin_back.user.dto.UserReadDTO;
+import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
 import org.zerock.cleanaido_admin_back.user.service.UserService;
 
 @RestController
@@ -46,6 +46,20 @@ public class UserController {
             return ResponseEntity.ok(userService.search(pageRequestDTO));
         }
         return ResponseEntity.ok(userService.listUsers(pageRequestDTO));
-
     }
+
+    @GetMapping("{userId}")
+    public ResponseEntity<UserReadDTO> read(@PathVariable String userId)
+    {
+        UserReadDTO readDTO = userService.getUser(userId);
+
+        return ResponseEntity.ok(readDTO);
+    }
+
+    @PutMapping("delete/{userId}")
+    public String delete(@PathVariable String userId)
+    {
+        return userService.deleteUser(userId);
+    }
+
 }

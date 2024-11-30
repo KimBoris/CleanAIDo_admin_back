@@ -170,7 +170,7 @@ public class ProductService {
         return id;
     }
 
-    @Transactional
+
     public Long updateProduct(
             Long pno,
             ProductRegisterDTO productRegisterDTO,
