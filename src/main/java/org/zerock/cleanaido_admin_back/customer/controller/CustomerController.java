@@ -4,10 +4,7 @@ package org.zerock.cleanaido_admin_back.customer.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
@@ -43,10 +40,17 @@ public class CustomerController {
 //        if (searchDTO.getKeyword() == null) {
 //            log.info("All List");
 //        }
-            return ResponseEntity.ok(customerService.listCustomers(pageRequestDTO));
+        return ResponseEntity.ok(customerService.listCustomers(pageRequestDTO));
 //        else {
 //            log.info("Search");
 //            return ResponseEntity.ok(customerService.search(pageRequestDTO));
 //        }
+    }
+
+    @PutMapping("delete/{customerId}")
+    public ResponseEntity<String> delete(@PathVariable("customerId") String customerId) {
+        customerService.softDeleteCustomer(customerId);
+
+        return ResponseEntity.ok(customerId + "is delete successfully");
     }
 }

@@ -17,7 +17,4 @@ public interface UserSearch {
 
     UserReadDTO getUserById(String userId);
 
-    String deleteUserById(String userId);
-
-
 }

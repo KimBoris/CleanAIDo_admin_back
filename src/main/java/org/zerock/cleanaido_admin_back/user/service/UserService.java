@@ -60,14 +60,6 @@ public class UserService {
         return userRepository.searchBy(type, keyword, pageRequestDTO);
     }
 
-    @PutMapping("user/delete")
-    public String deleteUser(@RequestParam(value = "userId", required = false) String userId) {
-
-
-
-//        userRepository.deleteById(userId);
-        return "판매자 "+userId+"가 삭제 되었습니다.";
-    }
 
 
     public UserReadDTO getUser(String userId) {
@@ -78,5 +70,15 @@ public class UserService {
             throw new EntityNotFoundException("유저를 찾을 수 없습니다.");
         }
         return userReadDTO;
+    }
+
+    public String softDeleteUser(String userId)
+    {
+        User user =userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException(userId + "를 찾을 수 없습니다."));
+
+        user.setDelFlag(true);
+        userRepository.save(user);
+
+        return userId  +"가 삭제되었습니다.";
     }
 }
