@@ -25,6 +25,7 @@ import java.util.List;
 @RequestMapping("/api/v1/product")
 @Log4j2
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class ProductController {
 
     private final ProductService productService;
