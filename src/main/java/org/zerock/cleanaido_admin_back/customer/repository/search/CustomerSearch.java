@@ -8,4 +8,6 @@ public interface CustomerSearch {
     PageResponseDTO<CustomerListDTO> list(PageRequestDTO pageRequestDTO);
 
     PageResponseDTO<CustomerListDTO> searchBy(String type, String key, PageRequestDTO pageRequestDTO);
+
+
 }

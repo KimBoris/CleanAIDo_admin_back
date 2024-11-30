@@ -37,6 +37,7 @@ public class UserService {
     }
 
     // 이메일과 비밀번호로 사용자 인증
+    // 로그인 할 떄 사용.
     public User authenticate(String userId, String rawPassword) {
         User user = userRepository.findById(userId).orElse(null);
 
@@ -50,34 +51,7 @@ public class UserService {
         String type = pageRequestDTO.getSearchDTO().getSearchType();
         String keyword = pageRequestDTO.getSearchDTO().getKeyword();
 
-        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
-
-        PageResponseDTO<UserListDTO> resultPage = userRepository.searchBy(type, keyword, pageRequestDTO);
-
-        List<UserListDTO> dtoList = resultPage.getDtoList().stream()
-                .map(user ->
-                        UserListDTO.builder().
-                                userId(user.getUserId()).
-                                password(user.getPassword()).
-                                businessName(user.getBusinessName()).
-                                businessType(user.getBusinessType()).
-                                ownerName(user.getOwnerName()).
-                                businessAddress(user.getBusinessAddress()).
-                                businessStatus(user.getBusinessStatus()).
-                                businessCategory(user.getBusinessCategory()).
-                                storeName(user.getStoreName()).
-                                commerceLicenseNum(user.getCommerceLicenseNum()).
-                                businessLicenseFile(user.getBusinessLicenseFile()).
-                                originAddress(user.getOriginAddress()).
-                                contactNumber(user.getContactNumber()).
-                                accountNumber(user.getAccountNumber()).
-                                userStatus(user.getUserStatus()).
-                                delFlag(user.isDelFlag()).
-                                adminRole(user.isAdminRole()).
-                                createDate(user.getCreateDate())
-                                .build()).collect(Collectors.toList());
-
-            return userRepository.searchBy(type, keyword, pageRequestDTO);
+        return userRepository.searchBy(type, keyword, pageRequestDTO);
     }
 
 
