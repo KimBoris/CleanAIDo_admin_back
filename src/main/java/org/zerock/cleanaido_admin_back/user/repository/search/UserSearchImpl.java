@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.user.dto.UserListDTO;
+import org.zerock.cleanaido_admin_back.user.dto.UserReadDTO;
 import org.zerock.cleanaido_admin_back.user.entity.QUser;
 import org.zerock.cleanaido_admin_back.user.entity.User;
 
@@ -130,4 +131,21 @@ public class UserSearchImpl extends QuerydslRepositorySupport implements UserSea
                 .build();
 
     }
+
+    @Override
+    public UserReadDTO getUserById(String userId) {
+        QUser user = QUser.user;
+
+        JPQLQuery<User> query = from(user).where(user.userId.eq(userId));
+        User result = query.fetchOne();
+
+        if(result == null) {
+            throw new IllegalArgumentException("User not Fount");
+        }
+
+        return UserReadDTO.builder()
+                .userId(result.getUserId()).build();
+    }
+
+
 }
