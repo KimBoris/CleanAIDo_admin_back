@@ -3,12 +3,12 @@ spring:
     name: api1
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-#    url: jdbc:mariadb://127.0.01:13306/webdb2
-#    username: root
-#    password: 12345678
-    url: jdbc:mariadb://10.10.10.79:3306/cleanaido
-    username: cleanaidouser
-    password: cleanaidouser
+    url: jdbc:mariadb://127.0.01:13306/webdb2
+    username: root
+    password: 12345678
+#    url: jdbc:mariadb://10.10.10.79:3306/cleanaido
+#    username: cleanaidouser
+#    password: cleanaidouser
 
     hikari:
       minimum-idle: 2
