@@ -1,6 +1,7 @@
 package org.zerock.cleanaido_admin_back.user.controller;
 
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.catalina.connector.Response;
@@ -13,6 +14,7 @@ import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.product.service.ProductService;
 import org.zerock.cleanaido_admin_back.user.dto.UserListDTO;
 import org.zerock.cleanaido_admin_back.user.dto.UserReadDTO;
+import org.zerock.cleanaido_admin_back.user.entity.User;
 import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
 import org.zerock.cleanaido_admin_back.user.service.UserService;
 
@@ -23,6 +25,7 @@ import org.zerock.cleanaido_admin_back.user.service.UserService;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @GetMapping("list")
     public ResponseEntity<PageResponseDTO<UserListDTO>> list(@RequestParam(value = "page", defaultValue = "1") int page,
@@ -57,9 +60,11 @@ public class UserController {
     }
 
     @PutMapping("delete/{userId}")
-    public String delete(@PathVariable String userId)
+    public ResponseEntity<String> delete(@PathVariable String userId)
     {
-        return userService.deleteUser(userId);
+        userService.softDeleteUser(userId);
+
+        return ResponseEntity.ok(userId+" is deleted successfully");
     }
 
 }

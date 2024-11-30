@@ -147,20 +147,5 @@ public class UserSearchImpl extends QuerydslRepositorySupport implements UserSea
                 .userId(result.getUserId()).build();
     }
 
-    @Override
-    public String deleteUserById(String userId) {
-        QUser user = QUser.user;
 
-        JPQLQuery<User> query = from(user).where(user.userId.eq(userId));
-        User result = query.fetchOne();
-
-        if(result == null) {
-            throw new IllegalArgumentException("User Not Found");
-        }
-//        return UserReadDTO.builder()
-//                .delFlag(result.isDelFlag())
-//                .userId(result.getUserId())
-//                .build();
-        return null;
-    }
 }
