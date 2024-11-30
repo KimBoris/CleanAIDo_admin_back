@@ -7,5 +7,7 @@ import org.zerock.cleanaido_admin_back.customer.dto.CustomerListDTO;
 public interface CustomerSearch {
     PageResponseDTO<CustomerListDTO> list(PageRequestDTO pageRequestDTO);
 
-    PageResponseDTO<CustomerListDTO> searchByName(String type, String key, PageRequestDTO pageRequestDTO);
+    PageResponseDTO<CustomerListDTO> searchBy(String type, String key, PageRequestDTO pageRequestDTO);
+
+
 }
