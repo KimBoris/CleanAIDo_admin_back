@@ -20,4 +20,7 @@ public interface ProductSearch {
     List<CategoryDTO> searchCategoryBy(String category);
 
     ProductReadDTO getProduct(Long pno);
+
+    PageResponseDTO<ProductListDTO> listBySeller(PageRequestDTO pageRequestDTO, String sellerId);
+
 }

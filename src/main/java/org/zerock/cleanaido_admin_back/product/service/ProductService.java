@@ -23,6 +23,8 @@ import org.zerock.cleanaido_admin_back.category.entity.ProductCategory;
 import org.zerock.cleanaido_admin_back.product.repository.ProductCategoryRepository;
 import org.zerock.cleanaido_admin_back.product.repository.ProductRepository;
 import org.zerock.cleanaido_admin_back.product.entity.ImageFiles;
+import org.zerock.cleanaido_admin_back.user.entity.User;
+import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,20 +41,21 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CustomFileUtil customFileUtil;
     private final ProductCategoryRepository productCategoryRepository;
+    private final UserRepository userRepository;
 
-    public PageResponseDTO<ProductListDTO> listProduct(PageRequestDTO pageRequestDTO) {
-
-        if (pageRequestDTO.getPage() < 1) {
-            throw new IllegalArgumentException("페이지 번호는 1이상 이어야 합니다.");
+    public PageResponseDTO<ProductListDTO> listProductByRole(PageRequestDTO pageRequestDTO, String userId, String role) {
+        if ("ROLE_ADMIN".equals(role)) {
+            // 관리자는 storeName 포함 전체 리스트 조회
+            return productRepository.list(pageRequestDTO);
+        } else if ("ROLE_SELLER".equals(role)) {
+            // 판매자는 storeName 없이 자신의 리스트만 조회
+            return productRepository.listBySeller(pageRequestDTO, userId);
+        } else {
+            throw new IllegalArgumentException("잘못된 권한입니다.");
         }
-        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
-        PageResponseDTO<ProductListDTO> response = productRepository.list(pageRequestDTO);
-
-        log.info("---------------------------------------1");
-
-        return response;
-
     }
+
+
 
     public PageResponseDTO<ProductListDTO> search(PageRequestDTO pageRequestDTO) {
         // SearchDTO에서 type과 keyword를 가져옴
@@ -87,7 +90,21 @@ public class ProductService {
 
     public Long registerProduct(ProductRegisterDTO dto,
                                 List<Long> categoryList, UploadDTO imageUploadDTO,
-                                UploadDTO detailImageUploadDTO , UploadDTO usageImageUploadDTO) {
+                                UploadDTO detailImageUploadDTO, UploadDTO usageImageUploadDTO) {
+
+        // seller 유효성 확인
+        if (dto.getSeller() == null) {
+            throw new IllegalArgumentException("판매자 정보가 누락되었습니다.");
+        }
+
+        log.info("Registering product for seller: {}", dto.getSeller());
+
+        User seller = userRepository.findById(dto.getSeller())
+                .orElseThrow(() -> new IllegalArgumentException("판매자를 찾을 수 없습니다: " + dto.getSeller()));
+
+        log.info("Found seller: {}", seller.getUserId());
+
+        // Product 생성
         Product product = Product.builder()
                 .pcode(dto.getPcode())
                 .pname(dto.getPname())
@@ -95,61 +112,60 @@ public class ProductService {
                 .quantity(dto.getQuantity())
                 .releasedAt(dto.getReleasedAt())
                 .ptags(dto.getPtags())
-                .sellerId(dto.getSellerId())
+                .seller(seller)
                 .build();
 
-        if (categoryList != null) {
+        log.info("Product to register: {}", product);
+
+        // 카테고리 연결
+        if (categoryList != null && !categoryList.isEmpty()) {
+            log.info("Registering categories: {}", categoryList);
             for (Long cno : categoryList) {
-                Category category = Category.builder()
-                        .cno(cno)
-                        .build();
+                Category category = Category.builder().cno(cno).build();
 
                 ProductCategory productCategory = ProductCategory.builder()
-                        .product(product) // Product 객체 참조
+                        .product(product)
                         .category(category)
                         .build();
 
-                productCategoryRepository.save(productCategory); // ProductCategory 저장
+                productCategoryRepository.save(productCategory);
             }
+        } else {
+            log.warn("Category list is null or empty for product: {}", product.getPname());
         }
 
-        List<String> imageFileNames = Optional.ofNullable(imageUploadDTO.getFiles())
-                .map(files -> Arrays.stream(files)
-                        .filter(file -> !file.isEmpty()) // 실제 파일이 있는 경우만 필터링
-                        .collect(Collectors.toList()))
-                .filter(validFiles -> !validFiles.isEmpty()) // 빈 리스트는 제외
-                .map(customFileUtil::saveFiles) // 유효한 파일이 있으면 저장
-                .orElse(Collections.emptyList()); // 유효한 파일이 없으면 빈 리스트
+        // 이미지 파일 처리
+        processImages(product, imageUploadDTO, true);
+        processImages(product, detailImageUploadDTO, false);
+        processImages(product, usageImageUploadDTO, false);
 
-        // 파일을 product에 추가할 때 check 필드를 false로 설정
-        imageFileNames.forEach(filename -> product.addImageFile(filename, true));
-
-        List<String> detailFileNames = Optional.ofNullable(detailImageUploadDTO.getFiles())
-                .map(files -> Arrays.stream(files)
-                        .filter(file -> !file.isEmpty()) // 실제 파일이 있는 경우만 필터링
-                        .collect(Collectors.toList()))
-                .filter(validFiles -> !validFiles.isEmpty()) // 빈 리스트는 제외
-                .map(customFileUtil::saveFiles) // 유효한 파일이 있으면 저장
-                .orElse(Collections.emptyList()); // 유효한 파일이 없으면 빈 리스트
-
-        // 파일을 product에 추가할 때 check 필드를 true로 설정
-        detailFileNames.forEach(filename -> product.addImageFile(filename, false));
-
-        List<String> fileNames = Optional.ofNullable(usageImageUploadDTO.getFiles())
-                .map(files -> Arrays.stream(files)
-                        .filter(file -> !file.isEmpty()) // 실제 파일이 있는 경우만 필터링
-                        .collect(Collectors.toList()))
-                .filter(validFiles -> !validFiles.isEmpty()) // 빈 리스트는 제외
-                .map(customFileUtil::saveFiles) // 유효한 파일이 있으면 저장
-                .orElse(Collections.emptyList()); // 유효한 파일이 없으면 빈 리스트
-
-        fileNames.forEach(product::addUsingImageFile);
-
-
+        // 상품 저장
         productRepository.save(product);
+        log.info("Product registered with ID: {}", product.getPno());
 
         return product.getPno();
     }
+
+    private void processImages(Product product, UploadDTO uploadDTO, boolean isMainImage) {
+        List<String> fileNames = Optional.ofNullable(uploadDTO.getFiles())
+                .map(files -> Arrays.stream(files)
+                        .filter(file -> !file.isEmpty())
+                        .collect(Collectors.toList()))
+                .filter(validFiles -> !validFiles.isEmpty())
+                .map(customFileUtil::saveFiles)
+                .orElse(Collections.emptyList());
+
+        log.info("Uploaded {} image files: {}", isMainImage ? "main" : "detail/usage", fileNames);
+
+        fileNames.forEach(filename -> {
+            if (isMainImage) {
+                product.addImageFile(filename, true);
+            } else {
+                product.addUsingImageFile(filename);
+            }
+        });
+    }
+
 
     public ProductReadDTO getProduct(Long pno) {
 

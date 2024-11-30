@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
@@ -30,10 +31,16 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping("list")
-    public ResponseEntity<PageResponseDTO<ProductListDTO>> list(@RequestParam(value = "page", defaultValue = "1") int page,
-                                                                @RequestParam(value = "size", defaultValue = "10") int size,
-                                                                @RequestParam(value = "type", required = false) String type,
-                                                                @RequestParam(value = "keyword", required = false) String keyword) {
+    public ResponseEntity<PageResponseDTO<ProductListDTO>> list(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "keyword", required = false) String keyword) {
+
+        String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String role = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
+        log.info("UserId: " + userId);
+        log.info("Role: " + role);
 
         SearchDTO searchDTO = SearchDTO.builder()
                 .searchType(type)
@@ -46,17 +53,11 @@ public class ProductController {
                 .searchDTO(searchDTO)
                 .build();
 
-        if (searchDTO.getKeyword() == null || searchDTO.getKeyword().isEmpty()) {
-            log.info("keyword is null or empty");
-            log.info("---------------------");
-            return ResponseEntity.ok(productService.listProduct(pageRequestDTO));
-        } else {
-            return ResponseEntity.ok(productService.search(pageRequestDTO));
-        }
-
+        return ResponseEntity.ok(productService.listProductByRole(pageRequestDTO, userId, role));
     }
 
-    @GetMapping("seller/register")
+
+    @GetMapping("seller/category")
     public ResponseEntity<List<CategoryDTO>> searchCategory(
             @RequestParam(value = "keyword", required = false) String keyword) {
 
@@ -66,19 +67,42 @@ public class ProductController {
 
 
     @PostMapping(value = "seller/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Long> register(
+    public ResponseEntity<Long> registerProduct(
             @ModelAttribute ProductRegisterDTO productRegisterDTO,
-            @RequestParam List<Long> categoryList ,
+            @RequestParam List<Long> categoryList,
             @RequestParam("imageFiles") MultipartFile[] imageFiles,
             @RequestParam("detailImageFiles") MultipartFile[] detailImageFiles,
             @RequestParam("usageImageFiles") MultipartFile[] usageImageFiles) {
-        UploadDTO imageUploadDTO = new UploadDTO(imageFiles, null); // 또는 적절한 초기화 코드
-        UploadDTO detailImageUploadDTO = new UploadDTO(detailImageFiles, null); // 또는 적절한 초기화 코드
-        UploadDTO usageImageUploadDTO = new UploadDTO(usageImageFiles, null); // 또는 적절한 초기화 코드
-        Long fno = productService.registerProduct(
-                productRegisterDTO, categoryList, imageUploadDTO, detailImageUploadDTO, usageImageUploadDTO);
-        return ResponseEntity.ok(fno);
+
+        // 인증 정보 가져오기
+        String userId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        // DTO에 seller 설정
+        productRegisterDTO.setSeller(userId);
+
+        log.info("ProductRegisterDTO: " + productRegisterDTO);
+        log.info("CategoryList: " + categoryList);
+
+        // 파일 업로드 DTO 생성
+        UploadDTO imageUploadDTO = new UploadDTO(imageFiles, null);
+        UploadDTO detailImageUploadDTO = new UploadDTO(detailImageFiles, null);
+        UploadDTO usageImageUploadDTO = new UploadDTO(usageImageFiles, null);
+
+        // 서비스 호출로 상품 등록
+        Long productId = productService.registerProduct(
+                productRegisterDTO,
+                categoryList,
+                imageUploadDTO,
+                detailImageUploadDTO,
+                usageImageUploadDTO
+        );
+
+        return ResponseEntity.ok(productId);
     }
+
+
+
+
 
     @GetMapping("/read/{pno}")
     public ResponseEntity<ProductReadDTO> read(@PathVariable Long pno) {

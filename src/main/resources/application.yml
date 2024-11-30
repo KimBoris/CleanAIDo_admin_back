@@ -4,6 +4,9 @@ spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://172.30.1.22:13306/cleanaido
+#    url: jdbc:mariadb://127.0.01:13306/webdb2
+#    username: root
+#    password: 12345678
     username: cleanaidouser
     password: cleanaidouser
 
