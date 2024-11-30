@@ -21,6 +21,7 @@ import org.zerock.cleanaido_admin_back.product.entity.Product;
 import org.zerock.cleanaido_admin_back.category.entity.QCategory;
 import org.zerock.cleanaido_admin_back.product.entity.QImageFiles;
 import org.zerock.cleanaido_admin_back.product.entity.QProduct;
+import org.zerock.cleanaido_admin_back.user.entity.QUser;
 
 
 import java.util.List;
@@ -33,37 +34,80 @@ public class ProductSearchImpl extends QuerydslRepositorySupport implements Prod
     @Override
     public PageResponseDTO<ProductListDTO> list(PageRequestDTO pageRequestDTO) {
         QProduct product = QProduct.product;
+        QUser user = QUser.user; // User QEntity
 
-        JPQLQuery<Product> query = from(product).orderBy(product.pno.desc());
+        // Product와 User를 조인
+        JPQLQuery<Product> query = from(product)
+                .join(product.seller, user)
+                .orderBy(product.pno.desc());
 
-        Pageable pageable = PageRequest.of(pageRequestDTO.getPage()-1, pageRequestDTO.getSize());
-
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
         getQuerydsl().applyPagination(pageable, query);
 
-        JPQLQuery<ProductListDTO> results =
-                query.select(
-                        Projections.bean(
-                                ProductListDTO.class,
-                                product.pno,
-                                product.pcode,
-                                product.pname,
-                                product.price,
-                                product.quantity,
-                                product.pstatus,
-                                product.createdAt,
-                                product.updatedAt,
-                                product.sellerId
-                        )
-                );
+        JPQLQuery<ProductListDTO> results = query.select(
+                Projections.bean(
+                        ProductListDTO.class,
+                        product.pno,
+                        product.pcode,
+                        product.pname,
+                        product.price,
+                        product.quantity,
+                        product.pstatus,
+                        product.updatedAt,
+                        user.storeName.as("storeName") // 관리자 리스트에만 storeName 포함
+                )
+        );
 
         List<ProductListDTO> dtoList = results.fetch();
         long total = query.fetchCount();
+
         return PageResponseDTO.<ProductListDTO>withAll()
                 .dtoList(dtoList)
                 .totalCount(total)
                 .pageRequestDTO(pageRequestDTO)
                 .build();
     }
+
+
+    @Override
+    public PageResponseDTO<ProductListDTO> listBySeller(PageRequestDTO pageRequestDTO, String sellerId) {
+        QProduct product = QProduct.product;
+        QUser user = QUser.user; // User QEntity
+
+        JPQLQuery<Product> query = from(product)
+                .join(product.seller, user) // Product와 User를 조인
+                .where(user.userId.eq(sellerId)) // User ID 필터링
+                .orderBy(product.pno.desc());
+
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
+        getQuerydsl().applyPagination(pageable, query);
+
+        JPQLQuery<ProductListDTO> results = query.select(
+                Projections.bean(
+                        ProductListDTO.class,
+                        product.pno,
+                        product.pcode,
+                        product.pname,
+                        product.price,
+                        product.quantity,
+                        product.pstatus,
+                        product.createdAt,
+                        product.updatedAt,
+                        user.userId.as("sellerId") // DTO에 sellerId 포함
+                )
+        );
+
+        List<ProductListDTO> dtoList = results.fetch();
+        long total = query.fetchCount();
+
+        return PageResponseDTO.<ProductListDTO>withAll()
+                .dtoList(dtoList)
+                .totalCount(total)
+                .pageRequestDTO(pageRequestDTO)
+                .build();
+    }
+
+
     @Override
     public Page<Product> searchBy(String type, String keyword, Pageable pageable) {
         QProduct product = QProduct.product;
