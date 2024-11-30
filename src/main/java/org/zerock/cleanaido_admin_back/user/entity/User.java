@@ -2,7 +2,11 @@ package org.zerock.cleanaido_admin_back.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.zerock.cleanaido_admin_back.product.entity.Product;
+
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -83,4 +87,6 @@ public class User {
     public void preUpdate() {
         this.updatedDate = LocalDateTime.now();
     }
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Product> products = new HashSet<>();
 }
