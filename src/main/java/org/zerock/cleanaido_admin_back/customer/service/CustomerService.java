@@ -31,4 +31,15 @@ public class CustomerService
 
         return response;
     }
+
+    public PageResponseDTO search(PageRequestDTO pageRequestDTO){
+        String type = pageRequestDTO.getSearchDTO().getSearchType();
+        String keyword = pageRequestDTO.getSearchDTO().getKeyword();
+
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage()-1, pageRequestDTO.getSize());
+
+        PageResponseDTO<CustomerListDTO> resultPage = customerRepository.searchBy(type, keyword, pageRequestDTO);
+
+        return null;
+    }
 }

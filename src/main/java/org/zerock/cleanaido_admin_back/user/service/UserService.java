@@ -29,14 +29,14 @@ public class UserService {
     private final CustomFileUtil customFileUtil;
 
     public PageResponseDTO<UserListDTO> listUsers(PageRequestDTO pageRequestDTO) {
+
         if (pageRequestDTO.getPage() < 1) {
-            log.info("페이지는 1을 초과해야 합니다.");
             throw new IllegalArgumentException("페이지 번호는 1이상 이어야 합니다.");
         }
-        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
+
         PageResponseDTO<UserListDTO> response = userRepository.list(pageRequestDTO);
 
-        log.info("response "+ response);
+        log.info("response " + response);
 
         return response;
     }
@@ -57,7 +57,7 @@ public class UserService {
 
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
 
-        PageResponseDTO<UserListDTO> resultPage = userRepository.searchByBusinessName(type, keyword, pageRequestDTO);
+        PageResponseDTO<UserListDTO> resultPage = userRepository.searchBy(type, keyword, pageRequestDTO);
 
         List<UserListDTO> dtoList = resultPage.getDtoList().stream()
                 .map(user ->
@@ -82,22 +82,9 @@ public class UserService {
                                 createDate(user.getCreateDate())
                                 .build()).collect(Collectors.toList());
 
-
-        log.info("dtoList = "+dtoList);
-        return userRepository.searchByBusinessName(type, keyword, pageRequestDTO);
+            return userRepository.searchBy(type, keyword, pageRequestDTO);
     }
-//public PageResponseDTO<UserListDTO> search(PageRequestDTO pageRequestDTO) {
-//    String type = pageRequestDTO.getSearchDTO().getSearchType();
-//    String keyword = pageRequestDTO.getSearchDTO().getKeyword();
-//
-//    if (keyword == null || keyword.isEmpty()) {
-//        throw new IllegalArgumentException("검색 키워드는 비어 있을 수 없습니다.");
-//    }
-//
-//    log.info("Searching by type: {}, keyword: {}", type, keyword);
-//
-//    return userRepository.searchByBusinessName(type, keyword, pageRequestDTO);
-//}
+
 
     public String registUser(UserRegisterDTO userRegisterDTO, UploadOneDTO uploadOneDTO) {
 
