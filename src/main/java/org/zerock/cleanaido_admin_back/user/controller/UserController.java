@@ -41,7 +41,7 @@ public class UserController {
                 .searchDTO(searchDTO)
                 .build();
 
-        //키워드가 없으면
+        //키워드가 있거나 type이 있으면
         if (searchDTO.getKeyword() != null || searchDTO.getSearchType() != null) {
             return ResponseEntity.ok(userService.search(pageRequestDTO));
         }
