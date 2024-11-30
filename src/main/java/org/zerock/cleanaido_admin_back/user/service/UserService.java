@@ -8,11 +8,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
+import org.zerock.cleanaido_admin_back.common.dto.UploadOneDTO;
+import org.zerock.cleanaido_admin_back.common.util.CustomFileUtil;
 import org.zerock.cleanaido_admin_back.user.dto.UserListDTO;
+import org.zerock.cleanaido_admin_back.user.dto.UserRegisterDTO;
 import org.zerock.cleanaido_admin_back.user.entity.User;
 import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
 
-import java.util.List;
+import java.util.*;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +26,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CustomFileUtil customFileUtil;
 
     public PageResponseDTO<UserListDTO> listUsers(PageRequestDTO pageRequestDTO) {
         if (pageRequestDTO.getPage() < 1) {
@@ -93,5 +98,36 @@ public class UserService {
 //
 //    return userRepository.searchByBusinessName(type, keyword, pageRequestDTO);
 //}
+
+    public String registUser(UserRegisterDTO userRegisterDTO, UploadOneDTO uploadOneDTO) {
+
+        User user = User.builder()
+                .userId(userRegisterDTO.getUserId())
+                .password(userRegisterDTO.getPassword())
+                .businessNumber(userRegisterDTO.getBusinessNumber())
+                .businessName(userRegisterDTO.getBusinessName())
+                .businessType(userRegisterDTO.getBusinessType())
+                .ownerName(userRegisterDTO.getOwnerName())
+                .businessAddress(userRegisterDTO.getBusinessAddress())
+                .businessStatus(userRegisterDTO.getBusinessStatus())
+                .businessCategory(userRegisterDTO.getBusinessCategory())
+                .storeName(userRegisterDTO.getStoreName())
+                .commerceLicenseNum(userRegisterDTO.getCommerceLicenseNum())
+                .originAddress(userRegisterDTO.getOriginAddress())
+                .contactNumber(userRegisterDTO.getContactNumber())
+                .accountNumber(userRegisterDTO.getAccountNumber())
+                .userStatus("입점요청")
+                .delFlag(false)
+                .adminRole(false)
+                .businessLicenseFile(Optional.ofNullable(uploadOneDTO.getFile())
+                        .filter(file -> !file.isEmpty())
+                        .map(customFileUtil::saveFile)
+                        .orElse(null)) // 파일명 저장
+                .build();
+
+        userRepository.save(user);
+
+        return user.getUserId();
+    }
 
 }

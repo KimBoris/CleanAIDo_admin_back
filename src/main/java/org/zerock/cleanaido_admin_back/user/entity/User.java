@@ -2,6 +2,8 @@ package org.zerock.cleanaido_admin_back.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -68,19 +70,11 @@ public class User {
     @Column(name = "admin_role", nullable = false)
     private boolean adminRole;
 
+    @CreationTimestamp
     @Column(name = "create_date")
     private LocalDateTime createDate;
 
+    @CreationTimestamp
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
-
-    @PrePersist
-    public void prePersist() {
-        this.createDate = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        this.updatedDate = LocalDateTime.now();
-    }
 }
