@@ -9,6 +9,8 @@ import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.customer.dto.CustomerListDTO;
+import org.zerock.cleanaido_admin_back.customer.dto.CustomerReadDTO;
+import org.zerock.cleanaido_admin_back.customer.dto.CustomerRegisterDTO;
 import org.zerock.cleanaido_admin_back.customer.service.CustomerService;
 
 @RestController
@@ -36,15 +38,20 @@ public class CustomerController {
                 .searchDTO(searchDTO)
                 .build();
 
-        //키워드가 없으면
-//        if (searchDTO.getKeyword() == null) {
-//            log.info("All List");
-//        }
+
+        if (searchDTO.getKeyword() != null || searchDTO.getSearchType() != null) {
+            return ResponseEntity.ok(customerService.search(pageRequestDTO));
+        }
         return ResponseEntity.ok(customerService.listCustomers(pageRequestDTO));
-//        else {
-//            log.info("Search");
-//            return ResponseEntity.ok(customerService.search(pageRequestDTO));
-//        }
+    }
+    @GetMapping("{customerId}")
+    public ResponseEntity<CustomerReadDTO> read(@PathVariable String customerId)
+    {
+        CustomerReadDTO readDTO = customerService.getCustomer(customerId);
+
+        log.info("REadDTO = "+ readDTO.toString());
+
+        return ResponseEntity.ok(readDTO);
     }
 
     @PutMapping("delete/{customerId}")
@@ -53,4 +60,14 @@ public class CustomerController {
 
         return ResponseEntity.ok(customerId + "is delete successfully");
     }
+
+    @PutMapping("{customerId}")
+    public ResponseEntity<String> update(@PathVariable String customerId,
+                                         @ModelAttribute CustomerRegisterDTO customerRegisterDTO) {
+        String resultMessage = customerService.updateCustomer(customerId, customerRegisterDTO);
+
+        return ResponseEntity.ok(resultMessage);
+    }
+
+
 }

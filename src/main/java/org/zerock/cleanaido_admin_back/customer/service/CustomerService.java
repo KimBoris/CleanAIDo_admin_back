@@ -7,11 +7,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.customer.dto.CustomerListDTO;
 import org.zerock.cleanaido_admin_back.customer.dto.CustomerLoginDTO;
+import org.zerock.cleanaido_admin_back.customer.dto.CustomerReadDTO;
+import org.zerock.cleanaido_admin_back.customer.dto.CustomerRegisterDTO;
 import org.zerock.cleanaido_admin_back.customer.entity.Customer;
 import org.zerock.cleanaido_admin_back.customer.repository.CustomerRepository;
 import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
@@ -19,6 +22,7 @@ import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
 @Service
 @RequiredArgsConstructor
 @Log4j2
+@Transactional
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
@@ -50,12 +54,39 @@ public class CustomerService {
         return customerRepository.searchBy(type, keyword, pageRequestDTO);
     }
 
-    public String  softDeleteCustomer(String customerId) {
+    public String softDeleteCustomer(String customerId) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new EntityNotFoundException(customerId + "를 찾을 수 없습니다."));
 
-        customer.setDelFlag(true);
+        log.info(customer);
+
+        customer.toggleDelflag();
+
         customerRepository.save(customer);
 
-        return customerId+ "가 삭제되었습니다.";
+        if (customer.isDelFlag()) {
+            return customerId + "가 삭제되었습니다.";
+        }
+        return customerId+ "가 복구되었습니다." ;
+    }
+
+    public CustomerReadDTO getCustomer(String customerId) {
+        CustomerReadDTO customerReadDTO = customerRepository.getCustomerById(customerId);
+
+        log.info(customerReadDTO);
+
+        if (customerReadDTO == null) {
+            throw new EntityNotFoundException("고객을 찾을 수 없습니다.");
+        }
+        return customerReadDTO;
+    }
+
+    public String updateCustomer(String customerId, CustomerRegisterDTO customerRegisterDTO) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new EntityNotFoundException(customerId + "를 찾을 수 없습니다."));
+
+        customer.setCustomerPw(customerRegisterDTO.getCustomerPw());
+        customerRepository.save(customer);
+
+        return customer.getCustomerId() + "의 비밀번호가 변경되었습니다.";  // 비즈니스 로직 처리 후 메시지 반환
     }
 }

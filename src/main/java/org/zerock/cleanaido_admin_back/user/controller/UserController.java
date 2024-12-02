@@ -14,6 +14,7 @@ import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.product.service.ProductService;
 import org.zerock.cleanaido_admin_back.user.dto.UserListDTO;
 import org.zerock.cleanaido_admin_back.user.dto.UserReadDTO;
+import org.zerock.cleanaido_admin_back.user.dto.UserRegisterDTO;
 import org.zerock.cleanaido_admin_back.user.entity.User;
 import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
 import org.zerock.cleanaido_admin_back.user.service.UserService;
@@ -25,7 +26,7 @@ import org.zerock.cleanaido_admin_back.user.service.UserService;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
+
 
     @GetMapping("list")
     public ResponseEntity<PageResponseDTO<UserListDTO>> list(@RequestParam(value = "page", defaultValue = "1") int page,
@@ -55,7 +56,6 @@ public class UserController {
     public ResponseEntity<UserReadDTO> read(@PathVariable String userId)
     {
         UserReadDTO readDTO = userService.getUser(userId);
-
         return ResponseEntity.ok(readDTO);
     }
 
@@ -65,6 +65,15 @@ public class UserController {
         userService.softDeleteUser(userId);
 
         return ResponseEntity.ok(userId+" is deleted successfully");
+    }
+
+    @PutMapping("{userId}")
+    public ResponseEntity<String> update(@PathVariable String userId
+                                         ,@ModelAttribute UserRegisterDTO userRegisterDTO){
+
+        String updatedUserId = userService.updateUser(userId, userRegisterDTO);
+
+        return ResponseEntity.ok(updatedUserId);
     }
 
 }
