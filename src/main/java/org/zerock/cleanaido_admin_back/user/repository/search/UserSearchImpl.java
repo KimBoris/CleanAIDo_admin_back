@@ -86,8 +86,7 @@ public class UserSearchImpl extends QuerydslRepositorySupport implements UserSea
             query.where(user.ownerName.like("%" + keyword + "%"));
         } else if (type.equals("StoreName")) {
             query.where(user.storeName.like("%" + keyword + "%"));
-        }
-        else if (type.equals("UserStatus")){
+        } else if (type.equals("UserStatus")) {
             query.where(user.userStatus.like("%" + keyword + "%"));
         }
 
@@ -142,10 +141,28 @@ public class UserSearchImpl extends QuerydslRepositorySupport implements UserSea
         JPQLQuery<User> query = from(user).where(user.userId.eq(userId));
         User result = query.fetchOne();
 
-        if(result == null) {
+        if (result == null) {
             throw new IllegalArgumentException("User not Fount");
         }
         return UserReadDTO.builder()
-                .userId(result.getUserId()).build();
+                .userId(result.getUserId())
+                .password(result.getPassword())
+                .businessName(result.getBusinessName())
+                .businessType(result.getBusinessType())
+                .ownerName(result.getOwnerName())
+                .businessAddress(result.getBusinessAddress())
+                .businessStatus(result.getBusinessStatus())
+                .businessCategory(result.getBusinessCategory())
+                .storeName(result.getStoreName())
+                .commerceLicenseNum(result.getCommerceLicenseNum())
+                .businessLicenseFile(result.getBusinessLicenseFile())
+                .originAddress(result.getOriginAddress())
+                .contactNumber(result.getContactNumber())
+                .accountNumber(result.getAccountNumber())
+                .userStatus(result.getUserStatus())
+                .delFlag(result.isDelFlag())
+                .adminRole(result.isAdminRole())
+                .createDate(result.getCreateDate())
+                .build();
     }
 }

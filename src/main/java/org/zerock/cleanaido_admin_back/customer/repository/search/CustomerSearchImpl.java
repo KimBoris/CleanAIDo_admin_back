@@ -12,6 +12,7 @@ import org.zerock.cleanaido_admin_back.customer.dto.CustomerListDTO;
 import org.zerock.cleanaido_admin_back.customer.dto.CustomerReadDTO;
 import org.zerock.cleanaido_admin_back.customer.entity.Customer;
 import org.zerock.cleanaido_admin_back.customer.entity.QCustomer;
+import org.zerock.cleanaido_admin_back.order.dto.OrderListDTO;
 import org.zerock.cleanaido_admin_back.order.entity.Order;
 import org.zerock.cleanaido_admin_back.order.entity.QOrder;
 
@@ -28,19 +29,35 @@ public class CustomerSearchImpl extends QuerydslRepositorySupport implements Cus
         QCustomer customer = QCustomer.customer;
         QOrder order = QOrder.order;
 
+        // 고객 정보 조회
         JPQLQuery<Customer> customerQuery = from(customer)
-//                .leftJoin(customer.orders, order)
                 .where(customer.customerId.eq(customerId));
 
-        Customer result = customerQuery.fetchOne();
+        Customer customerResult = customerQuery.fetchOne();
 
-        if(result == null)
-        {
-            throw new IllegalArgumentException("User not Found");
+        if (customerResult == null) {
+            throw new IllegalArgumentException("Customer not found");
         }
 
+        // 주문 개수 조회
+        JPQLQuery<Long> orderCountQuery = from(order)
+                .where(order.customerId.eq(customerId))
+                .select(order.count());
 
-        return CustomerReadDTO.builder().customerId(result.getCustomerId()).build();
+        Long orderCount = orderCountQuery.fetchOne();
+
+        // 결과 DTO 빌드
+        return CustomerReadDTO.builder()
+                .customerId(customerResult.getCustomerId())
+                .customerPw(customerResult.getCustomerPw())
+                .customerName(customerResult.getCustomerName())
+                .birthDate(customerResult.getBirthDate())
+                .createDate(customerResult.getCreateDate())
+                .phoneNumber(customerResult.getPhoneNumber())
+                .address(customerResult.getAddress())
+                .profileImageUrl(customerResult.getProfileImageUrl())
+                .orderCount(orderCount).build();
+
     }
 
     @Override
