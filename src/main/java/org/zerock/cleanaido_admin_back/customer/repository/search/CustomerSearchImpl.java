@@ -9,9 +9,13 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.customer.dto.CustomerListDTO;
+import org.zerock.cleanaido_admin_back.customer.dto.CustomerReadDTO;
 import org.zerock.cleanaido_admin_back.customer.entity.Customer;
 import org.zerock.cleanaido_admin_back.customer.entity.QCustomer;
+import org.zerock.cleanaido_admin_back.order.entity.Order;
+import org.zerock.cleanaido_admin_back.order.entity.QOrder;
 
+import java.nio.channels.IllegalChannelGroupException;
 import java.util.List;
 
 public class CustomerSearchImpl extends QuerydslRepositorySupport implements CustomerSearch {
@@ -19,6 +23,25 @@ public class CustomerSearchImpl extends QuerydslRepositorySupport implements Cus
         super(Customer.class);
     }
 
+    @Override
+    public CustomerReadDTO getCustomerById(String customerId) {
+        QCustomer customer = QCustomer.customer;
+        QOrder order = QOrder.order;
+
+        JPQLQuery<Customer> customerQuery = from(customer)
+//                .leftJoin(customer.orders, order)
+                .where(customer.customerId.eq(customerId));
+
+        Customer result = customerQuery.fetchOne();
+
+        if(result == null)
+        {
+            throw new IllegalArgumentException("User not Found");
+        }
+
+
+        return CustomerReadDTO.builder().customerId(result.getCustomerId()).build();
+    }
 
     @Override
     public PageResponseDTO<CustomerListDTO> list(PageRequestDTO pageRequestDTO) {
