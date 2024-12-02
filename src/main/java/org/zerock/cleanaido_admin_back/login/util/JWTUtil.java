@@ -21,12 +21,13 @@ public class JWTUtil {
         this.secretKeyBytes = Base64.getDecoder().decode(secretKey);
     }
 
-    public String createAccessToken(String userId, boolean isAdmin, int expirationMinutes) {
-        log.info("Creating AccessToken: userId = {}, isAdmin = {}", userId, isAdmin); // 디버깅 로그 추가
+    public String createAccessToken(String userId, boolean isAdmin, String ownerName, int expirationMinutes) {
+        log.info("Creating AccessToken: userId = {}, isAdmin = {}, ownerName = {}", userId, isAdmin, ownerName);
         return Jwts.builder()
                 .setSubject(userId)
                 .claim("user_id", userId)
                 .claim("admin_role", isAdmin) // Boolean 값으로 설정
+                .claim("owner_name", ownerName)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMinutes * 60 * 1000))
                 .signWith(Keys.hmacShaKeyFor(secretKeyBytes), SignatureAlgorithm.HS256)

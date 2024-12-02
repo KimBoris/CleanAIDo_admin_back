@@ -47,14 +47,14 @@ import org.zerock.cleanaido_admin_back.support.faq.service.FAQService;
         }
     }
 
-    @PostMapping(value = "admin/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Long> register(
-            @ModelAttribute FAQRegisterDTO faqRegisterDTO,
-            @RequestParam("files") MultipartFile[] files) {
-        UploadDTO uploadDTO = new UploadDTO(files, null); // 또는 적절한 초기화 코드
-        Long fno = faqService.registerFAQ(faqRegisterDTO, uploadDTO);
-        return ResponseEntity.ok(fno);
-    }
+        @PostMapping(value = "admin/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+        public ResponseEntity<Long> register(
+                @ModelAttribute FAQRegisterDTO faqRegisterDTO,
+                @RequestParam(value = "files", required = false) MultipartFile[] files) { // 첨부파일 필수 아님
+            UploadDTO uploadDTO = new UploadDTO(files, null); // 파일이 없으면 null 전달
+            Long fno = faqService.registerFAQ(faqRegisterDTO, uploadDTO);
+            return ResponseEntity.ok(fno);
+        }
 
     @GetMapping("read/{fno}")
     public ResponseEntity<FAQReadDTO> read(@PathVariable Long fno) {
@@ -73,8 +73,8 @@ import org.zerock.cleanaido_admin_back.support.faq.service.FAQService;
     public ResponseEntity<String> update(
             @PathVariable Long fno,
             @ModelAttribute FAQRegisterDTO faqRegisterDTO,
-            @RequestParam("files") MultipartFile[] files){
-        UploadDTO uploadDTO = new UploadDTO(files, null);
+            @RequestParam(value = "files", required = false) MultipartFile[] files) { // 첨부파일 필수 아님
+        UploadDTO uploadDTO = new UploadDTO(files, null); // 파일이 없으면 null 전달
         Long updateFno = faqService.updateFAQ(fno, faqRegisterDTO, uploadDTO);
         return ResponseEntity.ok(updateFno + "번이 수정되었습니다.");
     }
