@@ -89,10 +89,10 @@ public class ProductService {
     }
 
     public Long registerProduct(ProductRegisterDTO dto,
-                                List<Long> categoryList, UploadDTO imageUploadDTO,
+                                List<Long> categoryList, UploadDTO thumbnailUploadDTO,
                                 UploadDTO detailImageUploadDTO, UploadDTO usageImageUploadDTO) {
 
-        // seller 유효성 확인
+        // 판매자 유효성 확인
         if (dto.getSeller() == null) {
             throw new IllegalArgumentException("판매자 정보가 누락되었습니다.");
         }
@@ -135,9 +135,9 @@ public class ProductService {
         }
 
         // 이미지 파일 처리
-        processImages(product, imageUploadDTO, true);
-        processImages(product, detailImageUploadDTO, false);
-        processImages(product, usageImageUploadDTO, false);
+        processImages(product, thumbnailUploadDTO, "thumbnail");
+        processImages(product, detailImageUploadDTO, "detail");
+        processImages(product, usageImageUploadDTO, "usage");
 
         // 상품 저장
         productRepository.save(product);
@@ -146,7 +146,8 @@ public class ProductService {
         return product.getPno();
     }
 
-    private void processImages(Product product, UploadDTO uploadDTO, boolean isMainImage) {
+
+    private void processImages(Product product, UploadDTO uploadDTO, String imageType) {
         List<String> fileNames = Optional.ofNullable(uploadDTO.getFiles())
                 .map(files -> Arrays.stream(files)
                         .filter(file -> !file.isEmpty())
@@ -155,13 +156,22 @@ public class ProductService {
                 .map(customFileUtil::saveFiles)
                 .orElse(Collections.emptyList());
 
-        log.info("Uploaded {} image files: {}", isMainImage ? "main" : "detail/usage", fileNames);
+        log.info("Uploaded {} image files: {}", imageType, fileNames);
+
 
         fileNames.forEach(filename -> {
-            if (isMainImage) {
-                product.addImageFile(filename, true);
-            } else {
-                product.addUsingImageFile(filename);
+            switch (imageType) {
+                case "thumbnail":
+                    product.addImageFile(filename, false);
+                    break;
+                case "detail":
+                    product.addImageFile(filename, true);
+                    break;
+                case "usage":
+                    product.addUsingImageFile(filename);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid image type: " + imageType);
             }
         });
     }
@@ -248,9 +258,6 @@ public class ProductService {
         }
 
         productRepository.save(product);
-
         return product.getPno();
     }
-
-
 }

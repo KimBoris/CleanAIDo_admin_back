@@ -36,10 +36,11 @@ public class AuthController {
                 throw new IllegalStateException("Admin role is null for user: " + user.getUserId());
             }
 
-            log.info("User authenticated: userId = {}, adminRole = {}", user.getUserId(), isAdmin);
+            String ownerName = user.getOwnerName();
 
-            // JWT 생성
-            String accessToken = jwtUtil.createAccessToken(user.getUserId(), isAdmin, 60);
+            log.info("User authenticated: userId = {}, adminRole = {}, ownerName = {}", user.getUserId(), isAdmin, ownerName);
+
+            String accessToken = jwtUtil.createAccessToken(user.getUserId(), isAdmin, ownerName, 60);
             String refreshToken = jwtUtil.createRefreshToken(user.getUserId(), 7);
 
             // 응답 반환
@@ -47,7 +48,8 @@ public class AuthController {
                     "accessToken", accessToken,
                     "refreshToken", refreshToken,
                     "adminRole", isAdmin,
-                    "userId", user.getUserId()
+                    "userId", user.getUserId(),
+                    "ownerName", ownerName // 응답에 owner_name 추가
             ));
         } catch (IllegalArgumentException e) {
             log.error("Invalid credentials: {}", e.getMessage());
@@ -57,7 +59,5 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Login failed");
         }
     }
-
-
 
 }
