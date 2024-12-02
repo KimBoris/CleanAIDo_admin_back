@@ -5,13 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class UserReadDTO {
-    private String userId;
-
-    private boolean delFlag;
+@NoArgsConstructor
+public class UserUpdateDTO
+{
+    private String storeName;
 }
