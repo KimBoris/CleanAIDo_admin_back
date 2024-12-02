@@ -72,7 +72,7 @@ public class CustomerService {
     public CustomerReadDTO getCustomer(String customerId) {
         CustomerReadDTO customerReadDTO = customerRepository.getCustomerById(customerId);
 
-        log.info(customerReadDTO);
+        log.info("CustomerReadDTO = "+customerReadDTO);
 
         if (customerReadDTO == null) {
             throw new EntityNotFoundException("고객을 찾을 수 없습니다.");

@@ -25,4 +25,6 @@ public class CustomerReadDTO {
 //    private boolean delFlag;
     private String address;
     private String profileImageUrl;
+    private Long orderCount;
+
 }
