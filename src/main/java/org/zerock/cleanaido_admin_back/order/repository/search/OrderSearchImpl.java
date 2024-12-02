@@ -22,6 +22,33 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
     }
 
     @Override
+    public Page<OrderListDTO> listBySeller(String sellerId, List<String> statuses, Pageable pageable) {
+        QOrder order = QOrder.order;
+        QOrderDetail orderDetail = QOrderDetail.orderDetail;
+        QProduct product = QProduct.product;
+
+        BooleanBuilder condition = new BooleanBuilder();
+        condition.and(product.seller.userId.eq(sellerId)) // 판매자 ID 조건
+                .and(order.orderStatus.in(statuses));     // 주문 상태 조건
+
+        JPQLQuery<Order> query = from(order)
+                .join(order.orderDetails, orderDetail)
+                .join(orderDetail.product, product) // Product와 조인
+                .where(condition)
+                .distinct()
+                .orderBy(order.orderNumber.desc());
+
+        getQuerydsl().applyPagination(pageable, query);
+
+        List<OrderListDTO> results = query.fetch().stream()
+                .map(OrderListDTO::new)
+                .collect(Collectors.toList());
+
+        long total = query.fetchCount();
+        return new PageImpl<>(results, pageable, total);
+    }
+
+    @Override
     public Page<OrderListDTO> list(List<String> statuses, Pageable pageable) {
         QOrder order = QOrder.order;
         BooleanBuilder condition = new BooleanBuilder();

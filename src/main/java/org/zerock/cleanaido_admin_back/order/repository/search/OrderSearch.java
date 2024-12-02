@@ -7,8 +7,8 @@ import org.zerock.cleanaido_admin_back.order.dto.OrderListDTO;
 import java.util.List;
 
 public interface OrderSearch {
+    Page<OrderListDTO> listBySeller(String sellerId, List<String> statuses, Pageable pageable);
     Page<OrderListDTO> list(List<String> statuses, Pageable pageable);
-
     Page<OrderListDTO> searchByOrderNumber(String keyword, List<String> statuses, Pageable pageable);
     Page<OrderListDTO> searchByProductNumber(String keyword, List<String> statuses, Pageable pageable);
     Page<OrderListDTO> searchByCustomerId(String keyword, List<String> statuses, Pageable pageable);
