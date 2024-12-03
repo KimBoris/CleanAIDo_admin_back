@@ -4,17 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
-import org.zerock.cleanaido_admin_back.user.entity.UserStatus;
+
+import java.time.LocalDateTime;
+
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRegisterDTO {
+public class UserReadDTO {
     private String userId;
     private String password;
-    private String businessNumber;
     private String businessName;
     private String businessType;
     private String ownerName;
@@ -27,8 +27,8 @@ public class UserRegisterDTO {
     private String originAddress;
     private String contactNumber;
     private String accountNumber;
-    private MultipartFile imageFile;
-
-    private UserStatus userStatus;
-
+    private String userStatus;
+    private boolean delFlag;
+    private boolean adminRole;
+    private LocalDateTime createDate;
 }

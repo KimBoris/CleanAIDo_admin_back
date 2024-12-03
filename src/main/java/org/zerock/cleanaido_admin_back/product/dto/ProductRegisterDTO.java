@@ -33,5 +33,5 @@ public class ProductRegisterDTO {
 
     private String pstatus;
 
-    private String sellerId;
+    private String seller;
 }

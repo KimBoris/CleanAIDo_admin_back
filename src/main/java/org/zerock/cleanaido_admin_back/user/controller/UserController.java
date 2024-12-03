@@ -1,23 +1,27 @@
 package org.zerock.cleanaido_admin_back.user.controller;
 
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.catalina.connector.Response;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.common.dto.UploadOneDTO;
 import org.zerock.cleanaido_admin_back.product.service.ProductService;
 import org.zerock.cleanaido_admin_back.user.dto.UserListDTO;
+import org.zerock.cleanaido_admin_back.user.dto.UserReadDTO;
 import org.zerock.cleanaido_admin_back.user.dto.UserRegisterDTO;
+import org.zerock.cleanaido_admin_back.user.entity.User;
+import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
+import org.zerock.cleanaido_admin_back.user.dto.UserReadDTO;
 import org.zerock.cleanaido_admin_back.user.service.UserService;
 
-import javax.annotation.security.PermitAll;
 import java.util.Map;
 
 @RestController
@@ -46,12 +50,18 @@ public class UserController {
                 .searchDTO(searchDTO)
                 .build();
 
-        //키워드가 없으면
+        //키워드가 있거나 type이 있으면
         if (searchDTO.getKeyword() != null || searchDTO.getSearchType() != null) {
             return ResponseEntity.ok(userService.search(pageRequestDTO));
         }
         return ResponseEntity.ok(userService.listUsers(pageRequestDTO));
 
+        }
+    @GetMapping("{userId}")
+    public ResponseEntity<UserReadDTO> read(@PathVariable String userId)
+    {
+        UserReadDTO readDTO = userService.getUser(userId);
+        return ResponseEntity.ok(readDTO);
     }
 
     @PostMapping(value = "register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -78,4 +88,22 @@ public class UserController {
             return ResponseEntity.badRequest().body(false);
         }
     }
+
+    @PutMapping("delete/{userId}")
+    public ResponseEntity<String> delete(@PathVariable String userId)
+    {
+        userService.softDeleteUser(userId);
+
+        return ResponseEntity.ok(userId+" is deleted successfully");
+    }
+
+    @PutMapping("{userId}")
+    public ResponseEntity<String> update(@PathVariable String userId
+                                         ,@ModelAttribute UserRegisterDTO userRegisterDTO){
+
+        String updatedUserId = userService.updateUser(userId, userRegisterDTO);
+
+        return ResponseEntity.ok(updatedUserId);
+    }
+
 }

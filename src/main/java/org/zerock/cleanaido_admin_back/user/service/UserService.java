@@ -1,27 +1,32 @@
 package org.zerock.cleanaido_admin_back.user.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.UploadOneDTO;
 import org.zerock.cleanaido_admin_back.common.util.CustomFileUtil;
 import org.zerock.cleanaido_admin_back.user.dto.UserListDTO;
+import org.zerock.cleanaido_admin_back.user.dto.UserReadDTO;
 import org.zerock.cleanaido_admin_back.user.dto.UserRegisterDTO;
 import org.zerock.cleanaido_admin_back.user.entity.User;
+import org.zerock.cleanaido_admin_back.user.entity.UserStatus;
 import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
 
-import java.util.*;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
+@Transactional
 public class UserService {
 
     private final UserRepository userRepository;
@@ -42,6 +47,7 @@ public class UserService {
     }
 
     // 이메일과 비밀번호로 사용자 인증
+    // 로그인 할 떄 사용.
     public User authenticate(String userId, String rawPassword) {
         User user = userRepository.findById(userId).orElse(null);
 
@@ -82,9 +88,49 @@ public class UserService {
                                 createDate(user.getCreateDate())
                                 .build()).collect(Collectors.toList());
 
-            return userRepository.searchBy(type, keyword, pageRequestDTO);
+        return userRepository.searchBy(type, keyword, pageRequestDTO);
     }
-    
+
+
+    public UserReadDTO getUser(String userId) {
+        UserReadDTO userReadDTO = userRepository.getUserById(userId);
+
+        if (userReadDTO == null) {
+            log.info("No User");
+            throw new EntityNotFoundException("유저를 찾을 수 없습니다.");
+        }
+        return userReadDTO;
+    }
+
+    public String softDeleteUser(String userId) {
+        User user = userRepository.findById(userId).orElseThrow(()
+                -> new EntityNotFoundException(userId + "를 찾을 수 없습니다."));
+
+        user.setDelFlag(true);
+        userRepository.save(user);
+
+        return userId + "가 삭제되었습니다.";
+    }
+
+    public String updateUser(String userId, UserRegisterDTO userRegisterDTO) {
+        User user = userRepository.findById(userId).orElseThrow(()
+                -> new EntityNotFoundException(userId + "를 찾을 수 없습니다."));
+//
+//        //유저 delflag 처리
+//        user.toggleDelFlag();
+
+        UserStatus newStatus = userRegisterDTO.getUserStatus();
+        if (newStatus == null) {
+            throw new IllegalArgumentException("유효하지 않은 상태 입니다.");
+        }
+
+        user.setUserStatus(newStatus.name());
+        userRepository.save(user);
+
+        return user.getUserId() + "의 상태가 " + newStatus.name() + "으로 변경되었습니다.";
+    }
+
+
     // 판매자 입점 등록
     public String registUser(UserRegisterDTO userRegisterDTO, UploadOneDTO uploadOneDTO) {
 

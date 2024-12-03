@@ -28,4 +28,8 @@ public class ProductListDTO {
     private LocalDateTime updatedAt;
 
     private String pstatus;
+
+    private String sellerId;
+
+    private String storeName;
 }

@@ -3,8 +3,11 @@ package org.zerock.cleanaido_admin_back.user.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.zerock.cleanaido_admin_back.product.entity.Product;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -77,4 +80,14 @@ public class User {
     @CreationTimestamp
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
+
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Product> products = new HashSet<>();
+
+    public void toggleDelFlag()
+    {
+        this.delFlag = !this.delFlag;
+    }
+
+
 }

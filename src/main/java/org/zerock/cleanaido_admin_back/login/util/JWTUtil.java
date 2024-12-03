@@ -1,5 +1,6 @@
 package org.zerock.cleanaido_admin_back.login.util;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import io.jsonwebtoken.Claims;
@@ -11,6 +12,7 @@ import java.util.Base64;
 import java.util.Date;
 
 @Component
+@Log4j2
 public class JWTUtil {
 
     private final byte[] secretKeyBytes;
@@ -19,21 +21,25 @@ public class JWTUtil {
         this.secretKeyBytes = Base64.getDecoder().decode(secretKey);
     }
 
-    public String createAccessToken(String userId, boolean isAdmin, int expirationMinutes) {
+    public String createAccessToken(String userId, boolean isAdmin, String ownerName, int expirationMinutes) {
+        log.info("Creating AccessToken: userId = {}, isAdmin = {}, ownerName = {}", userId, isAdmin, ownerName);
         return Jwts.builder()
                 .setSubject(userId)
-                .claim("user_id", userId) // user_id 포함
-                .claim("admin_role", isAdmin) // admin_role 포함
+                .claim("user_id", userId)
+                .claim("admin_role", isAdmin) // Boolean 값으로 설정
+                .claim("owner_name", ownerName)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + expirationMinutes * 24 * 60* 60 * 1000))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMinutes * 60 * 1000))
                 .signWith(Keys.hmacShaKeyFor(secretKeyBytes), SignatureAlgorithm.HS256)
                 .compact();
     }
 
+
+
     public String createRefreshToken(String userId, int expirationDays) {
         return Jwts.builder()
                 .setSubject(userId)
-                .claim("user_id", userId) // user_id 포함
+                .claim("user_id", userId) // user_id 필드 추가
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationDays * 24 * 60 * 60 * 1000))
                 .signWith(Keys.hmacShaKeyFor(secretKeyBytes), SignatureAlgorithm.HS256)

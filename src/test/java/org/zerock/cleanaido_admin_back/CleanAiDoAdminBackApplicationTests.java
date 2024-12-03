@@ -44,7 +44,7 @@ class CleanAiDoAdminBackApplicationTests {
                     .releasedAt(releaseDate)
                     .pstatus("판매중")
                     .ptags("액체세제,인체무해성분")
-                    .sellerId("s30")
+//                    .sellerId("s30")
                     .build();
 
             repository.save(product);
