@@ -13,6 +13,8 @@ import org.zerock.cleanaido_admin_back.login.util.JWTUtil;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
+
 @Log4j2
 public class JWTFilter extends OncePerRequestFilter {
 
@@ -20,6 +22,14 @@ public class JWTFilter extends OncePerRequestFilter {
 
     public JWTFilter(JWTUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        log.info("shouldNotFilter path: {}", path);
+
+        return path.startsWith("/api/auth/");
     }
 
     @Override
@@ -34,6 +44,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
                 String userId = claims.get("user_id", String.class);
                 Boolean isAdmin = claims.get("admin_role", Boolean.class);
+                String ownerName = claims.get("owner_name", String.class);
+
 
                 if (isAdmin == null) {
                     log.error("Missing admin_role in JWT token for user: {}", userId);
@@ -41,7 +53,7 @@ public class JWTFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                log.info("JWT user_id: {}, admin_role: {}", userId, isAdmin);
+                log.info("JWT user_id: {}, admin_role: {} owner_name: {}", userId, isAdmin, ownerName);
 
                 String role = isAdmin ? "ROLE_ADMIN" : "ROLE_SELLER";
 
@@ -50,6 +62,9 @@ public class JWTFilter extends OncePerRequestFilter {
                         null,
                         Collections.singletonList(new SimpleGrantedAuthority(role))
                 );
+
+                authToken.setDetails(Map.of("owner_name", ownerName));
+
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } catch (Exception e) {
                 log.error("JWT validation failed: ", e);
@@ -60,9 +75,4 @@ public class JWTFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
-
-
-
-
 }

@@ -2,6 +2,7 @@ package org.zerock.cleanaido_admin_back.customer.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.zerock.cleanaido_admin_back.order.entity.Order;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -49,4 +50,13 @@ public class Customer {
 
     @Column(name="fcm_token")
     private String fcmToken;
+//
+//    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<Order> orders;
+
+
+    public void toggleDelflag()
+    {
+        this.delFlag = !this.delFlag;
+    }
 }

@@ -89,4 +89,11 @@ public class User {
     }
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Product> products = new HashSet<>();
+
+    public void toggleDelFlag()
+    {
+        this.delFlag = !this.delFlag;
+    }
+
+
 }

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.user.dto.UserListDTO;
+import org.zerock.cleanaido_admin_back.user.dto.UserReadDTO;
 import org.zerock.cleanaido_admin_back.user.entity.QUser;
 import org.zerock.cleanaido_admin_back.user.entity.User;
 
@@ -79,12 +80,14 @@ public class UserSearchImpl extends QuerydslRepositorySupport implements UserSea
                     .or(user.userId.like("%" + keyword + "%"))
                     .or(user.storeName.like("%" + keyword + "%"));
             query.where(builder).distinct();
-        } else if (type.equals("userId")) {
+        } else if (type.equals("UserId")) {
             query.where(user.userId.like("%" + keyword + "%"));
         } else if (type.equals("OwnerName")) {
             query.where(user.ownerName.like("%" + keyword + "%"));
         } else if (type.equals("StoreName")) {
             query.where(user.storeName.like("%" + keyword + "%"));
+        } else if (type.equals("UserStatus")) {
+            query.where(user.userStatus.like("%" + keyword + "%"));
         }
 
         query.orderBy(user.userId.desc());
@@ -129,5 +132,37 @@ public class UserSearchImpl extends QuerydslRepositorySupport implements UserSea
                 .pageRequestDTO(pageRequestDTO)
                 .build();
 
+    }
+
+    @Override
+    public UserReadDTO getUserById(String userId) {
+        QUser user = QUser.user;
+
+        JPQLQuery<User> query = from(user).where(user.userId.eq(userId));
+        User result = query.fetchOne();
+
+        if (result == null) {
+            throw new IllegalArgumentException("User not Fount");
+        }
+        return UserReadDTO.builder()
+                .userId(result.getUserId())
+                .password(result.getPassword())
+                .businessName(result.getBusinessName())
+                .businessType(result.getBusinessType())
+                .ownerName(result.getOwnerName())
+                .businessAddress(result.getBusinessAddress())
+                .businessStatus(result.getBusinessStatus())
+                .businessCategory(result.getBusinessCategory())
+                .storeName(result.getStoreName())
+                .commerceLicenseNum(result.getCommerceLicenseNum())
+                .businessLicenseFile(result.getBusinessLicenseFile())
+                .originAddress(result.getOriginAddress())
+                .contactNumber(result.getContactNumber())
+                .accountNumber(result.getAccountNumber())
+                .userStatus(result.getUserStatus())
+                .delFlag(result.isDelFlag())
+                .adminRole(result.isAdminRole())
+                .createDate(result.getCreateDate())
+                .build();
     }
 }

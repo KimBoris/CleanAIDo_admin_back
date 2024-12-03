@@ -92,7 +92,7 @@ public class ProductService {
                                 List<Long> categoryList, UploadDTO imageUploadDTO,
                                 UploadDTO detailImageUploadDTO, UploadDTO usageImageUploadDTO) {
 
-        // seller 유효성 확인
+        // 판매자 유효성 확인
         if (dto.getSeller() == null) {
             throw new IllegalArgumentException("판매자 정보가 누락되었습니다.");
         }
@@ -156,7 +156,8 @@ public class ProductService {
                 .map(customFileUtil::saveFiles)
                 .orElse(Collections.emptyList());
 
-        log.info("Uploaded {} image files: {}", isMainImage ? "main" : "detail/usage", fileNames);
+        log.info("Uploaded {} image files: {}", imageType, fileNames);
+
 
         fileNames.forEach(filename -> {
             if (isMainImage) {
