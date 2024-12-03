@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.zerock.cleanaido_admin_back.category.entity.Category;
 import org.zerock.cleanaido_admin_back.user.entity.User;
 
 import java.time.LocalDateTime;
@@ -52,6 +53,12 @@ public class Product {
     @Builder.Default
     private String pstatus = "selling";
 
+    @Column(name = "use_case", nullable = false)
+    private String puseCase;
+
+    @Column(name = "used_item", nullable = false)
+    private String pusedItem;
+
     @Column(name = "tags", length = 100)
     private String ptags;
 
@@ -63,6 +70,10 @@ public class Product {
     @Builder.Default
     private Set<ImageFiles> imageFiles = new HashSet<>();
 
+    @ElementCollection
+    @Builder.Default
+    private Set<UsageImageFile> usageImageFiles = new HashSet<>();
+
     public void addImageFile(String filename, boolean type) {
         imageFiles.add(new ImageFiles(imageFiles.size(), filename, type));
     }
@@ -71,10 +82,6 @@ public class Product {
         imageFiles.clear();
     }
 
-    @ElementCollection
-    @Builder.Default
-    private Set<UsageImageFile> usageImageFiles = new HashSet<>();
-
     public void addUsingImageFile(String filename) {
         usageImageFiles.add(new UsageImageFile(usageImageFiles.size(), filename));
     }
@@ -82,5 +89,10 @@ public class Product {
     public void clearUsingImageFile() {
         usageImageFiles.clear();
     }
-}
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_number", nullable = false)
+    private Category category;
+
+
+}

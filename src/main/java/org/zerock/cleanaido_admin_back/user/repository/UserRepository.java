@@ -8,6 +8,5 @@ import org.zerock.cleanaido_admin_back.user.entity.User;
 import org.zerock.cleanaido_admin_back.user.repository.search.UserSearch;
 
 public interface UserRepository extends JpaRepository<User, String> , UserSearch {
-
-
+    boolean existsByUserId(String userId);
 }

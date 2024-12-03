@@ -99,6 +99,27 @@ public class CustomFileUtil {
     return ResponseEntity.ok().headers(headers).body(resource);
   }
 
+  public String saveFile(MultipartFile file) throws RuntimeException {
+
+    if (file == null || file.isEmpty()) {
+      return null;
+    }
+
+    // 고유한 파일 이름 생성
+    String savedName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
+
+    // 저장 경로 설정
+    Path savePath = Paths.get(uploadPath, savedName);
+
+    try {
+      // 파일을 저장 경로로 복사
+      Files.copy(file.getInputStream(), savePath);
+    } catch (IOException e) {
+      throw new RuntimeException(e.getMessage());
+    }
+
+    return savedName;
+  }
 
   public void deleteFiles(List<String> fileNames) {
 
