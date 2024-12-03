@@ -17,4 +17,6 @@ public interface UserSearch {
 
     UserReadDTO getUserById(String userId);
 
+    PageResponseDTO<UserListDTO> getUserByStatus(PageRequestDTO pageRequestDTO);
+
 }
