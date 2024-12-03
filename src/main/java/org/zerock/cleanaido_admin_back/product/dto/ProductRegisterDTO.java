@@ -29,6 +29,8 @@ public class ProductRegisterDTO {
 
     private LocalDateTime releasedAt;
 
+    private Long categoryId;
+
     private String ptags;
 
     private String pstatus;

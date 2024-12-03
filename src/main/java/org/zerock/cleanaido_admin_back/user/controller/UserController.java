@@ -13,7 +13,6 @@ import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.common.dto.UploadOneDTO;
-
 import org.zerock.cleanaido_admin_back.user.dto.UserListDTO;
 import org.zerock.cleanaido_admin_back.user.dto.UserReadDTO;
 import org.zerock.cleanaido_admin_back.user.dto.UserRegisterDTO;
@@ -56,7 +55,8 @@ public class UserController {
         }
         return ResponseEntity.ok(userService.listUsers(pageRequestDTO));
 
-        }
+    }
+
     @GetMapping("{userId}")
     public ResponseEntity<UserReadDTO> read(@PathVariable String userId)
     {
@@ -104,6 +104,18 @@ public class UserController {
         String updatedUserId = userService.updateUser(userId, userRegisterDTO);
 
         return ResponseEntity.ok(updatedUserId);
+    }
+
+    @GetMapping("request")
+    public ResponseEntity<PageResponseDTO<UserListDTO>> request(@RequestParam(value = "page", defaultValue = "1") int page,
+                                                                @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(page)
+                .size(size)
+                .build();
+
+        return ResponseEntity.ok(userService.userListByStatus(pageRequestDTO));
     }
 
 }
