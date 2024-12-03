@@ -165,4 +165,50 @@ public class UserSearchImpl extends QuerydslRepositorySupport implements UserSea
                 .createDate(result.getCreateDate())
                 .build();
     }
+
+    @Override
+    public PageResponseDTO<UserListDTO> getUserByStatus(PageRequestDTO pageRequestDTO) {
+        QUser user = QUser.user;
+
+        JPQLQuery<User> query = from(user)
+                .where(user.userStatus.eq("입점요청"))
+                .orderBy(user.userId.desc());
+
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
+
+        getQuerydsl().applyPagination(pageable, query);
+
+        JPQLQuery<UserListDTO> results =
+                query.select(
+                        Projections.bean(
+                                UserListDTO.class,
+                                user.userId,
+                                user.password,
+                                user.businessName,
+                                user.businessType,
+                                user.ownerName,
+                                user.businessAddress,
+                                user.businessStatus,
+                                user.businessCategory,
+                                user.storeName,
+                                user.commerceLicenseNum,
+                                user.businessLicenseFile,
+                                user.originAddress,
+                                user.contactNumber,
+                                user.accountNumber,
+                                user.userStatus,
+                                user.delFlag,
+                                user.adminRole,
+                                user.createDate
+                        )
+                );
+        List<UserListDTO> dtoList = results.fetch();
+        long total = query.fetchCount();
+
+        return PageResponseDTO.<UserListDTO>withAll()
+                .dtoList(dtoList)
+                .totalCount(total)
+                .pageRequestDTO(pageRequestDTO)
+                .build();
+    }
 }
