@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.zerock.cleanaido_admin_back.category.entity.Category;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,7 +35,7 @@ public class ProductReadDTO {
 
     private List<String> usageImageFiles;
 
-    private List<Long> categories;
+    private Category category;
 
     private String tags;
 
