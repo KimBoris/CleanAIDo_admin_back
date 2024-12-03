@@ -18,6 +18,7 @@ import org.zerock.cleanaido_admin_back.user.dto.UserRegisterDTO;
 import org.zerock.cleanaido_admin_back.user.service.UserService;
 
 import javax.annotation.security.PermitAll;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/admin/user")
@@ -54,13 +55,27 @@ public class UserController {
     }
 
     @PostMapping(value = "register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> register(
-            UserRegisterDTO userRegisterDTO,
-            @RequestParam("imageFile") MultipartFile imageFile) {
+    public ResponseEntity<String> register(UserRegisterDTO userRegisterDTO) {
 
-        UploadOneDTO uploadOneDTO = new UploadOneDTO(imageFile, null);
+        UploadOneDTO uploadOneDTO = new UploadOneDTO(userRegisterDTO.getImageFile(), null);
         String userId = userService.registUser(userRegisterDTO, uploadOneDTO);
 
         return ResponseEntity.ok(userId);
+    }
+
+    @PostMapping("checkid")
+    public ResponseEntity<Boolean> check(@RequestBody Map<String, String> requestId) {
+        try {
+
+            String userId = requestId.get("userId");
+            boolean isUserId = userService.checkUserId(userId);
+
+            return ResponseEntity.ok(isUserId);
+
+        } catch (IllegalArgumentException e) {
+
+            // 잘못된 요청에 대한 응답 처리
+            return ResponseEntity.badRequest().body(false);
+        }
     }
 }

@@ -84,8 +84,8 @@ public class UserService {
 
             return userRepository.searchBy(type, keyword, pageRequestDTO);
     }
-
-
+    
+    // 판매자 입점 등록
     public String registUser(UserRegisterDTO userRegisterDTO, UploadOneDTO uploadOneDTO) {
 
         User user = User.builder()
@@ -115,6 +115,15 @@ public class UserService {
         userRepository.save(user);
 
         return user.getUserId();
+    }
+
+    // 판매자 아이디 중복 조회
+    public boolean checkUserId(String userId) {
+
+        if (userId == null || userId.trim().isEmpty()) {
+            return true; // 또는 예외를 던질 수 있음
+        }
+        return userRepository.existsByUserId(userId);
     }
 
 }
