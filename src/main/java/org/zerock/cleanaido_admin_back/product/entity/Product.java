@@ -50,7 +50,7 @@ public class Product {
 
     @Column(name = "product_status", nullable = false, length = 50)
     @Builder.Default
-    private String pstatus = "판매중";
+    private String pstatus = "selling";
 
     @Column(name = "tags", length = 100)
     private String ptags;

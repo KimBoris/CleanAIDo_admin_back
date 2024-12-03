@@ -111,6 +111,7 @@ public class ProductService {
                 .price(dto.getPrice())
                 .quantity(dto.getQuantity())
                 .releasedAt(dto.getReleasedAt())
+                .pstatus(dto.getPstatus())
                 .ptags(dto.getPtags())
                 .seller(seller)
                 .build();
@@ -135,9 +136,9 @@ public class ProductService {
         }
 
         // 이미지 파일 처리
-        processImages(product, imageUploadDTO, true);
-        processImages(product, detailImageUploadDTO, false);
-        processImages(product, usageImageUploadDTO, false);
+        processImages(product, imageUploadDTO, true, false);
+        processImages(product, detailImageUploadDTO, true, true);
+        processImages(product, usageImageUploadDTO, false,true);
 
         // 상품 저장
         productRepository.save(product);
@@ -146,7 +147,7 @@ public class ProductService {
         return product.getPno();
     }
 
-    private void processImages(Product product, UploadDTO uploadDTO, boolean isMainImage) {
+    private void processImages(Product product, UploadDTO uploadDTO, boolean isMainImage, boolean isDetailImage) {
         List<String> fileNames = Optional.ofNullable(uploadDTO.getFiles())
                 .map(files -> Arrays.stream(files)
                         .filter(file -> !file.isEmpty())
@@ -159,7 +160,12 @@ public class ProductService {
 
         fileNames.forEach(filename -> {
             if (isMainImage) {
-                product.addImageFile(filename, true);
+                if (isDetailImage) {
+                    product.addImageFile(filename, true);
+                }
+                else {
+                    product.addImageFile(filename, false);
+                }
             } else {
                 product.addUsingImageFile(filename);
             }
@@ -251,6 +257,5 @@ public class ProductService {
 
         return product.getPno();
     }
-
 
 }
