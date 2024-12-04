@@ -159,7 +159,6 @@ public class ProductSearchImpl extends QuerydslRepositorySupport implements Prod
     @Override
     public ProductReadDTO getProduct(Long pno) {
         QProduct product = QProduct.product;
-        QCategory category = QCategory.category;
 
         // Fetch Product data
         JPQLQuery<Product> productQuery = from(product).where(product.pno.eq(pno));
@@ -190,12 +189,15 @@ public class ProductSearchImpl extends QuerydslRepositorySupport implements Prod
                 .quantity(result.getQuantity())
                 .createdAt(result.getCreatedAt())
                 .updatedAt(result.getUpdatedAt())
+                .releasedAt(result.getReleasedAt())
                 .imageFiles(imageFiles)
                 .detailImageFiles(detailImageFiles)
                 .usageImageFiles(result.getUsageImageFiles().stream()
                         .map(org.zerock.cleanaido_admin_back.product.entity.UsageImageFile::getFileName) // FQN 사용
                         .toList())
                 .category(result.getCategory())
+                .puseCase(result.getPuseCase())
+                .pusedItem(result.getPusedItem())
                 .tags(result.getPtags())
                 .pstatus(result.getPstatus())
                 .build();
