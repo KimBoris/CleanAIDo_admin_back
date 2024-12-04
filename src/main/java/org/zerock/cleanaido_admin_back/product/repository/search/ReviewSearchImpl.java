@@ -11,6 +11,7 @@ import org.zerock.cleanaido_admin_back.customer.entity.QCustomer;
 import org.zerock.cleanaido_admin_back.product.dto.ReviewListDTO;
 import org.zerock.cleanaido_admin_back.product.entity.QProduct;
 import org.zerock.cleanaido_admin_back.product.entity.QReview;
+import org.zerock.cleanaido_admin_back.product.entity.QReviewImage;
 import org.zerock.cleanaido_admin_back.product.entity.Review;
 import org.zerock.cleanaido_admin_back.user.entity.QUser;
 
@@ -29,11 +30,12 @@ public class ReviewSearchImpl extends QuerydslRepositorySupport implements Revie
         QReview review = QReview.review;
         QProduct product = QProduct.product;
         QCustomer customer = QCustomer.customer;
-
+        QReviewImage reviewImages = QReviewImage.reviewImage;
 
         JPQLQuery<Review> query = from(review)
                 .leftJoin(review.product, product).on(review.product.pno.eq(product.pno))
-                .leftJoin(review.customer, customer).on(customer.customerId.eq(customer.customerId))
+                .leftJoin(review.customer, customer).on(review.customer.customerId.eq(customer.customerId))
+                .leftJoin(review.reviewImages, reviewImages)
                 .orderBy(review.reviewNumber.desc());
 
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
@@ -46,8 +48,10 @@ public class ReviewSearchImpl extends QuerydslRepositorySupport implements Revie
                         review.reviewContent,
                         review.createDate,
                         review.score,
+                        product.pname.as("productName"),
                         customer.customerName.as("customerName"),
-                        customer.customerId.as("customerId")
+                        customer.customerId.as("customerId"),
+                        product.pname.as("productName")
 
                 )
         );

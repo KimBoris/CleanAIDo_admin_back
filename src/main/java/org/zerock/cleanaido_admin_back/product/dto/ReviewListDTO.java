@@ -21,9 +21,9 @@ public class ReviewListDTO {
     private String reviewContent;
     private LocalDateTime createDate;
     private int score;
+    private String customerId;
     private String customerName;
     private String productName;
-    private Set<String> reviewImages;
 
 
 }
