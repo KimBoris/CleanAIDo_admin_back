@@ -172,4 +172,15 @@ public class UserService {
         return userRepository.existsByUserId(userId);
     }
 
+    public PageResponseDTO<UserListDTO> userListByStatus(PageRequestDTO pageRequestDTO) {
+
+        if (pageRequestDTO.getPage() < 1) {
+            throw new IllegalArgumentException("페이지 번호는 1이상 이어야 합니다.");
+        }
+
+        PageResponseDTO<UserListDTO> response = userRepository.getUserByStatus(pageRequestDTO);
+
+        return response;
+    }
+
 }
