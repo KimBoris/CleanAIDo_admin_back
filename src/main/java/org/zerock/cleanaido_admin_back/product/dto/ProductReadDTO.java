@@ -29,6 +29,8 @@ public class ProductReadDTO {
 
     private LocalDateTime updatedAt;
 
+    private LocalDateTime releasedAt;
+
     private List<String> imageFiles;
 
     private List<String> detailImageFiles;
@@ -36,6 +38,10 @@ public class ProductReadDTO {
     private List<String> usageImageFiles;
 
     private Category category;
+
+    private String puseCase;
+
+    private String pusedItem;
 
     private String tags;
 

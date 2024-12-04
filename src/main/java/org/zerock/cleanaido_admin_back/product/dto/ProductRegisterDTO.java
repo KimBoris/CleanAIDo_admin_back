@@ -36,4 +36,8 @@ public class ProductRegisterDTO {
     private String pstatus;
 
     private String seller;
+
+    private String puseCase;
+
+    private String pusedItem;
 }
