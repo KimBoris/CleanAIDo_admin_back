@@ -147,6 +147,7 @@ public class UserSearchImpl extends QuerydslRepositorySupport implements UserSea
         return UserReadDTO.builder()
                 .userId(result.getUserId())
                 .password(result.getPassword())
+                .businessNumber(result.getBusinessNumber())
                 .businessName(result.getBusinessName())
                 .businessType(result.getBusinessType())
                 .ownerName(result.getOwnerName())
