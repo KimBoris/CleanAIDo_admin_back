@@ -15,6 +15,7 @@ import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.category.dto.CategoryDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductListDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductReadDTO;
+import org.zerock.cleanaido_admin_back.product.entity.ImageFile;
 import org.zerock.cleanaido_admin_back.product.entity.Product;
 import org.zerock.cleanaido_admin_back.category.entity.QCategory;
 import org.zerock.cleanaido_admin_back.product.entity.QProduct;
@@ -172,12 +173,12 @@ public class ProductSearchImpl extends QuerydslRepositorySupport implements Prod
         // Split image files by type
         List<String> imageFiles = result.getImageFiles().stream()
                 .filter(imageFile -> !imageFile.isType()) // `type`이 `false`인 경우
-                .map(org.zerock.cleanaido_admin_back.product.entity.ImageFiles::getFileName) // FQN 사용
+                .map(ImageFile::getFileName) // FQN 사용
                 .toList();
 
         List<String> detailImageFiles = result.getImageFiles().stream()
-                .filter(org.zerock.cleanaido_admin_back.product.entity.ImageFiles::isType) // `type`이 `true`인 경우
-                .map(org.zerock.cleanaido_admin_back.product.entity.ImageFiles::getFileName) // FQN 사용
+                .filter(ImageFile::isType) // `type`이 `true`인 경우
+                .map(ImageFile::getFileName) // FQN 사용
                 .toList();
 
         // Build DTO

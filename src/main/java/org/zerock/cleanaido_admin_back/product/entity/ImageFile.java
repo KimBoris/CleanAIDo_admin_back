@@ -12,7 +12,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class ImageFiles {
+public class ImageFile {
 
     @Column(name = "ord")
     private int ord;

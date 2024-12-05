@@ -3,7 +3,6 @@ package org.zerock.cleanaido_admin_back.product.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +17,10 @@ import org.zerock.cleanaido_admin_back.product.dto.ProductListDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductReadDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductRegisterDTO;
 import org.zerock.cleanaido_admin_back.category.entity.Category;
+import org.zerock.cleanaido_admin_back.product.entity.ImageFile;
 import org.zerock.cleanaido_admin_back.product.entity.Product;
 import org.zerock.cleanaido_admin_back.product.entity.UsageImageFile;
 import org.zerock.cleanaido_admin_back.product.repository.ProductRepository;
-import org.zerock.cleanaido_admin_back.product.entity.ImageFiles;
 import org.zerock.cleanaido_admin_back.user.entity.User;
 import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
 
@@ -217,7 +216,7 @@ public class ProductService {
         // type이 true인 경우만 필터링
         List<String> oldFileNames = product.getImageFiles().stream()
                 .filter(imageFile -> !imageFile.isType()) // isType == false
-                .map(ImageFiles::getFileName) // 파일 이름만 추출
+                .map(ImageFile::getFileName) // 파일 이름만 추출
                 .collect(Collectors.toList());
 
         for (String file : oldFileNames) {
@@ -238,8 +237,8 @@ public class ProductService {
 
         // type이 false인 경우만 필터링 (상세 이미지 파일)
         List<String> oldDetailFileNames = product.getImageFiles().stream()
-                .filter(ImageFiles::isType) // isType == true
-                .map(ImageFiles::getFileName) // 파일 이름만 추출
+                .filter(ImageFile::isType) // isType == true
+                .map(ImageFile::getFileName) // 파일 이름만 추출
                 .collect(Collectors.toList());
 
         // 삭제할 파일 리스트

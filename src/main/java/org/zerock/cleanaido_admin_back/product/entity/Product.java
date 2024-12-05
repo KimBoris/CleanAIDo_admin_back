@@ -68,14 +68,14 @@ public class Product {
 
     @ElementCollection
     @Builder.Default
-    private Set<ImageFiles> imageFiles = new HashSet<>();
+    private Set<ImageFile> imageFiles = new HashSet<>();
 
     @ElementCollection
     @Builder.Default
     private Set<UsageImageFile> usageImageFiles = new HashSet<>();
 
     public void addImageFile(String filename, boolean type) {
-        imageFiles.add(new ImageFiles(imageFiles.size(), filename, type));
+        imageFiles.add(new ImageFile(imageFiles.size(), filename, type));
     }
 
     public void clearImageFile() {
