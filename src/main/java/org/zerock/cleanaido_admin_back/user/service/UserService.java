@@ -185,12 +185,12 @@ public class UserService {
     }
 
     // 입점요청 승인(상태를 '입점'으로 업데이트)
-    public String okUserRequest(String userId) {
+    public String updateUserStatus(String userId, String status) {
 
         User user = userRepository.findById(userId).orElseThrow(()
                 -> new EntityNotFoundException(userId + "를 찾을 수 없습니다."));
 
-        user.setUserStatus("입점");
+        user.setUserStatus(status);
         userRepository.save(user);
 
         return user.getUserId();
