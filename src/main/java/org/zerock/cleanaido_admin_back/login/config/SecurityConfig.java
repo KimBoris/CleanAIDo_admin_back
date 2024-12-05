@@ -26,6 +26,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
         http
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -44,8 +45,13 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/admin/user/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/v1/admin/customer/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/v1/category/**").hasAuthority("ROLE_ADMIN")
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/v1/images/**").permitAll()
                 )
+                .anonymous(httpSecurityAnonymousConfigurer -> {
+                    httpSecurityAnonymousConfigurer
+                            .principal("anonymousUser") // 익명 사용자의 principal 설정
+                            .authorities("ROLE_ANONYMOUS"); // 익명 사용자에게 권한 부여
+                })
                 .addFilterBefore(new JWTFilter(jwtUtil), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
