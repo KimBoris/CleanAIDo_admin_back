@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class UserReadDTO {
     private String userId;
     private String password;
+    private String businessNumber;
     private String businessName;
     private String businessType;
     private String ownerName;

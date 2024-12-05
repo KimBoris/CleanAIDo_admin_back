@@ -172,6 +172,7 @@ public class UserService {
         return userRepository.existsByUserId(userId);
     }
 
+    // 상태가 입점요청인 판매자 리스트 조회
     public PageResponseDTO<UserListDTO> userListByStatus(PageRequestDTO pageRequestDTO) {
 
         if (pageRequestDTO.getPage() < 1) {
@@ -181,6 +182,19 @@ public class UserService {
         PageResponseDTO<UserListDTO> response = userRepository.getUserByStatus(pageRequestDTO);
 
         return response;
+    }
+
+    // 입점요청 승인(상태를 '입점'으로 업데이트)
+    public String okUserRequest(String userId) {
+
+        User user = userRepository.findById(userId).orElseThrow(()
+                -> new EntityNotFoundException(userId + "를 찾을 수 없습니다."));
+
+        user.setUserStatus("입점");
+        userRepository.save(user);
+
+        return user.getUserId();
+
     }
 
 }
