@@ -63,6 +63,12 @@ public class UserService {
 
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
 
+        log.info("------------------------------------------");
+        log.info(type);
+        log.info(keyword);
+        log.info("------------------------------------------");
+
+
         PageResponseDTO<UserListDTO> resultPage = userRepository.searchBy(type, keyword, pageRequestDTO);
 
         List<UserListDTO> dtoList = resultPage.getDtoList().stream()

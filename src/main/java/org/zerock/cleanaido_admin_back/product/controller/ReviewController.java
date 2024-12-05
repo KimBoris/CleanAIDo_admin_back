@@ -17,7 +17,7 @@ import org.zerock.cleanaido_admin_back.product.service.ReviewService;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/review")
 @ToString
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174", "http://localhost:5175"})
+@CrossOrigin(origins = "*")
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -43,5 +43,7 @@ public class ReviewController {
 
         return ResponseEntity.ok(reviewService.list(pageRequestDTO,  role));
     }
+
+
 
 }
