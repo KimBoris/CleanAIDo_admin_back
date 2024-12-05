@@ -118,13 +118,14 @@ public class UserController {
         return ResponseEntity.ok(userService.userListByStatus(pageRequestDTO));
     }
 
-    @PutMapping("okrequest")
-    public ResponseEntity<String> okRequest(@RequestBody Map<String, String> requestId) {
+    @PutMapping("status")
+    public ResponseEntity<String> updateStatus(@RequestBody Map<String, String> request) {
 
         try {
 
-            String userId = requestId.get("userId");
-            String response = userService.okUserRequest(userId);
+            String userId = request.get("userId");
+            String status = request.get("status");
+            String response = userService.updateUserStatus(userId, status);
 
             return ResponseEntity.ok(response);
 
