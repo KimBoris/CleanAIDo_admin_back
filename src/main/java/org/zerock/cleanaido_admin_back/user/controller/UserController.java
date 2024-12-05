@@ -118,4 +118,25 @@ public class UserController {
         return ResponseEntity.ok(userService.userListByStatus(pageRequestDTO));
     }
 
+    @PutMapping("status")
+    public ResponseEntity<String> updateStatus(@RequestBody Map<String, String> request) {
+
+        try {
+
+            String userId = request.get("userId");
+            String status = request.get("status");
+            String response = userService.updateUserStatus(userId, status);
+
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+
+            // 잘못된 요청에 대한 응답 처리
+            return ResponseEntity.badRequest().body("요청 실패");
+            
+        }
+
+
+    }
+
 }

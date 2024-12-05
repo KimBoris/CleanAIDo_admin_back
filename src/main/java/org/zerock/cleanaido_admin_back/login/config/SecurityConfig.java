@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/admin/user/checkid").permitAll()
                         .requestMatchers("/api/v1/admin/user/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/v1/admin/customer/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/v1/category/**").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JWTFilter(jwtUtil), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
