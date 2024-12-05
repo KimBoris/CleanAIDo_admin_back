@@ -1,6 +1,7 @@
 package org.zerock.cleanaido_admin_back.order.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -8,12 +9,14 @@ import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.order.dto.OrderListDTO;
+import org.zerock.cleanaido_admin_back.order.dto.OrderDetailListDTO;
 import org.zerock.cleanaido_admin_back.order.repository.OrderRepository;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -58,4 +61,15 @@ public class OrderService {
                 return Page.empty(pageable);
         }
     }
+
+    public PageResponseDTO<OrderDetailListDTO> listOrderDetail
+            (String sellerId, Long orderNum, PageRequestDTO pageRequestDTO) {
+
+        PageResponseDTO<OrderDetailListDTO> results
+                = orderRepository.getOrderDetailList(sellerId, orderNum, pageRequestDTO);
+
+        return results;
+
+    }
+
 }

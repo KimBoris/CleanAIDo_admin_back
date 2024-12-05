@@ -1,16 +1,21 @@
 package org.zerock.cleanaido_admin_back.order.repository.search;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPQLQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
+import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
+import org.zerock.cleanaido_admin_back.order.dto.OrderDetailListDTO;
 import org.zerock.cleanaido_admin_back.order.dto.OrderListDTO;
-import org.zerock.cleanaido_admin_back.order.entity.Order;
-import org.zerock.cleanaido_admin_back.order.entity.QOrder;
-import org.zerock.cleanaido_admin_back.order.entity.QOrderDetail;
+import org.zerock.cleanaido_admin_back.order.entity.*;
 import org.zerock.cleanaido_admin_back.product.entity.QProduct;
+import org.zerock.cleanaido_admin_back.user.entity.QUser;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -156,5 +161,46 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
 
         long total = query.fetchCount();
         return new PageImpl<>(results, pageable, total);
+    }
+
+    public PageResponseDTO<OrderDetailListDTO> getOrderDetailList
+            (String sellerId, Long orderNum, PageRequestDTO pageRequestDTO) {
+        QOrder order = QOrder.order;
+        QOrderDetail orderDetail = QOrderDetail.orderDetail;
+        QProduct product = QProduct.product;
+        QUser user = QUser.user;
+
+        JPQLQuery<OrderDetail> query = from(orderDetail)
+                .leftJoin(orderDetail.order, order)
+                .leftJoin(orderDetail.product, product)
+                .leftJoin(product.seller, user)
+                .where(user.userId.eq(sellerId))
+                .where(orderDetail.order.orderNumber.eq(orderNum));
+
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
+        getQuerydsl().applyPagination(pageable, query);
+
+        JPQLQuery<OrderDetailListDTO> results = query.select(
+                Projections.bean(
+                        OrderDetailListDTO.class,
+                        product.pcode,
+                        product.pname,
+                        orderDetail.quantity,
+                        product.price,
+                        Expressions.as(
+                                product.price.multiply(orderDetail.quantity),
+                                "totalPrice"
+                        )
+                )
+        );
+
+        List<OrderDetailListDTO> dtoList = results.fetch();
+        long total = query.fetchCount();
+
+        return PageResponseDTO.<OrderDetailListDTO>withAll()
+                .dtoList(dtoList)
+                .totalCount(total)
+                .pageRequestDTO(pageRequestDTO)
+                .build();
     }
 }

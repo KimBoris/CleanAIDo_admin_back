@@ -1,12 +1,14 @@
 package org.zerock.cleanaido_admin_back.order.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
 import org.zerock.cleanaido_admin_back.order.dto.OrderListDTO;
+import org.zerock.cleanaido_admin_back.order.dto.OrderDetailListDTO;
 import org.zerock.cleanaido_admin_back.order.service.OrderService;
 
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
+@Log4j2
+@CrossOrigin(origins = "*")
 public class OrderController {
 
     private final OrderService orderService;
@@ -71,5 +75,31 @@ public class OrderController {
         PageResponseDTO<OrderListDTO> response = orderService.listOrdersByRole(pageRequestDTO, canceledStatuses, userId, role);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/detail")
+    public ResponseEntity<PageResponseDTO<OrderDetailListDTO>> getOrderDetail(@RequestParam(value = "sellerId") String sellerId,
+                                                                              @RequestParam(value = "orderNumber") String orderNumber,
+                                                                              @RequestParam(value = "page", defaultValue = "1") int page,
+                                                                              @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        if (orderNumber == null || !orderNumber.matches("\\d+")) {
+            throw new IllegalArgumentException("Invalid orderNumber: " + orderNumber);
+        }
+        Long orderNum = Long.valueOf(orderNumber);
+
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(page)
+                .size(size)
+                .build();
+
+        PageResponseDTO<OrderDetailListDTO> response = orderService.listOrderDetail(sellerId, orderNum, pageRequestDTO);
+
+        log.info("==============================");
+        log.info(response.toString());
+        log.info("==============================");
+
+        return ResponseEntity.ok(response);
+
     }
 }
