@@ -118,4 +118,24 @@ public class UserController {
         return ResponseEntity.ok(userService.userListByStatus(pageRequestDTO));
     }
 
+    @PutMapping("okrequest")
+    public ResponseEntity<String> okRequest(@RequestBody Map<String, String> requestId) {
+
+        try {
+
+            String userId = requestId.get("userId");
+            String response = userService.okUserRequest(userId);
+
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+
+            // 잘못된 요청에 대한 응답 처리
+            return ResponseEntity.badRequest().body("요청 실패");
+            
+        }
+
+
+    }
+
 }
