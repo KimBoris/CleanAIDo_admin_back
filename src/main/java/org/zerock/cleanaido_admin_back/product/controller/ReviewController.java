@@ -44,6 +44,4 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.list(pageRequestDTO,  role));
     }
 
-
-
 }

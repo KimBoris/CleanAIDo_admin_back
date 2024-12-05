@@ -76,17 +76,6 @@ public class UserSearchImpl extends QuerydslRepositorySupport implements UserSea
 
         JPQLQuery<User> query = from(user);
 
-        log.info("=============================================");
-        log.info("=============================================");
-
-        log.info(type);
-        log.info(keyword);
-
-        log.info("=============================================");
-
-        log.info("=============================================");
-
-
         //type = 스토어명, 유저 아이디, 사업자명
         if (type == null || type.isEmpty()) {
             BooleanBuilder builder = new BooleanBuilder();
