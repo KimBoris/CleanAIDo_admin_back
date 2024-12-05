@@ -6,7 +6,6 @@ spring:
     url: jdbc:mariadb://10.10.10.158:3306/cleanaido
     username: cleanaidouser
     password: cleanaidouser
-
     hikari:
       minimum-idle: 2
       maximum-pool-size: 5
@@ -27,6 +26,7 @@ spring:
       max-request-size: 20MB
       location: upload
       enabled: true
+
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false

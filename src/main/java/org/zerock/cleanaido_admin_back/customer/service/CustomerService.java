@@ -24,7 +24,9 @@ import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
 @Log4j2
 @Transactional
 public class CustomerService {
+
     private final CustomerRepository customerRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     public Customer authenticate(String customerId, String rawPassword) {

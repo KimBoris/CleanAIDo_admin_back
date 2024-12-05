@@ -115,10 +115,12 @@ public class ProductController {
     public ResponseEntity<Long> update(
             @PathVariable Long pno, // 수정 대상 Product 번호
             @ModelAttribute ProductRegisterDTO productRegisterDTO, // 수정할 기본 정보
+            @RequestParam(value = "oldImageFiles", required = false) List<String> oldImageFiles,
+            @RequestParam(value = "oldDetailFiles", required = false) List<String> oldDetailFiles,
+            @RequestParam(value = "oldUsageFiles", required = false) List<String> oldUsageFiles,
             @RequestParam(value = "imageFiles", required = false) MultipartFile[] imageFiles, // 새 이미지 파일
             @RequestParam(value = "detailImageFiles", required = false) MultipartFile[] detailImageFiles, // 새 상세 이미지
             @RequestParam(value = "usageImageFiles", required = false) MultipartFile[] usageImageFiles) { // 새 사용법 이미지
-        log.info("업데이트 코드 실행");
 
         // 파일이 존재하면 UploadDTO 생성
         UploadDTO imageUploadDTO = (imageFiles != null) ? new UploadDTO(imageFiles, null) : null;
@@ -127,7 +129,9 @@ public class ProductController {
 
         // 서비스 호출을 통해 데이터 수정
         Long updatedPno = productService.updateProduct(
-                pno, productRegisterDTO, imageUploadDTO, detailImageUploadDTO, usageImageUploadDTO);
+                pno, productRegisterDTO,
+                oldImageFiles, oldDetailFiles, oldUsageFiles,
+                imageUploadDTO, detailImageUploadDTO, usageImageUploadDTO);
 
         return ResponseEntity.ok(updatedPno); // 수정된 Product 번호 반환
     }

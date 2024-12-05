@@ -25,10 +25,7 @@ import org.zerock.cleanaido_admin_back.product.entity.ImageFiles;
 import org.zerock.cleanaido_admin_back.user.entity.User;
 import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,7 +49,6 @@ public class ProductService {
             throw new IllegalArgumentException("잘못된 권한입니다.");
         }
     }
-
 
 
     public PageResponseDTO<ProductListDTO> search(PageRequestDTO pageRequestDTO) {
@@ -126,7 +122,7 @@ public class ProductService {
         // 이미지 파일 처리
         processImages(product, imageUploadDTO, true, false);
         processImages(product, detailImageUploadDTO, true, true);
-        processImages(product, usageImageUploadDTO, false,true);
+        processImages(product, usageImageUploadDTO, false, true);
 
         // 상품 저장
         productRepository.save(product);
@@ -136,6 +132,8 @@ public class ProductService {
     }
 
     private void processImages(Product product, UploadDTO uploadDTO, boolean isMainImage, boolean isDetailImage) {
+        log.info("Processing image for product: {}", product.getPno());
+        log.info("Upload image: {}", uploadDTO);
         List<String> fileNames = Optional.ofNullable(uploadDTO.getFiles())
                 .map(files -> Arrays.stream(files)
                         .filter(file -> !file.isEmpty())
@@ -149,8 +147,7 @@ public class ProductService {
             if (isMainImage) {
                 if (isDetailImage) {
                     product.addImageFile(filename, true);
-                }
-                else {
+                } else {
                     product.addImageFile(filename, false);
                 }
             } else {
@@ -172,7 +169,7 @@ public class ProductService {
         return productReadDTO;
     }
 
-    public Long deleteProduct(Long id){
+    public Long deleteProduct(Long id) {
 
         productRepository.deleteById(id);
 
@@ -183,9 +180,21 @@ public class ProductService {
     public Long updateProduct(
             Long pno,
             ProductRegisterDTO productRegisterDTO,
+            List<String> oldImageFiles,
+            List<String> oldDetailFiles,
+            List<String> oldUsageFiles,
             UploadDTO imageUploadDTO,
             UploadDTO detailImageUploadDTO,
             UploadDTO usageImageUploadDTO) {
+
+        // null 체크 후 빈 리스트로 초기화
+        List<String> safeOldImageFiles = (oldImageFiles != null) ? oldImageFiles : new ArrayList<>();
+        List<String> safeOldDetailFiles = (oldDetailFiles != null) ? oldDetailFiles : new ArrayList<>();
+        List<String> safeOldUsageFiles = (oldUsageFiles != null) ? oldUsageFiles : new ArrayList<>();
+
+        for (String file : safeOldImageFiles) {
+            log.info("Safe Old Image File: {}", file);
+        }
 
         Category category = Category.builder()
                 .cno(productRegisterDTO.getCategoryId())
@@ -205,81 +214,69 @@ public class ProductService {
         product.setPusedItem(productRegisterDTO.getPusedItem());
         product.setCategory(category);
 
+        // type이 true인 경우만 필터링
+        List<String> oldFileNames = product.getImageFiles().stream()
+                .filter(imageFile -> !imageFile.isType()) // isType == false
+                .map(ImageFiles::getFileName) // 파일 이름만 추출
+                .collect(Collectors.toList());
 
-//        // type이 true인 경우만 필터링
-//        List<String> oldFileNames = product.getImageFiles().stream()
-//                .filter(ImageFiles::isType) // isType == true
-//                .map(ImageFiles::getFileName) // 파일 이름만 추출
-//                .collect(Collectors.toList());
-//
-//        // type이 false인 경우만 필터링
-//        List<String> oldDetailFileNames = product.getImageFiles().stream()
-//                .filter(imageFile -> !imageFile.isType()) // isType == false
-//                .map(ImageFiles::getFileName) // 파일 이름만 추출
-//                .collect(Collectors.toList());
-//
-//        // type이 false인 경우만 필터링
-//        List<String> oldUsageFileNames = product.getUsageImageFiles().stream()
-//                .map(UsageImageFile::getFileName) // 파일 이름만 추출
-//                .collect(Collectors.toList());
-//
-//        // 새로운 파일 리스트
-//        List<String> newFileNames = Optional.ofNullable(imageUploadDTO.getFiles())
-//                .map(files -> Arrays.stream(files)
-//                        .filter(file -> !file.isEmpty()) // 실제 파일이 있는 경우만 필터링
-//                        .collect(Collectors.toList()))
-//                .filter(validFiles -> !validFiles.isEmpty()) // 빈 리스트는 제외
-//                .map(customFileUtil::saveFiles) // 파일이 있으면 저장
-//                .orElse(Collections.emptyList()); // 파일이 없으면 빈 리스트
-//
-//        // 삭제할 파일 리스트
-//        List<String> filesToDelete = oldFileNames.stream()
-//                .filter(oldFile -> !newFileNames.contains(oldFile))
-//                .collect(Collectors.toList());
-//
-//        // 삭제할 파일이 있다면 실제 파일까지 삭제
-//        if (!filesToDelete.isEmpty()) {
-//            customFileUtil.deleteFiles(filesToDelete);
-//        }
-//
-//        // 새로운 파일 리스트
-//        List<String> newDetailFileNames = Optional.ofNullable(detailImageUploadDTO.getFiles())
-//                .map(files -> Arrays.stream(files)
-//                        .filter(file -> !file.isEmpty()) // 실제 파일이 있는 경우만 필터링
-//                        .collect(Collectors.toList()))
-//                .filter(validFiles -> !validFiles.isEmpty()) // 빈 리스트는 제외
-//                .map(customFileUtil::saveFiles) // 파일이 있으면 저장
-//                .orElse(Collections.emptyList()); // 파일이 없으면 빈 리스트
-//
-//        // 삭제할 파일 리스트
-//        List<String> detailFilesToDelete = oldDetailFileNames.stream()
-//                .filter(oldFile -> !newDetailFileNames.contains(oldFile))
-//                .collect(Collectors.toList());
-//
-//        // 삭제할 파일이 있다면 실제 파일까지 삭제
-//        if (!detailFilesToDelete.isEmpty()) {
-//            customFileUtil.deleteFiles(detailFilesToDelete);
-//        }
-//
-//        // 새로운 파일 리스트
-//        List<String> newUsageFileNames = Optional.ofNullable(usageImageUploadDTO.getFiles())
-//                .map(files -> Arrays.stream(files)
-//                        .filter(file -> !file.isEmpty()) // 실제 파일이 있는 경우만 필터링
-//                        .collect(Collectors.toList()))
-//                .filter(validFiles -> !validFiles.isEmpty()) // 빈 리스트는 제외
-//                .map(customFileUtil::saveFiles) // 파일이 있으면 저장
-//                .orElse(Collections.emptyList()); // 파일이 없으면 빈 리스트
-//
-//        // 삭제할 파일 리스트
-//        List<String> usageFilesToDelete = oldDetailFileNames.stream()
-//                .filter(oldFile -> !newUsageFileNames.contains(oldFile))
-//                .collect(Collectors.toList());
-//
-//        // 삭제할 파일이 있다면 실제 파일까지 삭제
-//        if (!usageFilesToDelete.isEmpty()) {
-//            customFileUtil.deleteFiles(usageFilesToDelete);
-//        }
+        for (String file : oldFileNames) {
+            log.info("saved files: {}", file);
+        }
 
+        // 삭제할 파일 리스트
+        List<String> filesToDelete = oldFileNames.stream()
+                .filter(oldFile -> !safeOldImageFiles.contains(oldFile)) // 안전하게 null 체크된 리스트 사용
+                .collect(Collectors.toList());
+
+        // 삭제할 파일이 있다면 실제 파일까지 삭제
+        if (!filesToDelete.isEmpty()) {
+            customFileUtil.deleteFiles(filesToDelete);
+            // DB에서 파일 삭제
+            product.getImageFiles().removeIf(imageFile -> filesToDelete.contains(imageFile.getFileName()));
+        }
+
+        // type이 false인 경우만 필터링 (상세 이미지 파일)
+        List<String> oldDetailFileNames = product.getImageFiles().stream()
+                .filter(ImageFiles::isType) // isType == true
+                .map(ImageFiles::getFileName) // 파일 이름만 추출
+                .collect(Collectors.toList());
+
+        // 삭제할 파일 리스트
+        List<String> detailFilesToDelete = oldDetailFileNames.stream()
+                .filter(oldFile -> !safeOldDetailFiles.contains(oldFile)) // 안전하게 null 체크된 리스트 사용
+                .collect(Collectors.toList());
+
+        // 삭제할 파일이 있다면 실제 파일까지 삭제
+        if (!detailFilesToDelete.isEmpty()) {
+            customFileUtil.deleteFiles(detailFilesToDelete);
+            // DB에서 파일 삭제
+            product.getImageFiles().removeIf(imageFile -> detailFilesToDelete.contains(imageFile.getFileName()));
+        }
+
+        // 사용법 이미지 파일 처리
+        List<String> oldUsageFileNames = product.getUsageImageFiles().stream()
+                .map(UsageImageFile::getFileName) // 파일 이름만 추출
+                .collect(Collectors.toList());
+
+        // 삭제할 파일 리스트
+        List<String> usageFilesToDelete = oldUsageFileNames.stream()
+                .filter(oldFile -> !safeOldUsageFiles.contains(oldFile)) // 안전하게 null 체크된 리스트 사용
+                .collect(Collectors.toList());
+
+        // 삭제할 파일이 있다면 실제 파일까지 삭제
+        if (!usageFilesToDelete.isEmpty()) {
+            customFileUtil.deleteFiles(usageFilesToDelete);
+            // DB에서 파일 삭제
+            product.getUsageImageFiles().removeIf(usageImageFile -> usageFilesToDelete.contains(usageImageFile.getFileName()));
+        }
+
+        // 이미지 파일 처리 (새 파일 등록)
+        processImages(product, imageUploadDTO, true, false);
+        processImages(product, detailImageUploadDTO, true, true);  // 상세 이미지도 등록
+        processImages(product, usageImageUploadDTO, false, true);  // 사용법 이미지도 등록
+
+        // DB 저장
         productRepository.save(product);
 
         return product.getPno();
