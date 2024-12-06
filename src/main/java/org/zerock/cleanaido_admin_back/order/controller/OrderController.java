@@ -3,6 +3,7 @@ package org.zerock.cleanaido_admin_back.order.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
@@ -12,6 +13,7 @@ import org.zerock.cleanaido_admin_back.order.dto.OrderDetailListDTO;
 import org.zerock.cleanaido_admin_back.order.service.OrderService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/orders")
@@ -77,16 +79,14 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/detail")
-    public ResponseEntity<PageResponseDTO<OrderDetailListDTO>> getOrderDetail(@RequestParam(value = "sellerId") String sellerId,
-                                                                              @RequestParam(value = "orderNumber") String orderNumber,
-                                                                              @RequestParam(value = "page", defaultValue = "1") int page,
-                                                                              @RequestParam(value = "size", defaultValue = "10") int size) {
+    // 주문 상세
+    @GetMapping("/detail/{orderNum}")
+    public ResponseEntity<PageResponseDTO<OrderDetailListDTO>> getOrderDetail(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @PathVariable Long orderNum) {
 
-        if (orderNumber == null || !orderNumber.matches("\\d+")) {
-            throw new IllegalArgumentException("Invalid orderNumber: " + orderNumber);
-        }
-        Long orderNum = Long.valueOf(orderNumber);
+        String sellerId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
                 .page(page)
