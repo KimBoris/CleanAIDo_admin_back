@@ -1,5 +1,6 @@
 package org.zerock.cleanaido_admin_back.order.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -8,9 +9,12 @@ import org.springframework.stereotype.Service;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
+import org.zerock.cleanaido_admin_back.order.dto.OrderDeliveryUpdateDTO;
 import org.zerock.cleanaido_admin_back.order.dto.OrderListDTO;
 import org.zerock.cleanaido_admin_back.order.dto.OrderDetailListDTO;
+import org.zerock.cleanaido_admin_back.order.entity.Order;
 import org.zerock.cleanaido_admin_back.order.repository.OrderRepository;
+import org.zerock.cleanaido_admin_back.user.repository.UserRepository;
 
 import java.util.List;
 
@@ -20,6 +24,7 @@ import java.util.List;
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final UserRepository userRepository;
 
     public PageResponseDTO<OrderListDTO> listOrdersByRole(PageRequestDTO pageRequestDTO, List<String> statuses, String userId, String role) {
         Page<OrderListDTO> resultPage;
@@ -62,6 +67,7 @@ public class OrderService {
         }
     }
 
+    // 주문 상세
     public PageResponseDTO<OrderDetailListDTO> listOrderDetail
             (String sellerId, Long orderNum, PageRequestDTO pageRequestDTO) {
 
@@ -70,6 +76,24 @@ public class OrderService {
 
         return results;
 
+    }
+
+    // 주문 상태 변경 및 송장번호 입력
+    public String updateOrderDeliveryStatus(List<OrderDeliveryUpdateDTO> orderDeliveryUpdateList) {
+
+        for (OrderDeliveryUpdateDTO dto : orderDeliveryUpdateList) {
+            Long orderNumber = Long.valueOf(dto.getOrderNumber());
+            String trackingNumber = dto.getTrackingNumber();
+
+            Order order = orderRepository.findById(orderNumber).orElseThrow(()
+                    -> new EntityNotFoundException(orderNumber + "를 찾을 수 없습니다."));
+
+            order.setTrackingNumber(trackingNumber);
+            order.setOrderStatus("배송완료");
+            orderRepository.save(order);
+        }
+
+        return "응답 성공";
     }
 
 }
