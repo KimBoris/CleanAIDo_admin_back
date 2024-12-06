@@ -1,19 +1,26 @@
 package org.zerock.cleanaido_admin_back.order.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
+import org.zerock.cleanaido_admin_back.order.dto.OrderDeliveryUpdateDTO;
 import org.zerock.cleanaido_admin_back.order.dto.OrderListDTO;
+import org.zerock.cleanaido_admin_back.order.dto.OrderDetailListDTO;
 import org.zerock.cleanaido_admin_back.order.service.OrderService;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
+@Log4j2
+@CrossOrigin(origins = "*")
 public class OrderController {
 
     private final OrderService orderService;
@@ -36,7 +43,7 @@ public class OrderController {
                 .searchDTO(new SearchDTO(keyword, searchType))
                 .build();
 
-        List<String> inProgressStatuses = List.of("배송전", "배송중", "배송완료", "주문 완료");
+        List<String> inProgressStatuses = List.of("배송전", "배송중", "배송완료", "주문완료");
         PageResponseDTO<OrderListDTO> response = orderService.listOrdersByRole(pageRequestDTO, inProgressStatuses, userId, role);
 
         return ResponseEntity.ok(response);
@@ -71,5 +78,46 @@ public class OrderController {
         PageResponseDTO<OrderListDTO> response = orderService.listOrdersByRole(pageRequestDTO, canceledStatuses, userId, role);
 
         return ResponseEntity.ok(response);
+    }
+
+    // 주문 상세
+    @GetMapping("/detail/{orderNum}")
+    public ResponseEntity<PageResponseDTO<OrderDetailListDTO>> getOrderDetail(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @PathVariable Long orderNum) {
+
+        String sellerId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        PageRequestDTO pageRequestDTO = PageRequestDTO.builder()
+                .page(page)
+                .size(size)
+                .build();
+
+        PageResponseDTO<OrderDetailListDTO> response = orderService.listOrderDetail(sellerId, orderNum, pageRequestDTO);
+
+        log.info("==============================");
+        log.info(response.toString());
+        log.info("==============================");
+
+        return ResponseEntity.ok(response);
+
+    }
+
+    @PutMapping("/delivery")
+    public ResponseEntity<String> updataDeliveryStatus
+            (@RequestBody List<OrderDeliveryUpdateDTO> orderDeliveryUpdateList) {
+
+        try {
+
+            String response = orderService.updateOrderDeliveryStatus(orderDeliveryUpdateList);
+
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity.badRequest().body("요청 실패");
+
+        }
     }
 }
