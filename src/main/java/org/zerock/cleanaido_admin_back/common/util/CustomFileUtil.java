@@ -48,56 +48,65 @@ public class CustomFileUtil {
   public List<String> saveFiles(List<MultipartFile> files)throws RuntimeException{
 
     if(files == null || files.size() == 0){
-      return null; 
+      return null;
     }
 
     List<String> uploadNames = new ArrayList<>();
+    List<String> uploadThumbNailNames = new ArrayList<>();
 
     for (MultipartFile multipartFile : files) {
-        
+
       String savedName = UUID.randomUUID().toString() + "_" + multipartFile.getOriginalFilename();
 
+      Path savePath = Paths.get(uploadPath, savedName);
+
       try {
-
-        String uploadedUrl = s3Uploader.uploadToS3(multipartFile, savedName);
-
+        Files.copy(multipartFile.getInputStream(), savePath);
+        log.info(1);
+        String uploadedUrl = s3Uploader.upload(uploadPath+"/"+savedName);
+        log.info(2);
         String contentType = multipartFile.getContentType();
-
-//        if(contentType != null && contentType.startsWith("image")){ //이미지여부 확인
-//          File tempFile = File.createTempFile("thumbnail", "*");
-//          String thumbnailName = "s_" + savedName;
-//          log.info(thumbnailName);
-//          Thumbnails.of(multipartFile.getInputStream())
-//                  .size(400,400)
-//                  .toFile(tempFile);
-//          log.info("thumbnailName save: " + thumbnailName);
-//          s3Uploader.uploadThumbNail(tempFile, thumbnailName);
-//        }
-
+        log.info(3);
+        if(contentType != null && contentType.startsWith("image")){ //이미지여부 확인
+          log.info(4);
+          Path thumbnailPath = Paths.get(uploadPath, "s_"+savedName);
+          log.info(5);
+          Thumbnails.of(savePath.toFile())
+                  .size(400,400)
+                  .toFile(thumbnailPath.toFile());
+        }
+        log.info(6);
+        String uploadThumbnailUrl = s3Uploader.upload(uploadPath+"/s_"+savedName);
+        log.info(7);
         uploadNames.add(savedName);
+        log.info(8);
+        uploadThumbNailNames.add("s_"+savedName);
       } catch (IOException e) {
         throw new RuntimeException(e.getMessage());
+      }finally {
+        deleteFiles(uploadNames);
+        deleteFiles(uploadThumbNailNames);
       }
     }//end for
     return uploadNames;
   }
 
   public ResponseEntity<Resource> getFile(String fileName) {
-    
+
     Resource resource = new FileSystemResource(uploadPath+ File.separator + fileName);
 
     if(!resource.exists()) {
 
       resource = new FileSystemResource(uploadPath+ File.separator + "default.jpeg");
-    
+
     }
 
     HttpHeaders headers = new HttpHeaders();
 
     try{
-        headers.add("Content-Type", Files.probeContentType( resource.getFile().toPath() ));
+      headers.add("Content-Type", Files.probeContentType( resource.getFile().toPath() ));
     } catch(Exception e){
-        return ResponseEntity.internalServerError().build();
+      return ResponseEntity.internalServerError().build();
     }
     return ResponseEntity.ok().headers(headers).body(resource);
   }
@@ -132,7 +141,7 @@ public class CustomFileUtil {
 
     fileNames.forEach(fileName -> {
 
-      //썸네일이 있는지 확인하고 삭제 
+      //썸네일이 있는지 확인하고 삭제
       String thumbnailFileName = "s_" + fileName;
       Path thumbnailPath = Paths.get(uploadPath, thumbnailFileName);
       Path filePath = Paths.get(uploadPath, fileName);

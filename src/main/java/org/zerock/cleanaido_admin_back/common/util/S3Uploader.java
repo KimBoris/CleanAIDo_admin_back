@@ -33,7 +33,7 @@ public class S3Uploader {
         File targetFile = new File(filePath);
 
         String uploadImageUrl = putS3(targetFile, targetFile.getName()); // s3로 업로드
-        removeOriginalFile(targetFile);
+
         return uploadImageUrl;
     }
 
