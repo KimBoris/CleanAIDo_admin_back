@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.zerock.cleanaido_admin_back.common.dto.PageRequestDTO;
 import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.SearchDTO;
+import org.zerock.cleanaido_admin_back.order.dto.OrderDeliveryUpdateDTO;
 import org.zerock.cleanaido_admin_back.order.dto.OrderListDTO;
 import org.zerock.cleanaido_admin_back.order.dto.OrderDetailListDTO;
 import org.zerock.cleanaido_admin_back.order.service.OrderService;
@@ -42,7 +43,7 @@ public class OrderController {
                 .searchDTO(new SearchDTO(keyword, searchType))
                 .build();
 
-        List<String> inProgressStatuses = List.of("배송전", "배송중", "배송완료", "주문 완료");
+        List<String> inProgressStatuses = List.of("배송전", "배송중", "배송완료", "주문완료");
         PageResponseDTO<OrderListDTO> response = orderService.listOrdersByRole(pageRequestDTO, inProgressStatuses, userId, role);
 
         return ResponseEntity.ok(response);
@@ -101,5 +102,22 @@ public class OrderController {
 
         return ResponseEntity.ok(response);
 
+    }
+
+    @PutMapping("/delivery")
+    public ResponseEntity<String> updataDeliveryStatus
+            (@RequestBody List<OrderDeliveryUpdateDTO> orderDeliveryUpdateList) {
+
+        try {
+
+            String response = orderService.updateOrderDeliveryStatus(orderDeliveryUpdateList);
+
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException e) {
+
+            return ResponseEntity.badRequest().body("요청 실패");
+
+        }
     }
 }
