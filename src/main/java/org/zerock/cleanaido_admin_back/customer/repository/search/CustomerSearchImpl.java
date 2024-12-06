@@ -107,12 +107,13 @@ public class CustomerSearchImpl extends QuerydslRepositorySupport implements Cus
 
         JPQLQuery<Customer> query = from(customer).where(customer.delFlag.isFalse());
 
-            BooleanBuilder builder = new BooleanBuilder();
         if (type == null || type.isEmpty()) {
+            BooleanBuilder builder = new BooleanBuilder();
             builder.or(customer.customerName.like("%" + keyword + "%"))
                     .or(customer.customerId.like("%" + keyword + "%"));
+            query.where(builder).distinct();
         } else if (type.equals("customerName")) {
-           query.where(customer.customerName.like("%" + keyword + "%"));
+            query.where(customer.customerName.like("%" + keyword + "%"));
         } else if (type.equals("customerId")) {
             query.where(customer.customerId.like("%" + keyword + "%"));
         }

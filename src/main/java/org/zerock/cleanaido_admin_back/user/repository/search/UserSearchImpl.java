@@ -3,6 +3,7 @@ package org.zerock.cleanaido_admin_back.user.repository.search;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.JPQLQuery;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -16,6 +17,7 @@ import org.zerock.cleanaido_admin_back.user.entity.User;
 import java.util.List;
 
 
+@Log4j2
 public class UserSearchImpl extends QuerydslRepositorySupport implements UserSearch {
 
     public UserSearchImpl() {
@@ -27,7 +29,8 @@ public class UserSearchImpl extends QuerydslRepositorySupport implements UserSea
         QUser user = QUser.user;
 
         JPQLQuery<User> query = from(user).where(user.adminRole.isFalse()).
-                orderBy(user.userId.desc());
+                where(user.userStatus.eq("입점").or(user.userStatus.eq("활동정지")))
+                .orderBy(user.userId.desc());
 
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize());
 
@@ -80,14 +83,18 @@ public class UserSearchImpl extends QuerydslRepositorySupport implements UserSea
                     .or(user.userId.like("%" + keyword + "%"))
                     .or(user.storeName.like("%" + keyword + "%"));
             query.where(builder).distinct();
-        } else if (type.equals("UserId")) {
-            query.where(user.userId.like("%" + keyword + "%"));
-        } else if (type.equals("OwnerName")) {
-            query.where(user.ownerName.like("%" + keyword + "%"));
-        } else if (type.equals("StoreName")) {
-            query.where(user.storeName.like("%" + keyword + "%"));
-        } else if (type.equals("UserStatus")) {
-            query.where(user.userStatus.like("%" + keyword + "%"));
+        } else {
+            BooleanBuilder builder = new BooleanBuilder();
+            if (type.equals("userId")) {
+                builder.or(user.userId.like("%" + keyword + "%"));
+            } else if (type.equals("ownerName")) {
+                builder.or(user.ownerName.like("%" + keyword + "%"));
+            } else if (type.equals("storeName")) {
+                builder.or(user.storeName.like("%" + keyword + "%"));
+            } else if (type.equals("UserStatus")) {
+                builder.or(user.userStatus.like("%" + keyword + "%"));
+            }
+            query.where(builder);
         }
 
         query.orderBy(user.userId.desc());
