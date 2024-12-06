@@ -26,6 +26,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CustomFileUtil {
 
+  private final S3Uploader s3Uploader;
+
   @Value("${org.zerock.upload.path}")
   private String uploadPath;
 
@@ -54,22 +56,23 @@ public class CustomFileUtil {
     for (MultipartFile multipartFile : files) {
         
       String savedName = UUID.randomUUID().toString() + "_" + multipartFile.getOriginalFilename();
-      
-      Path savePath = Paths.get(uploadPath, savedName);
 
       try {
-        Files.copy(multipartFile.getInputStream(), savePath);
+
+        String uploadedUrl = s3Uploader.uploadToS3(multipartFile, savedName);
 
         String contentType = multipartFile.getContentType();
 
-        if(contentType != null && contentType.startsWith("image")){ //이미지여부 확인
-
-          Path thumbnailPath = Paths.get(uploadPath, "s_"+savedName);
-
-          Thumbnails.of(savePath.toFile())
-                  .size(400,400)
-                  .toFile(thumbnailPath.toFile());
-        }
+//        if(contentType != null && contentType.startsWith("image")){ //이미지여부 확인
+//          File tempFile = File.createTempFile("thumbnail", "*");
+//          String thumbnailName = "s_" + savedName;
+//          log.info(thumbnailName);
+//          Thumbnails.of(multipartFile.getInputStream())
+//                  .size(400,400)
+//                  .toFile(tempFile);
+//          log.info("thumbnailName save: " + thumbnailName);
+//          s3Uploader.uploadThumbNail(tempFile, thumbnailName);
+//        }
 
         uploadNames.add(savedName);
       } catch (IOException e) {

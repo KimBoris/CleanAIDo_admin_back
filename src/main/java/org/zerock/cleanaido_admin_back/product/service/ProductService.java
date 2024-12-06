@@ -13,6 +13,7 @@ import org.zerock.cleanaido_admin_back.common.dto.PageResponseDTO;
 import org.zerock.cleanaido_admin_back.common.dto.UploadDTO;
 import org.zerock.cleanaido_admin_back.common.util.CustomFileUtil;
 import org.zerock.cleanaido_admin_back.category.dto.CategoryDTO;
+import org.zerock.cleanaido_admin_back.common.util.S3Uploader;
 import org.zerock.cleanaido_admin_back.product.dto.ProductListDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductReadDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductRegisterDTO;
@@ -36,6 +37,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CustomFileUtil customFileUtil;
     private final UserRepository userRepository;
+    private final S3Uploader s3Uploader;
 
     public PageResponseDTO<ProductListDTO> listProductByRole(PageRequestDTO pageRequestDTO, String userId, String role) {
         if ("ROLE_ADMIN".equals(role)) {
@@ -122,6 +124,8 @@ public class ProductService {
         processImages(product, imageUploadDTO, true, false);
         processImages(product, detailImageUploadDTO, true, true);
         processImages(product, usageImageUploadDTO, false, true);
+
+
 
         // 상품 저장
         productRepository.save(product);
@@ -230,7 +234,9 @@ public class ProductService {
 
         // 삭제할 파일이 있다면 실제 파일까지 삭제
         if (!filesToDelete.isEmpty()) {
-            customFileUtil.deleteFiles(filesToDelete);
+            for (String file : filesToDelete) {
+                s3Uploader.removeS3File(file);
+            }
             // DB에서 파일 삭제
             product.getImageFiles().removeIf(imageFile -> filesToDelete.contains(imageFile.getFileName()));
         }
@@ -248,7 +254,9 @@ public class ProductService {
 
         // 삭제할 파일이 있다면 실제 파일까지 삭제
         if (!detailFilesToDelete.isEmpty()) {
-            customFileUtil.deleteFiles(detailFilesToDelete);
+            for (String file : detailFilesToDelete) {
+                s3Uploader.removeS3File(file);
+            }
             // DB에서 파일 삭제
             product.getImageFiles().removeIf(imageFile -> detailFilesToDelete.contains(imageFile.getFileName()));
         }
@@ -265,7 +273,9 @@ public class ProductService {
 
         // 삭제할 파일이 있다면 실제 파일까지 삭제
         if (!usageFilesToDelete.isEmpty()) {
-            customFileUtil.deleteFiles(usageFilesToDelete);
+            for (String file : usageFilesToDelete) {
+                s3Uploader.removeS3File(file);
+            }
             // DB에서 파일 삭제
             product.getUsageImageFiles().removeIf(usageImageFile -> usageFilesToDelete.contains(usageImageFile.getFileName()));
         }
