@@ -1,15 +1,21 @@
 spring:
   application:
     name: api1
+
+  config:
+    import: optional:file:.env[.properties]
+
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://10.10.10.158:3306/cleanaido
-    username: cleanaidouser
-    password: cleanaidouser
+    url: ${MARIA_DB_URL}
+    username: ${MARIA_DB_USERNAME}
+    password: ${MARIA_DB_PASSWORD}
+
     hikari:
       minimum-idle: 2
       maximum-pool-size: 5
       connection-timeout: 5000
+
 
   jpa:
     hibernate:
@@ -40,8 +46,21 @@ org:
       path: upload
 
 jwt:
-  secretKey: jakCELGsH3DsQsw2RTSLuQokILHO/A3wRn6GWuao3EQ=
+  secretKey: ${JWT_SECRET_KEY}
 
 logging:
   level:
     org.springframework.security.web: TRACE
+
+cloud:
+  aws:
+    credentials:
+      access-key: ${IAM_LOCAL_ACCESS}
+      secret-key: ${IAM_LOCAL_SECRET}
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    s3:
+      bucket: bucket-cleanaido
+
