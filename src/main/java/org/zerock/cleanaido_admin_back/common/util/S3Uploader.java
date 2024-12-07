@@ -37,7 +37,6 @@ public class S3Uploader {
         return uploadImageUrl;
     }
 
-
     // S3로 업로드
     private String putS3(File uploadFile, String fileName)throws RuntimeException
     {
@@ -48,39 +47,10 @@ public class S3Uploader {
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
-    //S3 업로드 후 원본 파일 삭제
-    private void removeOriginalFile(File targetFile) {
-        if (targetFile.exists() && targetFile.delete()) {
-            log.info("File delete success");
-            return;
-        }
-        log.info("fail to remove");
-    }
-
     public void removeS3File(String fileName){
         final DeleteObjectRequest deleteObjectRequest = new
                 DeleteObjectRequest(bucket, fileName);
         amazonS3Client.deleteObject(deleteObjectRequest);
-    }
-
-    // S3 업로드 메서드
-    public String uploadToS3(MultipartFile file, String fileName) throws IOException {
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(file.getSize());
-        metadata.setContentType(file.getContentType());
-
-        amazonS3Client.putObject(bucket, fileName, file.getInputStream(), metadata);
-        return amazonS3Client.getUrl(bucket, fileName).toString();
-    }
-
-    // S3로 업로드
-    public String uploadThumbNail(File uploadFile, String fileName)throws RuntimeException
-    {
-
-        amazonS3Client.putObject(new PutObjectRequest(bucket, fileName,
-                uploadFile)
-                .withCannedAcl(CannedAccessControlList.PublicRead));
-        return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
 }
