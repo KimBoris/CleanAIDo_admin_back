@@ -7,9 +7,9 @@ spring:
 
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: ${MARIA_DB_URL}
-    username: ${MARIA_DB_USERNAME}
-    password: ${MARIA_DB_PASSWORD}
+    url: ${AWS_DB_URL}
+    username: ${AWS_DB_USERNAME}
+    password: ${AWS_DB_PASSWORD}
 
     hikari:
       minimum-idle: 2

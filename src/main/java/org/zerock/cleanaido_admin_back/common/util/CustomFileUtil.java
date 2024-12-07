@@ -62,24 +62,17 @@ public class CustomFileUtil {
 
       try {
         Files.copy(multipartFile.getInputStream(), savePath);
-        log.info(1);
         String uploadedUrl = s3Uploader.upload(uploadPath+"/"+savedName);
-        log.info(2);
         String contentType = multipartFile.getContentType();
-        log.info(3);
+
         if(contentType != null && contentType.startsWith("image")){ //이미지여부 확인
-          log.info(4);
           Path thumbnailPath = Paths.get(uploadPath, "s_"+savedName);
-          log.info(5);
           Thumbnails.of(savePath.toFile())
                   .size(400,400)
                   .toFile(thumbnailPath.toFile());
         }
-        log.info(6);
         String uploadThumbnailUrl = s3Uploader.upload(uploadPath+"/s_"+savedName);
-        log.info(7);
         uploadNames.add(savedName);
-        log.info(8);
         uploadThumbNailNames.add("s_"+savedName);
       } catch (IOException e) {
         throw new RuntimeException(e.getMessage());
