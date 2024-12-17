@@ -137,14 +137,24 @@ public class ProductService {
     private void processImages(Product product, UploadDTO uploadDTO, boolean isMainImage, boolean isDetailImage) {
         log.info("Processing image for product: {}", product.getPno());
         log.info("Upload image: {}", uploadDTO);
-        List<String> fileNames = Optional.ofNullable(uploadDTO.getFiles())
-                .map(files -> Arrays.stream(files)
-                        .filter(file -> !file.isEmpty())
-                        .collect(Collectors.toList()))
-                .filter(validFiles -> !validFiles.isEmpty())
-                .map(customFileUtil::saveFiles)
-                .orElse(Collections.emptyList());
-
+        List<String> fileNames;
+        if (isMainImage) {
+            fileNames = Optional.ofNullable(uploadDTO.getFiles())
+                    .map(files -> Arrays.stream(files)
+                            .filter(file -> !file.isEmpty())
+                            .collect(Collectors.toList()))
+                    .filter(validFiles -> !validFiles.isEmpty())
+                    .map(customFileUtil::saveFiles)
+                    .orElse(Collections.emptyList());
+        }else{
+            fileNames = Optional.ofNullable(uploadDTO.getFiles())
+                    .map(files -> Arrays.stream(files)
+                            .filter(file -> !file.isEmpty())
+                            .collect(Collectors.toList()))
+                    .filter(validFiles -> !validFiles.isEmpty())
+                    .map(customFileUtil::saveUsageFiles)
+                    .orElse(Collections.emptyList());
+        }
 
         fileNames.forEach(filename -> {
             if (isMainImage) {

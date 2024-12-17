@@ -27,6 +27,7 @@ import java.util.UUID;
 public class CustomFileUtil {
 
   private final S3Uploader s3Uploader;
+  private final FileUploadUtil fileUploadUtil;
 
   @Value("${org.zerock.upload.path}")
   private String uploadPath;
@@ -79,6 +80,35 @@ public class CustomFileUtil {
       }finally {
         deleteFiles(uploadNames);
         deleteFiles(uploadThumbNailNames);
+      }
+    }//end for
+    return uploadNames;
+  }
+
+  public List<String> saveUsageFiles(List<MultipartFile> files)throws RuntimeException{
+
+    if(files == null || files.size() == 0){
+      return null;
+    }
+
+    List<String> uploadNames = new ArrayList<>();
+
+    for (MultipartFile multipartFile : files) {
+
+      String savedName = UUID.randomUUID().toString() + "_" + multipartFile.getOriginalFilename();
+
+      Path savePath = Paths.get(uploadPath, savedName);
+
+      try {
+        Files.copy(multipartFile.getInputStream(), savePath);
+        String savedLoacation = uploadPath+"/"+savedName;
+        String uploadedUrl = s3Uploader.upload(savedLoacation);
+        String uploadToApi = fileUploadUtil.uploadImages(savedLoacation);
+        uploadNames.add(savedName);
+      } catch (IOException e) {
+        throw new RuntimeException(e.getMessage());
+      }finally {
+        deleteFiles(uploadNames);
       }
     }//end for
     return uploadNames;
