@@ -10,6 +10,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.io.File;
 import java.io.IOException;
 
+//물품등록시 python서버에 사용처 사진을 저장
 @Component
 public class FileUploadUtil {
 

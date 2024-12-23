@@ -21,6 +21,7 @@ public class CustomerController {
 
     private final CustomerService customerService;
 
+    //고객 리스트 가져오기
     @GetMapping("list")
     public ResponseEntity<PageResponseDTO<CustomerListDTO>> list(@RequestParam(value = "page", defaultValue = "1") int page,
                                                                  @RequestParam(value = "size", defaultValue = "10") int size,
@@ -44,6 +45,8 @@ public class CustomerController {
         }
         return ResponseEntity.ok(customerService.listCustomers(pageRequestDTO));
     }
+
+    //고객아이디로 해당 고객 정보 가져오기
     @GetMapping("{customerId}")
     public ResponseEntity<CustomerReadDTO> read(@PathVariable String customerId)
     {
@@ -54,6 +57,7 @@ public class CustomerController {
         return ResponseEntity.ok(readDTO);
     }
 
+    //고객 삭제
     @PutMapping("delete/{customerId}")
     public ResponseEntity<String> delete(@PathVariable("customerId") String customerId) {
         customerService.softDeleteCustomer(customerId);
@@ -61,6 +65,7 @@ public class CustomerController {
         return ResponseEntity.ok(customerId + "is delete successfully");
     }
 
+    //고객 정보수정
     @PutMapping("{customerId}")
     public ResponseEntity<String> update(@PathVariable String customerId,
                                          @ModelAttribute CustomerRegisterDTO customerRegisterDTO) {

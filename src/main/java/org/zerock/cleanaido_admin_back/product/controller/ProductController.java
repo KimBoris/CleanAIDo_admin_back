@@ -2,7 +2,6 @@ package org.zerock.cleanaido_admin_back.product.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,7 +17,6 @@ import org.zerock.cleanaido_admin_back.product.dto.ProductReadDTO;
 import org.zerock.cleanaido_admin_back.product.dto.ProductRegisterDTO;
 import org.zerock.cleanaido_admin_back.product.service.ProductService;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -30,6 +28,7 @@ public class ProductController {
 
     private final ProductService productService;
 
+    //해당 판매자의 판매물품 리스트 가져오기
     @GetMapping("list")
     public ResponseEntity<PageResponseDTO<ProductListDTO>> list(
             @RequestParam(value = "page", defaultValue = "1") int page,
@@ -56,7 +55,7 @@ public class ProductController {
         return ResponseEntity.ok(productService.listProductByRole(pageRequestDTO, userId, role));
     }
 
-
+    //상품 등록시 필요한 카테고리의 리스트 가져오기
     @GetMapping("seller/category")
     public ResponseEntity<List<CategoryDTO>> searchCategory(
             @RequestParam(value = "keyword", required = false) String keyword) {
@@ -65,7 +64,7 @@ public class ProductController {
     }
 
 
-
+    //물품 등록
     @PostMapping(value = "seller/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> registerProduct(
             @ModelAttribute ProductRegisterDTO productRegisterDTO,
@@ -100,12 +99,14 @@ public class ProductController {
         return ResponseEntity.ok(productId);
     }
 
+    //상품 상세정보 가져오기
     @GetMapping("/read/{pno}")
     public ResponseEntity<ProductReadDTO> read(@PathVariable Long pno) {
         ProductReadDTO readDTO = productService.getProduct(pno);
         return ResponseEntity.ok(readDTO);
     }
 
+    //상품 삭제
     @DeleteMapping("seller/delete")
     public Long delete(
             @RequestParam(value = "pno", required = false) Long pno
@@ -113,6 +114,7 @@ public class ProductController {
         return productService.deleteProduct(pno);
     }
 
+    //상품 정보 수정
     @PutMapping(value = "seller/{pno}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> update(
             @PathVariable Long pno, // 수정 대상 Product 번호

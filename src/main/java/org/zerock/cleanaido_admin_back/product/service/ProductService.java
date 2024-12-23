@@ -39,6 +39,7 @@ public class ProductService {
     private final UserRepository userRepository;
     private final S3Uploader s3Uploader;
 
+    //판매자/관리자 권한 구분하여 물품 리스트 가져오기
     public PageResponseDTO<ProductListDTO> listProductByRole(PageRequestDTO pageRequestDTO, String userId, String role) {
         if ("ROLE_ADMIN".equals(role)) {
             // 관리자는 storeName 포함 전체 리스트 조회
@@ -51,7 +52,7 @@ public class ProductService {
         }
     }
 
-
+    //검색한 물품 가져오기
     public PageResponseDTO<ProductListDTO> search(PageRequestDTO pageRequestDTO) {
         // SearchDTO에서 type과 keyword를 가져옴
         String type = pageRequestDTO.getSearchDTO().getSearchType();
@@ -76,6 +77,7 @@ public class ProductService {
         return new PageResponseDTO<>(dtoList, pageRequestDTO, resultPage.getTotalElements());
     }
 
+    //카테고리 리스트 가져오기
     public List<CategoryDTO> searchCategory(String keyword) {
 
         List<CategoryDTO> resultList = productRepository.searchCategoryBy(keyword);
@@ -83,6 +85,7 @@ public class ProductService {
         return resultList;
     }
 
+    //물품 등록하기
     public Long registerProduct(ProductRegisterDTO dto, UploadDTO imageUploadDTO,
                                 UploadDTO detailImageUploadDTO, UploadDTO usageImageUploadDTO) {
 
@@ -93,11 +96,13 @@ public class ProductService {
 
         log.info("Registering product for seller: {}", dto.getSeller());
 
+        //dto에서 seller를 가져와 임시로 생성
         User seller = userRepository.findById(dto.getSeller())
                 .orElseThrow(() -> new IllegalArgumentException("판매자를 찾을 수 없습니다: " + dto.getSeller()));
 
         log.info("Found seller: {}", seller.getUserId());
 
+        //dto에서 카테고리 번호를 가져와 임시로 생성
         Category category = Category.builder()
                 .cno(dto.getCategoryId())
                 .build();
@@ -138,6 +143,7 @@ public class ProductService {
         log.info("Processing image for product: {}", product.getPno());
         log.info("Upload image: {}", uploadDTO);
         List<String> fileNames;
+        //썸네일&상세이미지인지 아니면 사용처이미지인지 구분
         if (isMainImage) {
             fileNames = Optional.ofNullable(uploadDTO.getFiles())
                     .map(files -> Arrays.stream(files)
@@ -147,6 +153,7 @@ public class ProductService {
                     .map(customFileUtil::saveFiles)
                     .orElse(Collections.emptyList());
         }else{
+            //사용처 이미지면 파이썬 서버에도 사진을 전송해야하므로 다른 로직으로 분리
             fileNames = Optional.ofNullable(uploadDTO.getFiles())
                     .map(files -> Arrays.stream(files)
                             .filter(file -> !file.isEmpty())
@@ -155,13 +162,13 @@ public class ProductService {
                     .map(customFileUtil::saveUsageFiles)
                     .orElse(Collections.emptyList());
         }
-
+        //저장소에 들어간 이미지들의 파일명을 db에 저장
         fileNames.forEach(filename -> {
             if (isMainImage) {
                 if (isDetailImage) {
-                    product.addImageFile(filename, true);
+                    product.addImageFile(filename, true); //true면 상세이미지
                 } else {
-                    product.addImageFile(filename, false);
+                    product.addImageFile(filename, false); // false면 썸네일 이미지
                 }
             } else {
                 product.addUsingImageFile(filename);
@@ -169,7 +176,7 @@ public class ProductService {
         });
     }
 
-
+    //상품 상세정보 가져오기
     public ProductReadDTO getProduct(Long pno) {
 
         ProductReadDTO productReadDTO = productRepository.getProduct(pno);
@@ -182,6 +189,7 @@ public class ProductService {
         return productReadDTO;
     }
 
+    //상품 삭제하기
     public Long deleteProduct(Long id) {
 
         productRepository.deleteById(id);
@@ -189,6 +197,7 @@ public class ProductService {
         return id;
     }
 
+    //상품 정보 수정하기
     @Transactional
     public Long updateProduct(
             Long pno,

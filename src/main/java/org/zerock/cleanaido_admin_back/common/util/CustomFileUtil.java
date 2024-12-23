@@ -62,12 +62,15 @@ public class CustomFileUtil {
       Path savePath = Paths.get(uploadPath, savedName);
 
       try {
+        //임시 upload파일에 저장
         Files.copy(multipartFile.getInputStream(), savePath);
+        //s3에 업로드
         String uploadedUrl = s3Uploader.upload(uploadPath+"/"+savedName);
         String contentType = multipartFile.getContentType();
 
         if(contentType != null && contentType.startsWith("image")){ //이미지여부 확인
           Path thumbnailPath = Paths.get(uploadPath, "s_"+savedName);
+          //썸네일 생성
           Thumbnails.of(savePath.toFile())
                   .size(400,400)
                   .toFile(thumbnailPath.toFile());
@@ -78,13 +81,14 @@ public class CustomFileUtil {
       } catch (IOException e) {
         throw new RuntimeException(e.getMessage());
       }finally {
+        //업로드 완료시 임시파일 제거
         deleteFiles(uploadNames);
         deleteFiles(uploadThumbNailNames);
       }
     }//end for
     return uploadNames;
   }
-
+  //썸네일 생성을 제외한 사용처 이미지 업로드
   public List<String> saveUsageFiles(List<MultipartFile> files)throws RuntimeException{
 
     if(files == null || files.size() == 0){
@@ -103,11 +107,13 @@ public class CustomFileUtil {
         Files.copy(multipartFile.getInputStream(), savePath);
         String savedLoacation = uploadPath+"/"+savedName;
         String uploadedUrl = s3Uploader.upload(savedLoacation);
+        //파이선 서버에도 같은 사진을 전송
         String uploadToApi = fileUploadUtil.uploadImages(savedLoacation);
         uploadNames.add(savedName);
       } catch (IOException e) {
         throw new RuntimeException(e.getMessage());
       }finally {
+        //업로드 완료시 임시파일 제거
         deleteFiles(uploadNames);
       }
     }//end for

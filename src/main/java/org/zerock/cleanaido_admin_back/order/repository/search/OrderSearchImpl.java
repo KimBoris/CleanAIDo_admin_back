@@ -26,6 +26,7 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
         super(Order.class);
     }
 
+    //판매자별 주문 리스트 가져오기
     @Override
     public Page<OrderListDTO> listBySeller(String sellerId, List<String> statuses, Pageable pageable) {
         QOrder order = QOrder.order;
@@ -53,6 +54,7 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
         return new PageImpl<>(results, pageable, total);
     }
 
+    //주문리스트 가져오기
     @Override
     public Page<OrderListDTO> list(List<String> statuses, Pageable pageable) {
         QOrder order = QOrder.order;
@@ -62,6 +64,7 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
         return getPagedResult(condition, pageable);
     }
 
+    //주문 번호로 검색
     @Override
     public Page<OrderListDTO> searchByOrderNumber(String keyword, List<String> statuses, Pageable pageable) {
         QOrder order = QOrder.order;
@@ -78,6 +81,7 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
         return getPagedResult(condition, pageable);
     }
 
+    //상품 번호로 검색
     @Override
     public Page<OrderListDTO> searchByProductNumber(String keyword, List<String> statuses, Pageable pageable) {
         QOrder order = QOrder.order;
@@ -110,6 +114,7 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
         return new PageImpl<>(results, pageable, total);
     }
 
+    //고객 아이디로 검색
     @Override
     public Page<OrderListDTO> searchByCustomerId(String keyword, List<String> statuses, Pageable pageable) {
         QOrder order = QOrder.order;
@@ -120,6 +125,7 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
         return getPagedResult(condition, pageable);
     }
 
+    //고객 전화번호로 검색
     @Override
     public Page<OrderListDTO> searchByPhoneNumber(String keyword, List<String> statuses, Pageable pageable) {
         QOrder order = QOrder.order;
@@ -130,6 +136,7 @@ public class OrderSearchImpl extends QuerydslRepositorySupport implements OrderS
         return getPagedResult(condition, pageable);
     }
 
+    //트래킹 번호로 검색
     @Override
     public Page<OrderListDTO> searchByTrackingNumber(String keyword, List<String> statuses, Pageable pageable) {
         QOrder order = QOrder.order;

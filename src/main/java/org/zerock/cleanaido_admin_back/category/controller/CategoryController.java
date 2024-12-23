@@ -18,12 +18,14 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
+    //1차 카테고리 목록 가져오기
     @GetMapping("list")
     public ResponseEntity<List<CategoryListDTO>> list() {
 
         return ResponseEntity.ok(categoryService.listCategoryParents());
     }
 
+    //2차 카테고리 목록 가져오기
     @GetMapping("children/{cno}")
     public ResponseEntity<List<CategoryListDTO>> children(
             @PathVariable Long cno
@@ -32,6 +34,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.listCategoryChildren(cno));
     }
 
+    //2차 카테고리 생성
     @PostMapping(value = "children")
     public ResponseEntity<Long> addChild(
             @RequestParam("parent") Long parentCno,
@@ -40,6 +43,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.addChildCategory(parentCno, cname));
     }
 
+    //1차 카테고리 생성
     @PostMapping(value = "parent")
     public ResponseEntity<Long> addParent(
             @RequestParam("cname") String cname
@@ -47,6 +51,7 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.addParentCategory(cname));
     }
 
+    //카테고리 삭제
     @DeleteMapping(value = "{cno}")
     public ResponseEntity<Long> delete(
             @PathVariable Long cno
